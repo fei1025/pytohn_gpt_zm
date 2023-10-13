@@ -10,11 +10,6 @@ from langchain.chat_models import ChatOpenAI
 
 # 设置HTTP代理的地址和端口
 http_proxy = "http://127.0.0.1:7890"
-http_proxys = "https://127.0.0.1:7890"
-
-# 设置HTTP_PROXY环境变量
-#os.environ['http_proxy'] = http_proxy
-#os.environ['http_proxys'] = http_proxys
 
 # openAi的llm
 llm = OpenAI(openai_api_key=openai_api_key,verbose=True,openai_proxy=http_proxy)
@@ -23,8 +18,7 @@ chat_model = ChatOpenAI(openai_api_key=openai_api_key,verbose=True,openai_proxy=
 
 text = "What would be a good company name for a company that makes colorful socks?"
 messages = [HumanMessage(content=text)]
-print(llm.predict_messages(messages))
-print("------------------------")
+
 #print(chat_model.predict_messages(messages))
 result = chat_model._stream(messages) # 这里会得到生成器
 text = ""
