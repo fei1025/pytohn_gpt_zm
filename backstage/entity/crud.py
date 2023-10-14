@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from Util import cacheUtil
 from entity import models, schemas
 
 
@@ -37,11 +38,26 @@ def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
 
 
 def create_user_setting(db: Session):
-    setting=db.query(models.User_settings).filter(models.User_settings.id==1).first();
+    setting = db.query(models.User_settings).filter(models.User_settings.id == 1).first()
     if setting is None:
-        setting=models.User_settings(id=1)
+        setting = models.User_settings(id=1)
         db.add(setting)
         db.commit()
         db.refresh(setting)
     return setting
+
+
+# 用户设置应该有一个,且只有一个
+def save_user_setting(db: Session, userSettings: models.User_settings):
+    setting = db.query(models.User_settings).filter(models.User_settings.id == 1).first()
+    if setting is None:
+        userSettings.id = 1
+        db.add(userSettings)
+        db.commit()
+        db.refresh(userSettings)
+    else:
+        db.query(models.User_settings).filter(models.User_settings.id == 1).update(userSettings)
+        cacheUtil.ca_save("")
+
+
 

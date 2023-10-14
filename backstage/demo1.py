@@ -5,7 +5,7 @@ import uvicorn
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 
-from db.database import SessionLocal, engine
+from db.database import engine, get_db
 from entity import models, schemas, crud
 
 models.Base.metadata.create_all(bind=engine)
@@ -13,13 +13,7 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+
 
 
 @app.post("/users/", response_model=schemas.User)
