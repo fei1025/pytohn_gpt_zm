@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from Util import cacheUtil
 from entity import models, schemas
 
+userKey = "userSetting";
+
 
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
@@ -37,14 +39,22 @@ def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
     return db_item
 
 
-def create_user_setting(db: Session):
-    setting = db.query(models.User_settings).filter(models.User_settings.id == 1).first()
+def get_user_setting(db: Session):
+    setting = cacheUtil.calculate_value(userKey)
     if setting is None:
-        setting = models.User_settings(id=1)
-        db.add(setting)
-        db.commit()
-        db.refresh(setting)
-    return setting
+        setting = db.query(models.User_settings).filter(models.User_settings.id == 1).first()
+        if setting is None:
+            setting = models.User_settings(id=1)
+            db.add(setting)
+            db.commit()
+            db.refresh(setting)
+            cacheUtil.ca_save(userKey,setting);
+            return setting
+        else:
+            cacheUtil.ca_save(userKey, setting);
+            return setting
+    else:
+        return setting
 
 
 # 用户设置应该有一个,且只有一个
@@ -58,6 +68,3 @@ def save_user_setting(db: Session, userSettings: models.User_settings):
     else:
         db.query(models.User_settings).filter(models.User_settings.id == 1).update(userSettings)
         cacheUtil.ca_save("")
-
-
-

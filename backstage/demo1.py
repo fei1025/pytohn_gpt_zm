@@ -51,9 +51,9 @@ def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return items
 
 
-@app.get("/create_user_setting/")
-def create_user_setting(db: Session = Depends(get_db)):
-    return crud.create_user_setting(db)
+@app.get("/get_user_setting/")
+def get_user_setting(db: Session = Depends(get_db)):
+    return crud.get_user_setting(db)
 
 
 
