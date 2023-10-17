@@ -17,19 +17,16 @@ http_proxy = "http://127.0.0.1:3208"
 #llm = OpenAI(openai_api_key=openai_api_key,verbose=True,openai_api_base="https://api-cf.openai-sb.com/v1/chat/completions")
 # 这是一个语言模型，它将消息列表作为输入并返回消息
 chat_model = ChatOpenAI(openai_api_key=openai_api_key,verbose=True,openai_api_base="https://api.openai-sb.com/v1",streaming=True)
-
 text = "What would be a good company name for a company that makes colorful socks?"
 messages = [HumanMessage(content=text)]
 
-for chunk in chat_model.stream(messages):
-    print(chunk.content, end="", flush=False)
 
-#print(chat_model.predict_messages(messages))
-# result = chat_model._stream(messages) # 这里会得到生成器
-# text = ""
-#
-# for i in result:
-#     print(i)
-#     text = text+i.message.content
-#
-# print(text)
+
+
+print(text)
+
+
+def get_chat():
+    # print(chat_model.predict_messages(messages))
+     return chat_model._stream(messages)  # 这里会得到生成器
+

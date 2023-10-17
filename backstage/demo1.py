@@ -1,12 +1,18 @@
+import asyncio
 from http.client import HTTPException
 from typing import List
 
 import uvicorn
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends,Request
 from sqlalchemy.orm import Session
 
+
+import openAi.langChat
 from db.database import engine, get_db
 from entity import models, schemas, crud
+
+from sse_starlette.sse import EventSourceResponse
+
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -54,6 +60,38 @@ def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 @app.get("/get_user_setting/")
 def get_user_setting(db: Session = Depends(get_db)):
     return crud.get_user_setting(db)
+
+@app.get("/getSee")
+async def root(request: Request):
+    async def event_generator(request: Request):
+        res_str = "七夕情人节即将来临，我们为您准备了精美的鲜花和美味的蛋糕"
+        for i in res_str:
+            if await request.is_disconnected():
+                print("连接已中断")
+                break
+            yield {
+                "event": "message",
+                "retry": 15000,
+                "data": i
+            }
+
+            await asyncio.sleep(0.1)
+    g = event_generator(request)
+    return EventSourceResponse(g)
+
+@app.get("/chat")
+async def chat(request: Request):
+    async def event_generator(request: Request):
+        result = openAi.langChat.get_chat()
+        for i in result:
+            if await request.is_disconnected():
+                print("连接已中断")
+                break
+            yield i.message.content
+    g = event_generator(request)
+    return EventSourceResponse(g)
+
+
 
 
 
