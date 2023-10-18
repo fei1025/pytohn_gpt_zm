@@ -3,6 +3,8 @@ import os
 # https://blog.csdn.net/q506610466/article/details/132790633
 from langchain.llms import OpenAI
 from langchain.schema import HumanMessage
+from langchain.memory import ConversationSummaryMemory
+
 
 #openai.api_key = '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'
 #openai_api_key=   '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'
@@ -19,13 +21,6 @@ http_proxy = "http://127.0.0.1:3208"
 chat_model = ChatOpenAI(openai_api_key=openai_api_key,verbose=True,openai_api_base="https://api.openai-sb.com/v1",streaming=True)
 text = "What would be a good company name for a company that makes colorful socks?"
 messages = [HumanMessage(content=text)]
-
-
-
-
-print(text)
-
-
 def get_chat():
     # print(chat_model.predict_messages(messages))
      return chat_model._stream(messages)  # 这里会得到生成器

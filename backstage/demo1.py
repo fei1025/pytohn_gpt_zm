@@ -17,7 +17,8 @@ from sse_starlette.sse import EventSourceResponse
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-
+# 计算引擎
+# https://python.langchain.com/docs/integrations/providers/wolfram_alpha
 
 
 
@@ -79,8 +80,9 @@ async def root(request: Request):
     g = event_generator(request)
     return EventSourceResponse(g)
 
-@app.get("/chat")
-async def chat(request: Request):
+@app.post("/chat")
+async def chat(request: Request,user_id: int):
+    print(user_id)
     async def event_generator(request: Request):
         result = openAi.langChat.get_chat()
         for i in result:
