@@ -42,6 +42,7 @@ class MyCustomHandlerTwo(BaseCallbackHandler):
         print(f"on_llm_start (I'm the second handler!!) {serialized['name']}")
 
 
+
 llm = ChatOpenAI(openai_api_key=openai_api_key, verbose=True, openai_api_base="https://api.openai-sb.com/v1",
                  streaming=True,
                  callback_manager=CallbackManager([StreamingStdOutCallbackHandler()]))
