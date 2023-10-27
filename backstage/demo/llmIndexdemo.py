@@ -14,7 +14,6 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.schema import LLMResult, AgentAction, AgentFinish
 from langchain.tools import WolframAlphaQueryRun, format_tool_to_openai_function
 from langchain.utils import print_text
-from loguru import logger
 
 os.environ['OPENAI_API_KEY'] = 'sb-48ce6279f88e82c385dfc0a1d0feb964f4ea485874f9aeb9'
 os.environ['openai_api_base'] = 'https://api.openai-sb.com/v1'
@@ -165,7 +164,7 @@ agent = initialize_agent(tools, llm, agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_R
 
 #logfile = "output.log"
 # callbacks=[MyCustomHandlerTwo()] What is 2x+5 = -3x + 7?
-reply = agent.run(input="2x+5 =-3x+7 如何计算" ,callbacks=[MyCustomHandlerTwo11()])
+reply = agent.run(input="2 * 2 * 0.13 - 1.001? 如何计算,用中文回复" ,callbacks=[MyCustomHandlerTwo11()])
 print("--------------------------------------------------------------")
 print(reply)
 #logger.info(reply)
