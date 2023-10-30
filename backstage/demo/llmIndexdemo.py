@@ -141,7 +141,7 @@ class MyCustomHandlerTwo11(BaseCallbackHandler):
             **kwargs: Any,
     ) -> None:
        #print(f"text:{text}")
-       print_text(text, color=color , end="\n")
+       print_text(text, color=color , end="\n") 
 
     def on_agent_finish(
             self, finish: AgentFinish, color: Optional[str] = None, **kwargs: Any

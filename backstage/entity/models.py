@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date
 from sqlalchemy.orm import relationship
 
 from db.database import Base
@@ -35,3 +35,17 @@ class User_settings(Base):
     wolfram_appid = Column(String, default=None)
 
 
+
+class chat_hist(Base):
+    __tablename__ = "chat_hist"
+    chat_id = Column(String, primary_key=True, index=True)
+
+
+class chat_hist_details(Base):
+    __tablename__ = "chat_hist_details"
+    id = Column(Integer, primary_key=True, index=True)
+    chat_id = Column(String, default=None)
+    role = Column(String, default=None)
+    content = Column(String, default=None)
+    token_num = Column(String, default=None)
+    creation_time = Column(Date, default=None)

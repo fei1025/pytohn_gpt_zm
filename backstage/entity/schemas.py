@@ -35,3 +35,9 @@ class User(UserBase):
 
     class Config:
         from_attributes = True
+
+
+class reqChat(BaseModel):
+    chat_id: str
+    role: str
+    content: str
