@@ -1,3 +1,5 @@
+from typing import List
+
 from sqlalchemy.orm import Session
 
 from Util import cacheUtil
@@ -39,6 +41,8 @@ def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
     return db_item
 
 
+# 开始用户数据
+
 def get_user_setting(db: Session):
     setting = cacheUtil.calculate_value(userKey)
     if setting is None:
@@ -48,7 +52,7 @@ def get_user_setting(db: Session):
             db.add(setting)
             db.commit()
             db.refresh(setting)
-            cacheUtil.ca_save(userKey,setting);
+            cacheUtil.ca_save(userKey, setting);
             return setting
         else:
             cacheUtil.ca_save(userKey, setting);
@@ -68,3 +72,26 @@ def save_user_setting(db: Session, userSettings: models.User_settings):
     else:
         db.query(models.User_settings).filter(models.User_settings.id == 1).update(userSettings)
         cacheUtil.ca_save("")
+
+
+def save_chat_hist(db: Session, chatHist: models.chat_hist):
+    db.add(chatHist)
+    db.commit()
+    db.refresh(chatHist)
+
+
+def save_chat_hist_details(db: Session, chatHistDetails: models.chat_hist_details):
+    db.add(chatHistDetails)
+    db.commit()
+    db.refresh(chatHistDetails)
+
+
+def get_chat_hist_details(db: Session, chatId: str) -> List[models.chat_hist_details]:
+    return db.query(models.chat_hist_details).filter(models.chat_hist_details.chat_id == chatId).all()
+
+
+def delete_chat(db: Session, chatId: str):
+    db.query(models.chat_hist_details).filter(models.chat_hist_details.chat_id == chatId).delete()
+    db.query(models.chat_hist).filter(models.chat_hist.chat_id == chatId).delete()
+    db.commit()
+

@@ -37,7 +37,10 @@ class User(UserBase):
         from_attributes = True
 
 
+# 请求聊天记录内容表
 class reqChat(BaseModel):
     chat_id: str
     role: str
     content: str
+    token: int
+

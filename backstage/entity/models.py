@@ -1,3 +1,5 @@
+import time
+
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date
 from sqlalchemy.orm import relationship
 
@@ -39,6 +41,8 @@ class User_settings(Base):
 class chat_hist(Base):
     __tablename__ = "chat_hist"
     chat_id = Column(String, primary_key=True, index=True)
+    title = Column(String, primary_key=True, index=True)
+    creation_time= Column(Date, default=time.time())
 
 
 class chat_hist_details(Base):
@@ -48,4 +52,4 @@ class chat_hist_details(Base):
     role = Column(String, default=None)
     content = Column(String, default=None)
     token_num = Column(String, default=None)
-    creation_time = Column(Date, default=None)
+    creation_time = Column(Date, default=time.time())
