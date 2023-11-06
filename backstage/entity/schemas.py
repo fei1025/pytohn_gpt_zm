@@ -1,5 +1,6 @@
 from typing import Union
 
+from marshmallow.fields import Bool
 from pydantic import BaseModel
 
 
@@ -42,5 +43,7 @@ class reqChat(BaseModel):
     chat_id: str
     role: str
     content: str
+    modle: str
     token: int
-
+    temperature: str
+    stream: Bool = True

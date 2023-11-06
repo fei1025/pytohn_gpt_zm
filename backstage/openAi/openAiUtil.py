@@ -1,4 +1,43 @@
+from typing import List
+
 import tiktoken
+
+from entity.openAi_entity import TrimMessagesInput
+
+openAI_model = {"0": "gpt-3.5-turbo-0613",
+                "1": "gpt-3.5-turbo-16k-0613",
+                "2": "gpt-4-0613",
+                "3": "gpt-4-32k-0613",
+                }
+# 返回的最小数据
+re_chat = 1000
+
+token_4 = 4000
+token_16 = 8100
+token_32 = 32000
+model_max_token = {
+    "gpt-3.5-turbo-0613": token_4,
+    "gpt-3.5-turbo-16k-0613": token_16,
+    "gpt-4-0613": token_4,
+    "gpt-4-32k-0613": token_32
+}
+
+
+def get_model_max_token(model: str) -> int:
+    return model_max_token[model]
+
+
+def get_open_model(key: str):
+    return openAI_model[key]
+
+
+def get_all_model():
+    models = []
+    models.append({"0": "gpt-3.5-turbo-0613"})
+    models.append({"1": "gpt-3.5-turbo-16k-0613"})
+    models.append({"2": "gpt-4-0613"})
+    models.append({"3": "gpt-4-32k-0613"})
+    return get_all_model
 
 
 def num_tokens_from_messages(messages: list, model="gpt-3.5-turbo-0613"):
@@ -40,3 +79,19 @@ def num_tokens_from_messages(messages: list, model="gpt-3.5-turbo-0613"):
                 num_tokens += tokens_per_name
     num_tokens += 3  # every reply is primed with <|start|>assistant<|message|>
     return num_tokens
+
+
+def trim_messages(data: TrimMessagesInput):
+    messages = data.messages
+    max_tokens = get_max_tokens(data)
+    model = data.model
+    while num_tokens_from_messages(messages, model) > max_tokens:
+        if messages[0].role == "system":
+            messages.pop(1)  # 删除第二条消息
+        else:
+            messages.pop(0)  # 删除第一条消息
+    return {"messages": messages, "num": num_tokens_from_messages(messages, model)}
+
+
+def get_max_tokens(data: TrimMessagesInput):
+    return get_model_max_token(data.model) - re_chat

@@ -71,7 +71,7 @@ def save_user_setting(db: Session, userSettings: models.User_settings):
         db.refresh(userSettings)
     else:
         db.query(models.User_settings).filter(models.User_settings.id == 1).update(userSettings)
-        cacheUtil.ca_save("")
+    cacheUtil.ca_save(userKey, userSettings)
 
 
 def save_chat_hist(db: Session, chatHist: models.chat_hist):
@@ -94,4 +94,3 @@ def delete_chat(db: Session, chatId: str):
     db.query(models.chat_hist_details).filter(models.chat_hist_details.chat_id == chatId).delete()
     db.query(models.chat_hist).filter(models.chat_hist.chat_id == chatId).delete()
     db.commit()
-

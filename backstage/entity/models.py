@@ -41,8 +41,9 @@ class User_settings(Base):
 class chat_hist(Base):
     __tablename__ = "chat_hist"
     chat_id = Column(String, primary_key=True, index=True)
-    title = Column(String, primary_key=True, index=True)
+    title = Column(String, index=True)
     creation_time= Column(Date, default=time.time())
+    model= Column(String)
 
 
 class chat_hist_details(Base):

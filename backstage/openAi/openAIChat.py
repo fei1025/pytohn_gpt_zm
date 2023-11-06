@@ -1,12 +1,36 @@
+import openai
 from sqlalchemy.orm import Session
 
 from entity import crud
+from entity.openAi_entity import TrimMessagesInput
 from entity.schemas import reqChat
+import openAiUtil
 
 
 def send_open_ai(db: Session, res: reqChat):
     # 获取历史聊天记录
-    message = get_history(db, res)
+    message: list = get_history(db, res)
+    setting = crud.get_user_setting(db)
+
+    trim_mess = TrimMessagesInput()
+    trim_mess.messages = message
+    trim_mess.model = openAiUtil.get_open_model(res.modle)
+    message = openAiUtil.trim_messages(trim_mess)
+    max_token = openAiUtil.get_max_tokens(openAiUtil.get_open_model(res.modle)) - message["num"]
+    response = openai.ChatCompletion.create(
+        model=res.modle,  # The name of the OpenAI chatbot model to use
+        messages=message["messages"],  # The conversation history up to this point, as a list of dictionaries
+        max_tokens=max_token,  # The maximum number of tokens (words or subwords) in the generated response
+        # 为什么这里改成4096就得崩？
+        stop=None,  # The stopping sequence for the generated response, if any (not used here)
+        temperature=res.temperature,  # The "creativity" of the generated response (higher temperature = more creative)
+        stream=True
+    )
+
+    pass
+
+
+def set_max_token():
     pass
 
 
