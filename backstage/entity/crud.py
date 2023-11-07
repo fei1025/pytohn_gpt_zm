@@ -42,8 +42,7 @@ def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
 
 
 # 开始用户数据
-
-def get_user_setting(db: Session):
+def get_user_setting(db: Session) ->models.User_settings :
     setting = cacheUtil.calculate_value(userKey)
     if setting is None:
         setting = db.query(models.User_settings).filter(models.User_settings.id == 1).first()
@@ -59,6 +58,7 @@ def get_user_setting(db: Session):
             return setting
     else:
         return setting
+
 
 
 # 用户设置应该有一个,且只有一个

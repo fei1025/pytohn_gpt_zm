@@ -43,7 +43,7 @@ class reqChat(BaseModel):
     chat_id: str
     role: str
     content: str
-    modle: str
+    model: str
     token: int
-    temperature: str
+    temperature: float = 0.7
     stream: Bool = True

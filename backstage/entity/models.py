@@ -29,21 +29,26 @@ class Item(Base):
 class User_settings(Base):
     __tablename__ = "user_settings"
     id = Column(Integer, primary_key=True, index=True)
+    # 代理地址
     http_proxy = Column(String, default=None)
+    # openAi 的key
     openai_api_key = Column(String, default=None)
+    # openAi的转发地址
+    openai_api_base = Column(String, default=None)
+    # 默认openAI
     llm = Column(String, default=None)
+    # 当前主题
     theme = Column(String, default=None)
     # wolfram 的appid
     wolfram_appid = Column(String, default=None)
-
 
 
 class chat_hist(Base):
     __tablename__ = "chat_hist"
     chat_id = Column(String, primary_key=True, index=True)
     title = Column(String, index=True)
-    creation_time= Column(Date, default=time.time())
-    model= Column(String)
+    creation_time = Column(Date, default=time.time())
+    model = Column(String)
 
 
 class chat_hist_details(Base):
