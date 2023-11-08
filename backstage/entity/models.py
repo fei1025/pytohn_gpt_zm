@@ -41,6 +41,8 @@ class User_settings(Base):
     theme = Column(String, default=None)
     # wolfram 的appid
     wolfram_appid = Column(String, default=None)
+    # 新建聊天默认model
+    model = Column(String)
 
 
 class chat_hist(Base):

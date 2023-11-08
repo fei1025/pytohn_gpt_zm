@@ -1,3 +1,4 @@
+import time
 from typing import List
 
 from sqlalchemy.orm import Session
@@ -42,7 +43,7 @@ def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
 
 
 # 开始用户数据
-def get_user_setting(db: Session) ->models.User_settings :
+def get_user_setting(db: Session) -> models.User_settings:
     setting = cacheUtil.calculate_value(userKey)
     if setting is None:
         setting = db.query(models.User_settings).filter(models.User_settings.id == 1).first()
@@ -60,7 +61,6 @@ def get_user_setting(db: Session) ->models.User_settings :
         return setting
 
 
-
 # 用户设置应该有一个,且只有一个
 def save_user_setting(db: Session, userSettings: models.User_settings):
     setting = db.query(models.User_settings).filter(models.User_settings.id == 1).first()
@@ -75,6 +75,12 @@ def save_user_setting(db: Session, userSettings: models.User_settings):
 
 
 def save_chat_hist(db: Session, chatHist: models.chat_hist):
+    setting = get_user_setting(db)
+    # 使用设置的默认model
+    if setting.model:
+        chatHist.model = setting.model
+    else:
+        chatHist.model = "0"
     db.add(chatHist)
     db.commit()
     db.refresh(chatHist)

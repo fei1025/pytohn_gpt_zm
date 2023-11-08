@@ -4,7 +4,7 @@ import tiktoken
 
 from entity.openAi_entity import TrimMessagesInput
 
-openAI_model = {"0": "gpt-3.5-turbo-0613",
+openAI_model = {"0": "gpt-3.5-turbo",
                 "1": "gpt-3.5-turbo-16k-0613",
                 "2": "gpt-4-0613",
                 "3": "gpt-4-32k-0613",

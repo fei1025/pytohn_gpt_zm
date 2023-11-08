@@ -21,13 +21,20 @@ async def read_users():
 
 
 @router.post("/add_chat")
-def add_chat():
+def add_chat(chatHist: models.chat_hist, db: Session = Depends(get_db)):
     pass
-
 
 
 @router.post("/send_open_ai")
 def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
+    if res.chat_id:
+        pass
+    else:
+        chatHist = models.chat_hist()
+        chatHist.title = res.content
+        crud.save_chat_hist(db, chatHist)
+        res.chat_id = chatHist.chat_id
+
     async def event_generator(request: Request, res: reqChat):
         res = openAichat.send_open_ai(db, res)
         for i in res:
