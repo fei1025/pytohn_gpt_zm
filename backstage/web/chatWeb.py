@@ -28,20 +28,38 @@ async def read_users():
 @router.post("/send_open_ai")
 def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
     if res.chat_id:
+        print("没有保存")
         pass
     else:
+        print("保存历史记录")
         chatHist = models.chat_hist()
         chatHist.title = res.content
         crud.save_chat_hist(db, chatHist)
         res.chat_id = chatHist.chat_id
 
-    async def event_generator(request: Request, input_res: reqChat):
-        result = openAichat.send_open_ai(db, input_res)
+
+    # 保存历史记录
+    chatHistDetails = models.chat_hist_details()
+    chatHistDetails.chat_id = res.chat_id
+    chatHistDetails.content = res.content
+    chatHistDetails.role = res.role
+    crud.save_chat_hist_details(db, chatHistDetails)
+
+    async def event_generator():
+        result = openAichat.send_open_ai(db, res)
+        content = ""
+        # assistant
         for i in result:
             if await request.is_disconnected():
                 print("连接已中断")
                 break
-            yield i.message.content
-
-    g = event_generator(request,res)
+            if "stop" != i.choices[0].finish_reason:
+                content = content + i.choices[0].delta.content
+                yield i.choices[0].delta.content
+        chatHistDetails = models.chat_hist_details()
+        chatHistDetails.chat_id = res.chat_id
+        chatHistDetails.content = content
+        chatHistDetails.role = "assistant"
+        crud.save_chat_hist_details(db, chatHistDetails)
+    g = event_generator()
     return EventSourceResponse(g)
