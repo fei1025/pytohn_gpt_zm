@@ -16,6 +16,7 @@ token_4 = 4000
 token_16 = 8100
 token_32 = 32000
 model_max_token = {
+    "gpt-3.5-turbo":token_4,
     "gpt-3.5-turbo-0613": token_4,
     "gpt-3.5-turbo-16k-0613": token_16,
     "gpt-4-0613": token_4,
@@ -83,7 +84,7 @@ def num_tokens_from_messages(messages: list, model="gpt-3.5-turbo-0613"):
 
 def trim_messages(data: TrimMessagesInput):
     messages = data.messages
-    max_tokens = get_max_tokens(data)
+    max_tokens = get_max_tokens(data.model)
     model = data.model
     while num_tokens_from_messages(messages, model) > max_tokens:
         if messages[0].role == "system":
@@ -93,5 +94,5 @@ def trim_messages(data: TrimMessagesInput):
     return {"messages": messages, "num": num_tokens_from_messages(messages, model)}
 
 
-def get_max_tokens(data: TrimMessagesInput):
-    return get_model_max_token(data.model) - re_chat
+def get_max_tokens(model: str):
+    return get_model_max_token(model) - re_chat

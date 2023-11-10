@@ -20,9 +20,9 @@ async def read_users():
     return [{"username": "Rick"}, {"username": "Morty"}]
 
 
-@router.post("/add_chat")
-def add_chat(chatHist: models.chat_hist, db: Session = Depends(get_db)):
-    pass
+# @router.post("/add_chat")
+# def add_chat(chatHist: models.chat_hist, db: Session = Depends(get_db)):
+#     pass
 
 
 @router.post("/send_open_ai")
@@ -35,12 +35,13 @@ def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
         crud.save_chat_hist(db, chatHist)
         res.chat_id = chatHist.chat_id
 
-    async def event_generator(request: Request, res: reqChat):
-        res = openAichat.send_open_ai(db, res)
-        for i in res:
+    async def event_generator(request: Request, input_res: reqChat):
+        result = openAichat.send_open_ai(db, input_res)
+        for i in result:
             if await request.is_disconnected():
                 print("连接已中断")
                 break
             yield i.message.content
-    g = event_generator(request)
+
+    g = event_generator(request,res)
     return EventSourceResponse(g)

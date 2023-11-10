@@ -46,4 +46,4 @@ class reqChat(BaseModel):
     model: str
     token: int
     temperature: float = 0.7
-    stream: Bool = True
+    stream: bool = True

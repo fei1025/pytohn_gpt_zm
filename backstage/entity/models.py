@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date
 from sqlalchemy.orm import relationship
@@ -47,17 +48,17 @@ class User_settings(Base):
 
 class chat_hist(Base):
     __tablename__ = "chat_hist"
-    chat_id = Column(String, primary_key=True, index=True)
+    chat_id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     title = Column(String, index=True)
-    creation_time = Column(Date, default=time.time())
+    creation_time = Column(Date, default=datetime.now())
     model = Column(String)
 
 
 class chat_hist_details(Base):
     __tablename__ = "chat_hist_details"
-    id = Column(Integer, primary_key=True, index=True)
-    chat_id = Column(String, default=None)
+    id = Column(Integer, primary_key=True,autoincrement=True, index=True)
+    chat_id = Column(Integer, default=None)
     role = Column(String, default=None)
     content = Column(String, default=None)
     token_num = Column(String, default=None)
-    creation_time = Column(Date, default=time.time())
+    creation_time = Column(Date, default=datetime.now())

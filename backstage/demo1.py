@@ -3,16 +3,16 @@ from http.client import HTTPException
 from typing import List
 
 import uvicorn
-from fastapi import FastAPI, Depends,Request
+from fastapi import FastAPI, Depends, Request
 from sqlalchemy.orm import Session
 
-
 import openAi.langChat
-import openAi.openAIChat as openAichat
 from db.database import engine, get_db
 from entity import models, schemas, crud
 
 from sse_starlette.sse import EventSourceResponse
+
+from web import chatWeb
 
 from entity.schemas import reqChat
 
@@ -23,6 +23,7 @@ app = FastAPI()
 # https://python.langchain.com/docs/integrations/providers/wolfram_alpha
 
 
+app.include_router(chatWeb.router)
 
 
 @app.post("/users/", response_model=schemas.User)
@@ -49,7 +50,7 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
 
 @app.post("/users/{user_id}/items/", response_model=schemas.Item)
 def create_item_for_user(
-    user_id: int, item: schemas.ItemCreate, db: Session = Depends(get_db)
+        user_id: int, item: schemas.ItemCreate, db: Session = Depends(get_db)
 ):
     return crud.create_user_item(db=db, item=item, user_id=user_id)
 
@@ -63,7 +64,6 @@ def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 @app.get("/get_user_setting/")
 def get_user_setting(db: Session = Depends(get_db)):
     return crud.get_user_setting(db)
-
 
 
 @app.get("/getSee")
@@ -81,12 +81,15 @@ async def root(request: Request):
             }
 
             await asyncio.sleep(0.1)
+
     g = event_generator(request)
     return EventSourceResponse(g)
 
+
 @app.post("/chat")
-async def chat(request: Request,user_id: int):
+async def chat(request: Request, user_id: int):
     print(user_id)
+
     async def event_generator(request: Request):
         result = openAi.langChat.get_chat()
         for i in result:
@@ -94,11 +97,9 @@ async def chat(request: Request,user_id: int):
                 print("连接已中断")
                 break
             yield i.message.content
+
     g = event_generator(request)
     return EventSourceResponse(g)
-
-
-
 
 
 if __name__ == '__main__':
