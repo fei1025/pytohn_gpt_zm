@@ -45,7 +45,7 @@ def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
 # 开始用户数据
 def get_user_setting(db: Session) -> models.User_settings:
     setting = db.query(models.User_settings).filter(models.User_settings.id == 1).first()
-    return  setting
+    return setting
 
 
 # 用户设置应该有一个,且只有一个
@@ -57,8 +57,23 @@ def save_user_setting(db: Session, userSettings: models.User_settings):
         db.commit()
         db.refresh(userSettings)
     else:
-        db.query(models.User_settings).filter(models.User_settings.id == 1).update(userSettings)
-    cacheUtil.ca_save(userKey, userSettings)
+        # db.query(models.User_settings).filter(models.User_settings.id == 1).update(userSettings)
+        if userSettings.theme and len(userSettings.theme) > 0:
+            setting.theme = userSettings.theme
+        if userSettings.http_proxy and len(userSettings.http_proxy) > 0:
+            setting.http_proxy = userSettings.http_proxy
+        if userSettings.openai_api_key and len(userSettings.openai_api_key) > 0:
+            setting.openai_api_key = userSettings.openai_api_key
+        if userSettings.openai_api_base and len(userSettings.openai_api_base) > 0:
+            setting.openai_api_base = userSettings.openai_api_base
+        if userSettings.llm and len(userSettings.llm) > 0:
+            setting.llm = userSettings.llm
+        if userSettings.wolfram_appid and len(userSettings.wolfram_appid) > 0:
+            setting.wolfram_appid = userSettings.wolfram_appid
+        if userSettings.model and len(userSettings.model) > 0:
+            setting.model = userSettings.model
+        db.commit()
+    cacheUtil.ca_save(userKey, setting)
 
 
 def save_chat_hist(db: Session, chatHist: models.chat_hist):

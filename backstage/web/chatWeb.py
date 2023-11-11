@@ -5,24 +5,38 @@ from sqlalchemy.orm import Session
 
 import openAi.langChat
 import openAi.openAIChat as openAichat
+from Util.result import Result
 from db.database import engine, get_db
 from entity import models, schemas, crud
 
 from sse_starlette.sse import EventSourceResponse
 
-from entity.schemas import reqChat
+from entity.schemas import reqChat, userSetting
 
 router = APIRouter()
 
 
-@router.get("/users/")
+@router.get("/users")
 async def read_users():
     return [{"username": "Rick"}, {"username": "Morty"}]
 
 
-# @router.post("/add_chat")
-# def add_chat(chatHist: models.chat_hist, db: Session = Depends(get_db)):
-#     pass
+@router.get("/getUserSetting")
+async def get_user_setting(db: Session = Depends(get_db)):
+    return Result.success(data=crud.get_user_setting(db))
+
+
+@router.post("/saveUserSetting")
+async def save_user_setting(setting: userSetting, db: Session = Depends(get_db)):
+    userSetting = models.User_settings()
+    userSetting.model = setting.model
+    userSetting.http_proxy = setting.httpProxy
+    userSetting.wolfram_appid = setting.wolframAppid
+    userSetting.openai_api_base = setting.openaiApiBase
+    userSetting.openai_api_key = setting.openaiApiKey
+    userSetting.theme = setting.theme
+    crud.save_user_setting(db, userSetting)
+    return Result.success()
 
 
 @router.post("/send_open_ai")
@@ -36,7 +50,6 @@ def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
         chatHist.title = res.content
         crud.save_chat_hist(db, chatHist)
         res.chat_id = chatHist.chat_id
-
 
     # 保存历史记录
     chatHistDetails = models.chat_hist_details()
@@ -61,5 +74,6 @@ def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
         chatHistDetails.content = content
         chatHistDetails.role = "assistant"
         crud.save_chat_hist_details(db, chatHistDetails)
+
     g = event_generator()
     return EventSourceResponse(g)

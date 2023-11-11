@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 
 from marshmallow.fields import Bool
 from pydantic import BaseModel
@@ -36,6 +36,16 @@ class User(UserBase):
 
     class Config:
         from_attributes = True
+
+
+class userSetting(BaseModel):
+    httpProxy: Optional[str] = None
+    openaiApiKey: Optional[str] = None
+    openaiApiBase: Optional[str] = None
+    llm: Optional[str] = None
+    theme: Optional[str] = None
+    wolframAppid: Optional[str] = None
+    model: Optional[str] = None
 
 
 # 请求聊天记录内容表

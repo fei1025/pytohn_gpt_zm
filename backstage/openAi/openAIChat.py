@@ -22,28 +22,18 @@ def send_open_ai(db: Session, res: reqChat):
     print(messageNum)
     max_token = openAiUtil.get_max_tokens(openAiUtil.get_open_model(res.model)) - messageNum['num']
     print(max_token)
-    #with retrieve_proxy():
+    #with retrieve_proxy(db):
     response = openai.ChatCompletion.create(
-        model=openAiUtil.get_open_model(res.model),  # The name of the OpenAI chatbot model to use
-        messages=messageNum['messages'],  # The conversation history up to this point, as a list of dictionaries
-        max_tokens=max_token,  # The maximum number of tokens (words or subwords) in the generated response
-        # 为什么这里改成4096就得崩？
-        stop=None,  # The stopping sequence for the generated response, if any (not used here)
-        temperature=res.temperature,  # The "creativity" of the generated response (higher temperature = more creative)
-        stream=True,
-        api_base=setting.openai_api_base,
-        api_key=setting.openai_api_key
-
-    )
+            model=openAiUtil.get_open_model(res.model),  # The name of the OpenAI chatbot model to use
+            messages=messageNum['messages'],  # The conversation history up to this point, as a list of dictionaries
+            max_tokens=max_token,  # The maximum number of tokens (words or subwords) in the generated response
+            stop=None,  # The stopping sequence for the generated response, if any (not used here)
+            temperature=res.temperature,  # The "creativity" of the generated response (higher temperature = more creative)
+            stream=True,
+            api_base=setting.openai_api_base,
+            api_key=setting.openai_api_key
+        )
     return response
-    #
-
-
-
-
-def set_max_token():
-    pass
-
 
 def get_history(db: Session, res: reqChat) -> list:
     chat_id = res.chat_id
