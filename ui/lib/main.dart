@@ -31,11 +31,13 @@ class MyApp extends StatelessWidget {
 
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
+
   // ↓ Add this.
   void getNext() {
     current = WordPair.random();
     notifyListeners();
   }
+
   // ↓ Add the code below.
   var favorites = <WordPair>[];
 
@@ -55,7 +57,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var selectedIndex = 0;     // ← Add this property.
+  var selectedIndex = 0; // ← Add this property.
+void _demo(){
+
+  print("object");
+}
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +82,28 @@ class _MyHomePageState extends State<MyHomePage> {
           SafeArea(
             child: NavigationRail(
               extended: false,
+              elevation:15,
               labelType: NavigationRailLabelType.all,
+              trailing:  Expanded(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0),
+                    child:  Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children:[
+                          IconButton(
+                            onPressed: _demo, // 添加新聊天
+                            icon: const Icon(Icons.settings),
+                          ),
+                          Text( style: TextStyle(fontSize: 12.0),
+                              "设置")
+                      ]
+
+                    ),
+                  ),
+                ),
+              ),
               destinations: const [
                 NavigationRailDestination(
                   icon: Icon(Icons.home),
@@ -87,7 +114,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   label: Text('Favorites'),
                 ),
               ],
-              selectedIndex: selectedIndex,    // ← Change to this.
+              selectedIndex: selectedIndex,
+              // ← Change to this.
               onDestinationSelected: (value) {
                 setState(() {
                   selectedIndex = value;
@@ -106,7 +134,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
-
-
-

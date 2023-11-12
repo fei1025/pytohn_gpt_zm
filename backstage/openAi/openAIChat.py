@@ -23,6 +23,7 @@ def send_open_ai(db: Session, res: reqChat):
     max_token = openAiUtil.get_max_tokens(openAiUtil.get_open_model(res.model)) - messageNum['num']
     print(max_token)
     #with retrieve_proxy(db):
+    # openai.proxy=""
     response = openai.ChatCompletion.create(
             model=openAiUtil.get_open_model(res.model),  # The name of the OpenAI chatbot model to use
             messages=messageNum['messages'],  # The conversation history up to this point, as a list of dictionaries
