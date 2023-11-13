@@ -1,14 +1,23 @@
 // https://cloud.tencent.com/developer/article/2112778?areaId=106001
 // https://cloud.tencent.com/developer/article/2112771
+
+import 'dart:io';
+
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:open_ui/page/ChatPage/ChatPageMain.dart';
 import 'package:open_ui/page/FavoritesPage.dart';
 import 'package:open_ui/page/GeneratorPage/generator.dart';
+import 'package:open_ui/windowsUtil.dart';
 import 'package:provider/provider.dart';
+import 'package:window_manager/window_manager.dart';
 
-void main() {
+void main() async  {
+  createWindowsinit();
   runApp(MyApp());
 }
+
+// https://blog.csdn.net/yujiayinshi/article/details/131184825
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -18,6 +27,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Namer App',
         theme: ThemeData(
           useMaterial3: true,
@@ -65,13 +75,20 @@ void _demo(){
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);       // ← Add this.
+    final style = theme.textTheme.displayMedium!.copyWith(
+      color: theme.colorScheme.onPrimary,
+    );
     Widget page;
     switch (selectedIndex) {
       case 0:
-        page = GeneratorPage();
+        page = ChatPageMain();
         break;
       case 1:
         page = FavoritesPage();
+        break;
+      case 2:
+        page = GeneratorPage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
@@ -80,52 +97,58 @@ void _demo(){
       body: Row(
         children: [
           SafeArea(
-            child: NavigationRail(
-              extended: false,
-              elevation:15,
-              labelType: NavigationRailLabelType.all,
-              trailing:  Expanded(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child:  Column(
+            child: GestureDetector(
+              onPanUpdate: (details) {
+                // 处理拖动事件
+                windowManager.startDragging();
+              },
+              // 删除这里的 child 参数
+              child: NavigationRail(
+                extended: false,
+                elevation: 1,
+                labelType: NavigationRailLabelType.all,
+                trailing: Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
-                        children:[
+                        children: [
                           IconButton(
                             onPressed: _demo, // 添加新聊天
                             icon: const Icon(Icons.settings),
                           ),
-                          Text( style: TextStyle(fontSize: 12.0),
-                              "设置")
-                      ]
-
+                          Text(
+                            "设置",
+                            style: TextStyle(fontSize: 12.0),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
+                destinations: const [
+                  NavigationRailDestination(
+                    icon: Icon(Icons.home),
+                    label: Text('聊天'),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.favorite),
+                    label: Text('收藏'),
+                  ),
+                ],
+                selectedIndex: selectedIndex,
+                onDestinationSelected: (value) {
+                  setState(() {
+                    selectedIndex = value;
+                  });
+                },
               ),
-              destinations: const [
-                NavigationRailDestination(
-                  icon: Icon(Icons.home),
-                  label: Text('聊天'),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.favorite),
-                  label: Text('Favorites'),
-                ),
-              ],
-              selectedIndex: selectedIndex,
-              // ← Change to this.
-              onDestinationSelected: (value) {
-                setState(() {
-                  selectedIndex = value;
-                });
-              },
             ),
           ),
           Expanded(
             child: Container(
-              color: Theme.of(context).colorScheme.primaryContainer,
               child: page,
             ),
           ),

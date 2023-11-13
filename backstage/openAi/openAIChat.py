@@ -21,7 +21,8 @@ def send_open_ai(db: Session, res: reqChat):
     messageNum = openAiUtil.trim_messages(trim_mess)
     print(messageNum)
     max_token = openAiUtil.get_max_tokens(openAiUtil.get_open_model(res.model)) - messageNum['num']
-    print(max_token)
+    print(setting.openai_api_base)
+    print(setting.openai_api_key)
     #with retrieve_proxy(db):
     # openai.proxy=""
     response = openai.ChatCompletion.create(
