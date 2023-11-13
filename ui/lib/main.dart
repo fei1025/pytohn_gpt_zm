@@ -107,6 +107,17 @@ void _demo(){
                 extended: false,
                 elevation: 1,
                 labelType: NavigationRailLabelType.all,
+
+                destinations: const [
+                  NavigationRailDestination(
+                    icon: Icon(Icons.home),
+                    label: Text('聊天'),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.favorite),
+                    label: Text('收藏'),
+                  ),
+                ],
                 trailing: Expanded(
                   child: Align(
                     alignment: Alignment.bottomCenter,
@@ -119,7 +130,7 @@ void _demo(){
                             onPressed: _demo, // 添加新聊天
                             icon: const Icon(Icons.settings),
                           ),
-                          Text(
+                          const Text(
                             "设置",
                             style: TextStyle(fontSize: 12.0),
                           ),
@@ -128,16 +139,6 @@ void _demo(){
                     ),
                   ),
                 ),
-                destinations: const [
-                  NavigationRailDestination(
-                    icon: Icon(Icons.home),
-                    label: Text('聊天'),
-                  ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.favorite),
-                    label: Text('收藏'),
-                  ),
-                ],
                 selectedIndex: selectedIndex,
                 onDestinationSelected: (value) {
                   setState(() {
