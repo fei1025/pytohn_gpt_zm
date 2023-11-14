@@ -18,7 +18,7 @@ class ChatPageMain extends StatelessWidget {
       body: Row(
         children: [
           const VerticalDivider(
-            thickness: 0.5,
+            thickness: 0.2,
             width: 0.5,
           ),
           Column(
@@ -35,8 +35,7 @@ class ChatPageMain extends StatelessWidget {
                 decoration: const BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color: Colors.red, // 设置颜色
-                      width: 0.5, // 设置宽度
+                      width: 0.1, // 设置宽度
                     ),
                   ),
                 ),
@@ -46,7 +45,7 @@ class ChatPageMain extends StatelessWidget {
                   width: MediaQuery.of(context).size.width * 0.22,
                   child: ListView(
                     children: [
-                      ChatTitleCard(title: 'User 1',content:"内容1"),
+                      ChatTitleCard(title: 'User 1'),
 
                       // 添加更多的聊天标题卡片
                     ],
@@ -56,7 +55,7 @@ class ChatPageMain extends StatelessWidget {
             ],
           ),
           const VerticalDivider(
-            thickness: 0.5,
+            thickness: 0.2,
             width: 0.5,
           ),
         ],
@@ -65,132 +64,25 @@ class ChatPageMain extends StatelessWidget {
   }
 }
 
+
 class ChatTitleCard extends StatelessWidget {
   final String title;
-  final String content;
 
-
-  ChatTitleCard({required this.title,
-    required this.content,
-  });
- // 用ListTile  把
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: Card(
-        elevation: 1, //阴影的大小
-        margin: const EdgeInsets.all(5), //外边距
-        child: GestureDetector(
-          onTap: () {},
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.8,
-            height: MediaQuery.of(context).size.height * 0.1,
-            child: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, left: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 10.0),
-                      Text(
-                        content,
-                        style: const TextStyle(
-                          fontSize: 12.0,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-}
-
-class MyHoverCard extends StatefulWidget {
-  final String title;
-  final String content;
-  MyHoverCard({required this.title,
-    required this.content,
-  });
-  @override
-  _MyHoverCardState createState() => _MyHoverCardState(title: title,content:content);
-}
-
-class _MyHoverCardState extends State<MyHoverCard> {
-
-  bool isHovered = false;
-
-  final String title;
-  final String content;
-  _MyHoverCardState({required this.title,
-    required this.content,
-  });
+  ChatTitleCard({required this.title});
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
-
-    return InkWell(
-      onTap: () {
-        // 处理点击事件
-      },
-      onHover: (hover) {
-        setState(() {
-          isHovered = hover;
-        });
-      },
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        decoration: BoxDecoration(
-          color: isHovered ?theme.hoverColor  : theme.cardColor,
-          borderRadius: BorderRadius.circular(8.0),
+    return Card(
+      child: ListTile(
+        dense:true,
+        leading:const Padding(
+          padding: EdgeInsets.only(left: 1,top: 3),
+          child: Icon(Icons.chat_bubble_outline,size: 15,),
         ),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.8,
-          height: MediaQuery.of(context).size.height * 0.1,
-          child: Row(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 10, left: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    SizedBox(height: 10.0),
-                    Text(
-                      "Content",
-                      style: TextStyle(
-                        fontSize: 12.0,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        title: Text(title),
+        onTap: () {
+          // 处理聊天标题卡片的点击事件
+        },
       ),
     );
   }
