@@ -19,50 +19,54 @@ class ChatPageMain extends StatelessWidget {
         children: [
           const VerticalDivider(
             thickness: 0.2,
-            width: 0.5,
+            width: 0.01,
           ),
-          Column(
-            children: [
-              Container(
-                height: MediaQuery.of(context).size.height * 0.15,
-                width: MediaQuery.of(context).size.width * 0.22,
-                child: const Center(
-                  child: Text('Top 20%'),
+          Expanded(
+            flex: 1,
+            child:Column(
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.15,
+                  width: MediaQuery.of(context).size.width * 0.22,
+                  child: const Center(
+                    child: Text('Top 20%'),
+                  ),
                 ),
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.22,
-                decoration: const BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      width: 0.1, // 设置宽度
+                Divider(height: 0.1,),//分割线
+                Expanded(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.22,
+                    child: ListView(
+                      children: [
+                        ChatTitleCard(title: 'User 1'),
+
+                        // 添加更多的聊天标题卡片
+                      ],
                     ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.22,
-                  child: ListView(
-                    children: [
-                      ChatTitleCard(title: 'User 1'),
+              ],
+            ),
 
-                      // 添加更多的聊天标题卡片
-                    ],
-                  ),
-                ),
-              ),
-            ],
           ),
           const VerticalDivider(
             thickness: 0.2,
             width: 0.5,
           ),
+          const Expanded(
+            flex: 3,
+            child:Text("这是主题"),
+
+          ),
+
+
         ],
       ),
     );
   }
 }
+
+
 
 
 class ChatTitleCard extends StatelessWidget {
