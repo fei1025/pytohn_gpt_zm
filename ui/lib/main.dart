@@ -42,6 +42,14 @@ class MyApp extends StatelessWidget {
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
 
+  int titleIndex =-1;
+
+  void setTitle(int index){
+    titleIndex=index;
+    notifyListeners();
+
+  }
+
   // ↓ Add this.
   void getNext() {
     current = WordPair.random();
