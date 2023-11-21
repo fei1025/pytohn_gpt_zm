@@ -21,13 +21,6 @@ class _ChatPageMain  extends State<ChatPageMain> {
       var chat1= chatTitle(chatId: i.toString(),chatTopic: "标题$i");
       myList.add(chat1);
     }
-    // 处理聊天标题卡片的悬停事件
-    void handleChatTitleHover(bool isHovered) {
-      if (isHovered) {
-
-        // 在这里你可以执行更新主题的逻辑或其他操作
-      }
-    }
     int selectInt=-1;
     var appState = context.watch<MyAppState>();
     return Scaffold(

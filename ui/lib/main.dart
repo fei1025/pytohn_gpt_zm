@@ -28,10 +28,16 @@ class MyApp extends StatelessWidget {
       create: (context) => MyAppState(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Namer App',
+        title: 'openAi',
         theme: ThemeData(
+          brightness:Brightness.dark,
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+          //colorScheme: ColorScheme.fromSeed(seedColor: Colors.black54),
+          // colorScheme: ColorScheme.dark().copyWith(
+          //     primary:ColorScheme.fromSeed(seedColor: Colors.red).primary
+          //
+          // ),
+
         ),
         home: MyHomePage(),
       ),
@@ -40,33 +46,28 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
+
+  bool isDarkMode = false;
+
+  void toggleTheme() {
+    isDarkMode = !isDarkMode;
+    notifyListeners();
+  }
+
 
   int titleIndex =-1;
-
   void setTitle(int index){
     titleIndex=index;
     notifyListeners();
 
   }
 
-  // ↓ Add this.
-  void getNext() {
-    current = WordPair.random();
-    notifyListeners();
-  }
+
 
   // ↓ Add the code below.
   var favorites = <WordPair>[];
 
-  void toggleFavorite() {
-    if (favorites.contains(current)) {
-      favorites.remove(current);
-    } else {
-      favorites.add(current);
-    }
-    notifyListeners();
-  }
+
 }
 
 class MyHomePage extends StatefulWidget {
@@ -76,10 +77,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var selectedIndex = 0; // ← Add this property.
+  bool isDarkMode = false;
+
+
 void _demo(){
 
-  print("object");
-}
+  final appState = context.read<MyAppState>();
+  appState.toggleTheme();}
 
   @override
   Widget build(BuildContext context) {
@@ -134,6 +138,14 @@ void _demo(){
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
+                          IconButton(
+                            onPressed: _demo, // 添加新聊天
+                            icon: const Icon(Icons.telegram),
+                          ),
+                          const Text(
+                            "主题",
+                            style: TextStyle(fontSize: 12.0),
+                          ),
                           IconButton(
                             onPressed: _demo, // 添加新聊天
                             icon: const Icon(Icons.settings),

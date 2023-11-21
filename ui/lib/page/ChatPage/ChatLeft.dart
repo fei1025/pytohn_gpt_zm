@@ -33,7 +33,6 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
       child: InkWell(
         borderRadius: BorderRadius.circular(10.0),
         onHover: (bool key){
-          print("当前悬浮$key");
           setState(() {
             isHovered=key;
           });
