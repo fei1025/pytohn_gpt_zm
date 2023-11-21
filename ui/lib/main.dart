@@ -8,13 +8,17 @@ import 'package:flutter/material.dart';
 import 'package:open_ui/page/ChatPage/ChatPageMain.dart';
 import 'package:open_ui/page/FavoritesPage.dart';
 import 'package:open_ui/page/GeneratorPage/generator.dart';
+import 'package:open_ui/page/state.dart';
 import 'package:open_ui/windowsUtil.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 
-void main() async  {
+void main() async {
   createWindowsinit();
-  runApp(MyApp());
+  runApp(ChangeNotifierProvider(
+    create: (context) => MyAppState(),
+    child: MyApp(),
+  ));
 }
 
 // https://blog.csdn.net/yujiayinshi/article/details/131184825
@@ -24,50 +28,29 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'openAi',
-        theme: ThemeData(
-          brightness:Brightness.dark,
-          useMaterial3: true,
-          //colorScheme: ColorScheme.fromSeed(seedColor: Colors.black54),
-          // colorScheme: ColorScheme.dark().copyWith(
-          //     primary:ColorScheme.fromSeed(seedColor: Colors.red).primary
-          //
-          // ),
-
-        ),
-        home: MyHomePage(),
-      ),
-    );
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => MyAppState()),
+        ],
+        child: Consumer<MyAppState>(builder: (context, themeProvider, _) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            locale: const Locale('zh', 'CN'),
+            // 设置默认语言为简体中文
+            title: 'openAi',
+            //theme:themeProvider.isDarkMode ? ThemeData.dark() : ThemeData.light(),
+            theme: ThemeData(
+              useMaterial3: true,
+              //primarySwatch: Colors.blue,
+              // colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+              brightness:
+                  themeProvider.isDarkMode ? Brightness.dark : Brightness.light,
+            ),
+            home: MyHomePage(),
+          );
+        }));
   }
-}
-
-class MyAppState extends ChangeNotifier {
-
-  bool isDarkMode = false;
-
-  void toggleTheme() {
-    isDarkMode = !isDarkMode;
-    notifyListeners();
-  }
-
-
-  int titleIndex =-1;
-  void setTitle(int index){
-    titleIndex=index;
-    notifyListeners();
-
-  }
-
-
-
-  // ↓ Add the code below.
-  var favorites = <WordPair>[];
-
-
 }
 
 class MyHomePage extends StatefulWidget {
@@ -79,18 +62,19 @@ class _MyHomePageState extends State<MyHomePage> {
   var selectedIndex = 0; // ← Add this property.
   bool isDarkMode = false;
 
-
-void _demo(){
-
-  final appState = context.read<MyAppState>();
-  appState.toggleTheme();}
+  void _demo() {
+    final appState = context.read<MyAppState>();
+    appState.toggleTheme();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);       // ← Add this.
+    final theme = Theme.of(context); // ← Add this.
     final style = theme.textTheme.displayMedium!.copyWith(
       color: theme.colorScheme.onPrimary,
     );
+    var appState = context.watch<MyAppState>();
+
     Widget page;
     switch (selectedIndex) {
       case 0:
@@ -119,7 +103,6 @@ void _demo(){
                 extended: false,
                 elevation: 1,
                 labelType: NavigationRailLabelType.all,
-
                 destinations: const [
                   NavigationRailDestination(
                     icon: Icon(Icons.home),
@@ -140,12 +123,9 @@ void _demo(){
                         children: [
                           IconButton(
                             onPressed: _demo, // 添加新聊天
-                            icon: const Icon(Icons.telegram),
+                            icon: appState.isDarkMode? const Icon(Icons.brightness_5):const Icon(Icons.brightness_4),
                           ),
-                          const Text(
-                            "主题",
-                            style: TextStyle(fontSize: 12.0),
-                          ),
+
                           IconButton(
                             onPressed: _demo, // 添加新聊天
                             icon: const Icon(Icons.settings),

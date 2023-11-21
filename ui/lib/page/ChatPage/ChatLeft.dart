@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../main.dart';
+import '../state.dart';
 
 class ChatTitleCard extends StatefulWidget {
   final String title;
@@ -27,8 +27,6 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var titleIndex = appState.titleIndex;
-    Theme.of(context);
-
     return Card(
       child: InkWell(
         borderRadius: BorderRadius.circular(10.0),
@@ -46,7 +44,7 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: widget.curIndex == titleIndex ? Theme.of(context).primaryColor : Colors.transparent,
+              color: widget.curIndex == titleIndex ? !appState.isDarkMode? Theme.of(context).primaryColor:Theme.of(context).primaryColorDark.withOpacity(0.5): Colors.transparent ,
               width: 2.0,
             ),
             borderRadius: BorderRadius.circular(10.0),
@@ -79,7 +77,7 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
                   offset: const Offset(10, 0), // 控制水平偏移量
                   child:     InkWell(
                     onTap:(){print("点击修改了");},
-                    child: const Icon(Icons.delete_outlined, size: 18, color:Colors.red),
+                    child:  Icon(Icons.delete_outlined, size: 18, color:Colors.red.shade400),
                   ),
                 ),
               ],
