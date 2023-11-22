@@ -7,13 +7,15 @@ import 'package:window_manager/window_manager.dart';
 
 import '../state.dart';
 
-class ChatLeftTop  extends StatefulWidget {
+class ChatLeftTop extends StatefulWidget {
   @override
-  _ChatLeftTop  createState() =>_ChatLeftTop();
+  _ChatLeftTop createState() => _ChatLeftTop();
 }
-class _ChatLeftTop   extends State<ChatLeftTop> {
+
+class _ChatLeftTop extends State<ChatLeftTop> {
   final FocusNode _focusNode = FocusNode();
   final TextEditingController _textController = TextEditingController();
+
   @override
   void dispose() {
     _focusNode.dispose();
@@ -30,81 +32,118 @@ class _ChatLeftTop   extends State<ChatLeftTop> {
     void _clearTextField() {
       _textController.clear();
     }
-    return  SizedBox(
-        height: MediaQuery.of(context).size.height * 0.1,
-        width: MediaQuery.of(context).size.width * 0.22,
-        child: Row(
-            children: [
-              Expanded(
-                flex:6,
-                child: Container(
-                  height: 50,
-                  margin: const EdgeInsets.only(left:5,right: 0,top: 25,bottom: 10),
-                  // decoration: BoxDecoration(
-                  //   color: Colors.grey.withAlpha(40),
-                  //   borderRadius: BorderRadius.circular(10), // 设置圆角半径
-                  // ),
-                  //padding: EdgeInsets.only(left: 5, bottom: 0),
-                  child:  TextField(
-                      focusNode: _focusNode,
-                      controller: _textController,
 
-                      style: const TextStyle(fontSize: 12),
-                      onChanged: (String s){
-                        print("输入的文章$s");
-                      },
-                      decoration: InputDecoration(
-                          prefixIcon:appState.isIconVisible?null: const Icon(
-                            Icons.search,
-                            size: 20,
-                          ),
-                          contentPadding: const EdgeInsets.only(bottom: 1, top: 2,left: 10),
-                          filled: true,
-                          hintText: appState.isIconVisible?null:"搜索",
-                          fillColor: Colors.grey.withAlpha(0), // 设置输入框背景色为灰色,并设置透明度
-                          border: const OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(10.0)), //圆角边框
-                              borderSide: BorderSide(color: Colors.redAccent)
-                            //borderSide: BorderSide.none
-                          ),
-                          suffixIcon:appState.isIconVisible? InkWell(
-                            onTap: _clearTextField,
-                            child: Icon(Icons.close,size: 20,),
-                          ):null
-                          // suffixIcon: IconButton(//尾部叉叉图标
-                          //   icon: const Icon(
-                          //     Icons.close,
-                          //     size: 17,
-                          //   ),
-                          //   onPressed: (){print("删除操作");},//清空操作
-                          //   splashColor: Theme.of(context).primaryColor,
-                          // )
+    return SizedBox(
+        // height: MediaQuery.of(context).size.height * 0.1,
+        // width: MediaQuery.of(context).size.width * 0.22,
+        child: Row(children: [
+          Expanded(
+            flex: 6,
+            child: Container(
+              height: 50,
+              // color: Colors.cyan,
+              margin:
+                  const EdgeInsets.only(left: 5, right: 0, top: 25, bottom: 10),
+              decoration: BoxDecoration(
+                // color: Colors.grey.withAlpha(40),
+                borderRadius: BorderRadius.circular(10), // 设置圆角半径
+              ),
+              //padding: EdgeInsets.only(left: 5, bottom: 0),
+              child: TextField(
+                  focusNode: _focusNode,
+                  controller: _textController,
+                  style: const TextStyle(fontSize: 12),
+                  onChanged: (String s) {
+                    print("输入的文章$s");
+                  },
+                  decoration: InputDecoration(
+                      prefixIcon: appState.isIconVisible
+                          ? null
+                          : const Icon(
+                              Icons.search,
+                              size: 20,
+                            ),
+                      contentPadding:
+                          const EdgeInsets.only(bottom: 1, top: 2, left: 10),
+                      filled: true,
+                      hintText: appState.isIconVisible ? null : "搜索",
+                      fillColor: Colors.grey.withAlpha(0),
+                      // 设置输入框背景色为灰色,并设置透明度
+                      border: const OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(10.0)), //圆角边框
+                        // borderSide: BorderSide(color: Colors.redAccent)
+                        //borderSide: BorderSide.none
+                      ),
+                      suffixIcon: appState.isIconVisible
+                          ? InkWell(
+                              onTap: _clearTextField,
+                              child: Icon(
+                                Icons.close,
+                                size: 20,
+                              ),
+                            )
+                          : null
+                      // suffixIcon: IconButton(//尾部叉叉图标
+                      //   icon: const Icon(
+                      //     Icons.close,
+                      //     size: 17,
+                      //   ),
+                      //   onPressed: (){print("删除操作");},//清空操作
+                      //   splashColor: Theme.of(context).primaryColor,
+                      // )
                       )),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(
+              //color: Colors.lightBlue,
+              // margin: const EdgeInsets.only(right: 15,top: 25,bottom: 10,left: 5),
+              padding: const EdgeInsets.only(left: 0, bottom: 0, top: 15),
+              child: InkWell(
+                onTap: () {},
+                child: const Icon(Icons.add_circle_outline),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(
+              // margin: const EdgeInsets.only(right: 0,top: 25,bottom: 10,left: 0),
+              padding: const EdgeInsets.only(left: 0, bottom: 0, top: 15),
+              child: InkWell(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                          title: const Text('删除'),
+                          content: const Text('你确定要删除全部聊天记录吗?'),
+                          actions: <Widget>[
+                            TextButton(
+                                onPressed: () {
+                                  // 关闭弹窗
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('确定')),
+                            TextButton(
+                                onPressed: () {
+                                  // 关闭弹窗
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('退出')),
+                          ]);
+                    },
+                  );
+                },
+                child:  Icon(
+                  Icons.delete_sweep_rounded,
+                  color: Colors.redAccent.withRed(20),
                 ),
               ),
-               Expanded(
-                flex: 1,
-                child: Container(
-                  //color: Colors.lightBlue,
-                 // margin: const EdgeInsets.only(right: 15,top: 25,bottom: 10,left: 5),
-                  padding:  const EdgeInsets.only(left: 0, bottom: 0,top: 15),
-                  child: InkWell(
-                     onTap: (){},
-                    child: const Icon(Icons.add_circle_outline),),
-                ),
-              ),
-               Expanded(
-                flex: 1,
-                child: Container(
-                 // margin: const EdgeInsets.only(right: 0,top: 25,bottom: 10,left: 0),
-                  padding:  const EdgeInsets.only(left: 0, bottom: 0,top: 15),
-                  child: InkWell(onTap: (){},
-                      child:  Icon(Icons.delete_sweep_rounded,color: Colors.redAccent.shade200,)
-                    ,),
-                ),
-              )
-            ]
-        ));
+            ),
+          )
+        ]));
   }
-
 }

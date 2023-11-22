@@ -2,6 +2,7 @@ import 'package:english_words/english_words.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
+import 'package:open_ui/page/ChatPage/right/ChatRightMain.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -41,18 +42,23 @@ class _ChatPageMain extends State<ChatPageMain> {
             flex: 1,
             child: Column(
               children: [
-                GestureDetector(
-                    onPanUpdate: (details) {
-                      // 处理拖动事件
-                      windowManager.startDragging();
-                    },
-                    // 删除这里的 child 参数
-                    child: ChatLeftTop()),
+                Expanded(
+                  flex: 1,
+                  child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onPanUpdate: (details) {
+                        // 处理拖动事件
+                        windowManager.startDragging();
+                      },
+                      // 删除这里的 child 参数
+                      child: ChatLeftTop()),
+                ),
+
                 const Divider(
                   height: 0.1,
                 ), //分割线
                 Expanded(
-                  flex: 1,
+                  flex: 9,
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.22,
                     child: ListView.builder(
@@ -81,7 +87,7 @@ class _ChatPageMain extends State<ChatPageMain> {
           ),
           const Expanded(
             flex: 3,
-            child: Text("这是主题"),
+            child: ChatRightMain(),
           ),
         ],
       ),
