@@ -15,10 +15,7 @@ import 'package:window_manager/window_manager.dart';
 
 void main() async {
   createWindowsinit();
-  runApp(ChangeNotifierProvider(
-    create: (context) => MyAppState(),
-    child: MyApp(),
-  ));
+  runApp(const MyApp());
 }
 
 // https://blog.csdn.net/yujiayinshi/article/details/131184825

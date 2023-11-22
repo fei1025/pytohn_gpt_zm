@@ -3,11 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:window_manager/window_manager.dart';
 
 import '../../main.dart';
 import '../model.dart';
 import '../state.dart';
 import 'ChatLeft.dart';
+import 'ChatLeftTop.dart';
 
 class ChatPageMain extends StatefulWidget {
   const ChatPageMain({super.key});
@@ -17,9 +19,8 @@ class ChatPageMain extends StatefulWidget {
 }
 
 class _ChatPageMain extends State<ChatPageMain> {
+  clearKeywords() {}
 
-  clearKeywords() {
-  }
   @override
   Widget build(BuildContext context) {
     List<chatTitle> myList = [];
@@ -40,61 +41,13 @@ class _ChatPageMain extends State<ChatPageMain> {
             flex: 1,
             child: Column(
               children: [
-                Container(
-                    height: MediaQuery.of(context).size.height * 0.1,
-                    width: MediaQuery.of(context).size.width * 0.22,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex:3,
-                          child: Container(
-                            height: 50,
-                            margin: EdgeInsets.only(right: 0),
-                            padding: EdgeInsets.only(left: 5, bottom: 0,top: 15),
-                            child:  TextField(
-                                style: TextStyle(fontSize: 12),
-                                decoration: InputDecoration(
-                                    prefixIcon: Icon(
-                                      Icons.search,
-                                      size: 20,
-                                    ),
-                                    //头部搜索图标
-                                    contentPadding: EdgeInsets.only(
-                                        bottom: 1, top: 2),
-                                    filled: true,
-                                    fillColor: Colors.grey.withAlpha(0), // 设置输入框背景色为灰色,并设置透明度
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0)), //圆角边框
-                                      //borderSide: BorderSide.none
-                                    ),
-                                    suffixIcon: IconButton(//尾部叉叉图标
-                                      icon: const Icon(
-                                        Icons.close,
-                                        size: 17,
-                                      ),
-                                      onPressed: (){print("删除操作");},//清空操作
-                                      splashColor: Theme.of(context).primaryColor,
-                                    )
-                                )),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Padding(
-                            padding:  EdgeInsets.only(left: 6, bottom: 0,top: 15),
-                            child: Text("添加"),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Padding(
-                            padding:  EdgeInsets.only(left: 0, bottom: 0,top: 15),
-                            child: Text("删除"),
-                          ),
-                        )
-                      ]
-                    )),
+                GestureDetector(
+                    onPanUpdate: (details) {
+                      // 处理拖动事件
+                      windowManager.startDragging();
+                    },
+                    // 删除这里的 child 参数
+                    child: ChatLeftTop()),
                 const Divider(
                   height: 0.1,
                 ), //分割线
