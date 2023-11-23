@@ -1,6 +1,6 @@
-// ignore_for_file: library_private_types_in_public_api
 
-import 'package:flutter/cupertino.dart';
+// ignore_for_file: library_private_types_in_public_api, camel_case_types
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -41,6 +41,28 @@ class _ChatRightTop extends State<ChatRightTop> {
     var appState = context.watch<MyAppState>();
     return Scaffold(
       appBar: AppBar(
+        leadingWidth: 100,
+        leading: Container(
+          height: 20,
+          margin: EdgeInsets.only(top: 20,right: 5),
+          padding: EdgeInsets.only(top: 5,left: 5,bottom: 5),
+          child: MyPopupMenuButton(),
+        ),
+        title: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text("这是标题"),
+              Text(
+                "这是副标题",
+                style: TextStyle(
+                  fontSize: 14.0,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
+          ),
+        ),
         actions: [
           SizedBox(
             // color: Colors.lightBlue,
@@ -48,15 +70,56 @@ class _ChatRightTop extends State<ChatRightTop> {
             height: 200,
             child: Transform.translate(
                 offset: const Offset(0, -16), // 控制水平偏移量
-                child: windRightButton()),
+                child: const windRightButton()),
           )
         ],
       ),
     );
   }
 }
+class MyPopupMenuButton extends StatefulWidget {
+  @override
+  _MyPopupMenuButtonState createState() => _MyPopupMenuButtonState();
+}
+
+class _MyPopupMenuButtonState extends State<MyPopupMenuButton> {
+  String selectedValue = 'Option 1'; // 初始选中的值
+  List<String> menuItems = ['Option 1', 'Option 2', 'Option 3'];
+
+  @override
+  Widget build(BuildContext context) {
+    //Color buttonColor = Theme.of(context).buttonTheme.colorScheme!.primary;
+   TextStyle? textStyle = Theme.of(context).textTheme.titleSmall;
+    return PopupMenuButton<String>(
+      onSelected: (String value) {
+        setState(() {
+          selectedValue = value;
+        });
+      },
+      itemBuilder: (BuildContext context) {
+        return menuItems.map((String item) {
+          return PopupMenuItem<String>(
+            value: item,
+            child: Text(item),
+          );
+        }).toList();
+      },
+      offset: Offset(0, 40),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(selectedValue,style: textStyle,), // 显示选中的值
+          SizedBox(width: 8),
+          Icon(Icons.arrow_drop_down), // 向下箭头图标
+        ],
+      ), // 设置弹出菜单的位置
+    );
+  }
+}
 
 class windRightButton extends StatefulWidget {
+  const windRightButton({super.key});
+
   @override
   _windRightButton createState() => _windRightButton();
 }
@@ -80,7 +143,6 @@ class _windRightButton extends State<windRightButton> {
   @override
   Widget build(BuildContext context) {
     Color buttonColor = Theme.of(context).buttonTheme.colorScheme!.primary;
-
     return Row(
       children: [
         Expanded(
