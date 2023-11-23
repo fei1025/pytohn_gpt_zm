@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'ChatRightTop.dart';
+
 class ChatRightMain extends StatefulWidget {
   const ChatRightMain({super.key});
 
@@ -17,10 +19,8 @@ class _ChatPageMain extends State<ChatRightMain> {
         Expanded(
             flex: 1,
             child: Container(
-              color: Colors.red,
-              child: Center(
-                child: Text("这是标题"),
-              ),
+              //color: Colors.red,
+              child: ChatRightTop(),
             )),
         const Divider(
           height: 0.1,
@@ -28,7 +28,7 @@ class _ChatPageMain extends State<ChatRightMain> {
         Expanded(
           flex: 9,
           child: Container(
-            color: Colors.blue,
+            //color: Colors.blue,
             child: Center(
               child: Text("内容"),
             ),

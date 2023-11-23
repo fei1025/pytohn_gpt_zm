@@ -39,10 +39,9 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
               useMaterial3: true,
               //primarySwatch: Colors.blue,
-              // colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+               //colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
               visualDensity: VisualDensity.adaptivePlatformDensity,
-              brightness:
-                  themeProvider.isDarkMode ? Brightness.dark : Brightness.light,
+              brightness:themeProvider.isDarkMode ? Brightness.dark : Brightness.light,
             ),
             home: MyHomePage(),
           );

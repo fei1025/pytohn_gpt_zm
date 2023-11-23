@@ -42,8 +42,7 @@ class _ChatLeftTop extends State<ChatLeftTop> {
             child: Container(
               height: 50,
               // color: Colors.cyan,
-              margin:
-                  const EdgeInsets.only(left: 5, right: 0, top: 25, bottom: 10),
+              margin: const EdgeInsets.only(left: 5, right: 0, top: 25, bottom: 10),
               decoration: BoxDecoration(
                 // color: Colors.grey.withAlpha(40),
                 borderRadius: BorderRadius.circular(10), // 设置圆角半径
@@ -102,7 +101,8 @@ class _ChatLeftTop extends State<ChatLeftTop> {
               // margin: const EdgeInsets.only(right: 15,top: 25,bottom: 10,left: 5),
               padding: const EdgeInsets.only(left: 0, bottom: 0, top: 15),
               child: InkWell(
-                onTap: () {},
+                onTap: () {
+                },
                 child: const Icon(Icons.add_circle_outline),
               ),
             ),

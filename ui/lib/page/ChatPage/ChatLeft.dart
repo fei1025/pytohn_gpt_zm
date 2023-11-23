@@ -27,7 +27,12 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var titleIndex = appState.titleIndex;
+    final theme = Theme.of(context);
+    final style = theme.textTheme.titleMedium!.copyWith(
+      color: theme.colorScheme.onPrimary,
+    );
     return Card(
+      //color: theme.colorScheme.primary,
       child: InkWell(
         borderRadius: BorderRadius.circular(10.0),
         onHover: (bool key){
