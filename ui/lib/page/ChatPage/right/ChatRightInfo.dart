@@ -8,7 +8,7 @@ import 'package:markdown_widget/widget/blocks/leaf/code_block.dart';
 import 'package:markdown_widget/widget/markdown.dart';
 import 'package:provider/provider.dart';
 
-import '../../MarkdownPage.dart';
+import '../../md/MarkdownPage.dart';
 import '../../state.dart';
 
 class ChatRightInfo extends StatefulWidget {
