@@ -119,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         children: [
                           IconButton(
                             onPressed: _demo, // 添加新聊天
-                            icon: appState.isDarkMode? const Icon(Icons.brightness_5):const Icon(Icons.brightness_4),
+                            icon: appState.isDarkMode? const Icon(Icons.brightness_5_outlined):const Icon(Icons.brightness_2_outlined),
                           ),
 
                           IconButton(
