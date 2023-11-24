@@ -31,14 +31,14 @@ class _ChatPageMain extends State<ChatRightMain> {
         const Divider(
           height: 0.1,
         ),
-        Expanded(
+        const Expanded(
           flex: 9,
           child: Column(
             children: [
               Expanded(
               flex:7,
                   child:    ChatRightInfo()),
-              const Divider(
+              Divider(
                 height: 0.1,
               ),
               Expanded(
