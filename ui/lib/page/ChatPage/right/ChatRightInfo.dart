@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_highlight/theme_map.dart';
 import 'package:flutter_highlight/themes/a11y-light.dart';
 import 'package:markdown_widget/config/all.dart';
@@ -25,8 +26,9 @@ class _ChatRightInfo extends State<ChatRightInfo> {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     List msessage = [];
+    bool isDarkMode=appState.isDarkMode;
 
-    msessage.add({"user":"me","conter":"## 这是一个标题"});
+    msessage.add({"user":"me","conter":"##这是一个标题"});
     msessage.add({"user":"me","conter":"#### 这是一个普通内容"});
     msessage.add({"user":"you","conter":  ""
         "这是一个普通内容"
@@ -42,7 +44,8 @@ class _ChatRightInfo extends State<ChatRightInfo> {
               itemCount: msessage.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  leading:msessage[index]["user"]=="me" ?CircleAvatar(child: Text("you"),) :CircleAvatar(child: Text("gpt"),),
+                  leading:msessage[index]["user"]=="me" ?null :const CircleAvatar(child: Text("gpt")),
+                    trailing:msessage[index]["user"]=="me" ?const CircleAvatar(child: Text("you")):null ,
                     title: Container(
                         constraints: BoxConstraints(
                           maxWidth: MediaQuery.of(context).size.width *
@@ -50,8 +53,44 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                         ),
                         alignment: msessage[index]["user"] == "me"
                             ? Alignment.centerRight
-                            : Alignment.centerLeft,                        child: Column(
-                            children: getmd(context,msessage[index]["conter"]))
+                            : Alignment.centerLeft,
+                        child: msessage[index]["user"]=="me"?
+                          Container(
+                              decoration: BoxDecoration(
+                                color:isDarkMode?null:Colors.blue[100],
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            child: Text(msessage[index]["conter"])  ,
+                          ):
+                          Column(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  color:isDarkMode?null:Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(5),
+                              ),
+                                margin: const EdgeInsets.only(right: 100,) ,
+                                child: Column(
+                                    children: getmd(context,msessage[index]["conter"])),
+                              ),
+                              Container(
+                                  margin: const EdgeInsets.only(right: 100,) ,
+
+                                  child:Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [IconButton(onPressed: (){
+                                      Clipboard.setData(ClipboardData(text: msessage[index]["conter"]));
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                        content: Text('复制成功'),
+                                      ));
+
+                                    }, icon: Icon(Icons.copy,size: 18,))],)
+                              )
+
+                            ],
+
+                          ),
+
 
 
                     ));
