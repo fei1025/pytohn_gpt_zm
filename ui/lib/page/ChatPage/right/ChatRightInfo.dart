@@ -72,7 +72,7 @@ List<Widget> getmd(BuildContext  context,String data){
     isDarkMode? PreConfig.darkConfig.copy(wrapper: codeWrapper): PreConfig().copy(wrapper: codeWrapper)
   ]);
 
-  return MarkdownGenerator(  config: config1).buildWidgets(data,
+  return MarkdownGenerator().buildWidgets(data,config: config1
   );
 }
 
