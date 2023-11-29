@@ -31,6 +31,7 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
     final style = theme.textTheme.titleMedium!.copyWith(
       color: theme.colorScheme.onPrimary,
     );
+
     return Card(
       //color: theme.colorScheme.primary,
       child: InkWell(

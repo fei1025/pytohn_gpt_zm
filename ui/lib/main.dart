@@ -1,9 +1,7 @@
 // https://cloud.tencent.com/developer/article/2112778?areaId=106001
 // https://cloud.tencent.com/developer/article/2112771
 
-import 'dart:io';
 
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:open_ui/page/ChatPage/ChatPageMain.dart';
 import 'package:open_ui/page/FavoritesPage.dart';
