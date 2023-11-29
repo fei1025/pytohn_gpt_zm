@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_highlight/theme_map.dart';
 import 'package:flutter_highlight/themes/a11y-light.dart';
+import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:markdown_widget/config/all.dart';
 import 'package:markdown_widget/config/configs.dart';
 import 'package:markdown_widget/widget/blocks/leaf/code_block.dart';
@@ -22,6 +23,9 @@ class ChatRightInfo extends StatefulWidget {
 }
 
 class _ChatRightInfo extends State<ChatRightInfo> {
+  _showToast(String msg, {int? duration, int? position}) {
+    FlutterToastr.show(msg, context, duration: duration, position: position);
+  }
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
@@ -31,11 +35,11 @@ class _ChatRightInfo extends State<ChatRightInfo> {
     msessage.add({"user":"me","conter":"##这是一个标题"});
     msessage.add({"user":"me","conter":"#### 这是一个普通内容"});
     msessage.add({"user":"you","conter":  ""
-        "这是一个普通内容"
+        "这是一个普通内容 \r"
         "``` "
-        "class MarkdownHelper {Map<String, Widget> getTitleWidget(m.Node node) "
-        "=> title.getTitleWidget(node);Widget getPWidget(m.Element node) => p.getPWidget(node);"
-        "Widget getPreWidget(m.Node node) => pre.getPreWidget(node); }"
+        "\r class MarkdownHelper {Map<String, Widget> getTitleWidget(m.Node node)  \r"
+        "=> title.getTitleWidget(node);   \r Widget getPWidget(m.Element node) => p.getPWidget(node); \r"
+        "Widget getPreWidget(m.Node node) => pre.getPreWidget(node); } \r"
         " ```"});
 
     return Scaffold(
@@ -79,12 +83,14 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                                   child:Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [IconButton(onPressed: (){
-                                      Clipboard.setData(ClipboardData(text: msessage[index]["conter"]));
-                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                        content: Text('复制成功'),
-                                      ));
+                                      _showToast("复制成功");
+                                      // Clipboard.setData(ClipboardData(text: msessage[index]["conter"]));
+                                      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                      //   padding: EdgeInsets.only(bottom: 50),
+                                      //   content: Text('复制成功'),
+                                      // ));
 
-                                    }, icon: Icon(Icons.copy,size: 18,))],)
+                                    }, icon: Icon(Icons.copy_all,size: 20,))],)
                               )
 
                             ],

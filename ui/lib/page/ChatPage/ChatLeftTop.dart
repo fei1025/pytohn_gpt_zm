@@ -1,5 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -103,7 +104,10 @@ class _ChatLeftTop extends State<ChatLeftTop> {
               child: InkWell(
                 onTap: () {
                 },
-                child: const Icon(Icons.add_circle_outline),
+                child: const Icon(
+                    //Icons.add_circle_outline
+                    FluentIcons.add_12_regular
+                ),
               ),
             ),
           ),
@@ -139,7 +143,7 @@ class _ChatLeftTop extends State<ChatLeftTop> {
                 },
                 child:  Icon(
                   Icons.delete_sweep_rounded,
-                  color: Colors.redAccent.withRed(20),
+                 // color: Colors.redAccent.withRed(20),
                 ),
               ),
             ),

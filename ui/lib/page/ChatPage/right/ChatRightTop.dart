@@ -1,6 +1,7 @@
 
 // ignore_for_file: library_private_types_in_public_api, camel_case_types
 
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -142,7 +143,10 @@ class _windRightButton extends State<windRightButton> {
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    bool isDarkMode=appState.isDarkMode;
     Color buttonColor = Theme.of(context).buttonTheme.colorScheme!.primary;
+    //Color buttonColor =Colors.grey[800]!;
     return Row(
       children: [
         Expanded(
@@ -152,15 +156,23 @@ class _windRightButton extends State<windRightButton> {
                 setState(() {
                   isAlway = !isAlway;
                   windowManager.setAlwaysOnTop(isAlway);
+
                 });
               },
               child: Container(
-                padding: const EdgeInsets.only(top: 5),
+                padding:  EdgeInsets.only(top: 5),
                 color: !isAlway?null:Colors.black12,
-                child: SvgPicture.asset(
-                  "assets/images/nail.svg",
-                  colorFilter:ColorFilter.mode(buttonColor, BlendMode.srcIn),
-                  width: 28,
+                child:  Transform.rotate(
+                  angle: 315 * (3.141592653589793 / 180),
+                  child: SvgPicture.asset(
+                    "assets/images/nail.svg",
+                    colorFilter:ColorFilter.mode(
+                        isDarkMode?
+                        isAlway?buttonColor:Colors.white70:
+                        isAlway?buttonColor:Colors.grey[800]!,
+                        BlendMode.srcIn),
+                    width: 28,
+                  ),
                 ),
               ),
             )),
