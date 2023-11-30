@@ -42,7 +42,7 @@ def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
     return db_item
 
 
-# 开始用户数据
+# 获取用户的设置
 def get_user_setting(db: Session) -> models.User_settings:
     setting = db.query(models.User_settings).filter(models.User_settings.id == 1).first()
     return setting
@@ -93,6 +93,8 @@ def save_chat_hist_details(db: Session, chatHistDetails: models.chat_hist_detail
     db.commit()
     db.refresh(chatHistDetails)
 
+def get_all_Hist(db: Session):
+    return db.query(models.chat_hist).all()
 
 def get_chat_hist_details(db: Session, chatId: str) -> List[models.chat_hist_details]:
     return db.query(models.chat_hist_details).filter(models.chat_hist_details.chat_id == chatId).all()

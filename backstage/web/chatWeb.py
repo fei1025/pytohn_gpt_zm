@@ -39,6 +39,12 @@ async def save_user_setting(setting: userSetting, db: Session = Depends(get_db))
     return Result.success()
 
 
+@router.get("/getAllHist")
+def get_all_Hist(db: Session = Depends(get_db)):
+    list = crud.get_all_Hist(db)
+    return Result.success(list)
+
+
 @router.post("/send_open_ai")
 def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
     if res.chat_id:

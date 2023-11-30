@@ -1,6 +1,8 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'model/Chat_hist_list.dart';
+
 class MyAppState extends ChangeNotifier {
 
   bool isDarkMode = false;
@@ -22,5 +24,10 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
 
   }
+  List<ChatHist> chatHistList = [];
 
+  void setChatHistList( List<ChatHist> list ){
+    chatHistList=list;
+    notifyListeners();
+  }
 }

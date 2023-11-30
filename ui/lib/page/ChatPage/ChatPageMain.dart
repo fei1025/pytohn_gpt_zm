@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../model.dart';
+import '../model/Chat_hist_list.dart';
 import '../state.dart';
 import 'ChatLeft.dart';
 import 'ChatLeftTop.dart';
@@ -20,13 +21,10 @@ class _ChatPageMain extends State<ChatPageMain> {
 
   @override
   Widget build(BuildContext context) {
-    List<chatTitle> myList = [];
-    for (int i = 1; i <= 10; i++) {
-      var chat1 = chatTitle(chatId: i.toString(), chatTopic: "标题$i");
-      myList.add(chat1);
-    }
     int selectInt = -1;
     var appState = context.watch<MyAppState>();
+    List<ChatHist> chatHistList = appState.chatHistList;
+
     return Scaffold(
       body: Row(
         children: [
@@ -58,11 +56,11 @@ class _ChatPageMain extends State<ChatPageMain> {
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.22,
                     child: ListView.builder(
-                        itemCount: myList.length,
+                        itemCount: chatHistList.length,
                         itemBuilder: (context, index) {
-                          chatTitle title = myList[index];
+                          ChatHist title = chatHistList[index];
                           return ChatTitleCard(
-                            title: title.chatTopic,
+                            title: title.title,
                             curIndex: index,
                             onTap: () {
                               setState(() {

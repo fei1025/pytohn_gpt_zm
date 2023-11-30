@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:open_ui/page/ChatPage/ChatPageMain.dart';
 import 'package:open_ui/page/FavoritesPage.dart';
 import 'package:open_ui/page/GeneratorPage/generator.dart';
+import 'package:open_ui/page/api/api_service.dart';
 import 'package:open_ui/page/state.dart';
 import 'package:open_ui/windowsUtil.dart';
 import 'package:provider/provider.dart';
@@ -55,12 +56,18 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var selectedIndex = 0; // ← Add this property.
   bool isDarkMode = false;
-
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      // 在这里执行初始化操作，此时可以访问到 context。
+      init(context);
+    });
+  }
   void _demo() {
     final appState = context.read<MyAppState>();
     appState.toggleTheme();
   }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context); // ← Add this.
@@ -151,4 +158,10 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+}
+
+
+void init(BuildContext context){
+  MyAppState appState;
+  ApiService.fetchData().then((value) =>context.read<MyAppState>().setChatHistList(value));
 }
