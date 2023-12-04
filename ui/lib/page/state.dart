@@ -24,8 +24,14 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
 
   }
-  List<ChatHist> chatHistList = [];
 
+  int? cuChatId;
+  void setCuChatId(int id){
+    cuChatId=id;
+    notifyListeners();
+  }
+
+  List<ChatHist> chatHistList = [];
   void setChatHistList( List<ChatHist> list ){
     chatHistList=list;
     notifyListeners();

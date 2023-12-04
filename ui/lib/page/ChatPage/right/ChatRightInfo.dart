@@ -22,6 +22,8 @@ class _ChatRightInfo extends State<ChatRightInfo> {
     FlutterToastr.show(msg, context, duration: duration, position: position);
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();

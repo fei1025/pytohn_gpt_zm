@@ -63,6 +63,7 @@ class _ChatPageMain extends State<ChatPageMain> {
                             title: title.title,
                             curIndex: index,
                             onTap: () {
+                              appState.setCuChatId(title.chatId);
                               setState(() {
                                 appState.setTitle(index);
                               });

@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 
 from fastapi import Depends, Request
 from sqlalchemy.orm import Session
@@ -43,6 +43,11 @@ async def save_user_setting(setting: userSetting, db: Session = Depends(get_db))
 def get_all_Hist(db: Session = Depends(get_db)):
     list = crud.get_all_Hist(db)
     return Result.success(list)
+
+
+@router.get("/getChatHistDetails")
+def get_chat_hist_details(db: Session = Depends(get_db), chat_id: str = Query(...)):
+    return Result.success(crud.get_chat_hist_details(db, chat_id))
 
 
 @router.post("/send_open_ai")
