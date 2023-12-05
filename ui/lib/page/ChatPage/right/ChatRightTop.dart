@@ -182,7 +182,7 @@ class _windRightButton extends State<windRightButton> {
               onTap: () {
                 windowManager.minimize();
               },
-              child: Icon(Icons.minimize),
+              child: const Icon(Icons.minimize),
             )),
         Expanded(
             flex: 1,
@@ -200,7 +200,7 @@ class _windRightButton extends State<windRightButton> {
                   isMax = !isMax;
                 });
               },
-              child: isMax ? Icon(Icons.filter_none) : Icon(Icons.crop_square),
+              child: isMax ? const Icon(Icons.filter_none) : const Icon(Icons.crop_square),
             )),
         Expanded(
             flex: 1,

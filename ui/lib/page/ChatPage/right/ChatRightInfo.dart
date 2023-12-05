@@ -19,17 +19,16 @@ class ChatRightInfo extends StatefulWidget {
   _ChatRightInfo createState() => _ChatRightInfo();
 }
 
-
-void init(BuildContext context){
- // MyAppState appState =context.watch()<MyAppState>();
+void init(BuildContext context) {
+  // MyAppState appState =context.watch()<MyAppState>();
   MyAppState appState = Provider.of<MyAppState>(context, listen: false);
-
 }
 
 class _ChatRightInfo extends State<ChatRightInfo> {
   _showToast(String msg, {int? duration, int? position}) {
     FlutterToastr.show(msg, context, duration: duration, position: position);
   }
+
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -37,7 +36,6 @@ class _ChatRightInfo extends State<ChatRightInfo> {
       init(context);
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -64,34 +62,43 @@ class _ChatRightInfo extends State<ChatRightInfo> {
     // });
 
     return Scaffold(
-      body: SelectionArea(
-        child: ListView.builder(
-            itemCount: list.length,
-            itemBuilder: (context, index) {
-              ChatDetails chatDetails = list[index];
-              return ListTile(
-                  leading: chatDetails.role != "user" ? const CircleAvatar(child: Text("gpt")):null,
-                  trailing: chatDetails.role== "user"
-                      ? const CircleAvatar(child: Text("you"))
-                      : null,
-                  title: Column(
-                    children: [
-                      Container(
+      body: ListView.builder(
+          itemCount: list.length,
+          itemBuilder: (context, index) {
+            ChatDetails chatDetails = list[index];
+            return ListTile(
+                leading: chatDetails.role != "user"
+                    ? const CircleAvatar(
+                        child: Padding(
+                        padding: EdgeInsets.only(bottom: 5),
+                        child: Text("gpt"),
+                      ))
+                    : null,
+                trailing: chatDetails.role == "user"
+                    ? const CircleAvatar(child: Text("you"))
+                    : null,
+                title: Column(
+                  children: [
+                    SelectionArea(
+                      child: Container(
+                        padding: chatDetails.role != "user"
+                            ? const EdgeInsets.only(top: 30)
+                            : const EdgeInsets.only(top: 10),
                         constraints: BoxConstraints(
                           maxWidth:
                               MediaQuery.of(context).size.width * 0.6, // 限制宽度
                         ),
-                        alignment:  chatDetails.role== "user"
+                        alignment: chatDetails.role == "user"
                             ? Alignment.centerRight
                             : Alignment.centerLeft,
-                        child:  chatDetails.role== "user"
+                        child: chatDetails.role == "user"
                             ? Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   color: isDarkMode ? null : Colors.blue[100],
                                   borderRadius: BorderRadius.circular(5),
                                 ),
-                                child: Text( chatDetails.content),
+                                child: Text(chatDetails.content),
                               )
                             : Column(
                                 children: [
@@ -105,32 +112,37 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                                         right: 10, left: 10),
                                     child: Column(
                                         mainAxisSize: MainAxisSize.min,
-                                        children: getmd(context,
-                                            chatDetails.content)),
+                                        children: getmd(
+                                            context, chatDetails.content)),
                                   ),
                                 ],
                               ),
                       ),
-                      chatDetails.role== "user"
-                          ? const Row()
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                IconButton(
-                                    onPressed: () {
-                                      Clipboard.setData(ClipboardData(text: chatDetails.content));
-                                      _showToast("复制成功");
-                                    },
-                                    icon: const Icon(
-                                      Icons.copy_all,
-                                      size: 15,
-                                    ))
-                              ],
-                            )
-                    ],
-                  ));
-            }),
-      ),
+                    ),
+                    chatDetails.role == "user"
+                        ? const Row()
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: InkWell(
+                                  onTap: () {
+                                    Clipboard.setData(ClipboardData(
+                                        text: chatDetails.content));
+                                    _showToast("复制成功");
+                                  },
+                                  child: const Icon(
+                                    Icons.copy_all,
+                                    size: 15,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                  ],
+                ));
+          }),
     );
   }
 }
@@ -147,7 +159,7 @@ List<Widget> getmd(BuildContext context, String data) {
         ? PreConfig.darkConfig.copy(
             wrapper: codeWrapper,
           )
-        : PreConfig().copy(
+        : const PreConfig().copy(
             wrapper: codeWrapper, padding: EdgeInsets.only(top: 20, bottom: 0))
   ]);
 

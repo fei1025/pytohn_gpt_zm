@@ -141,7 +141,7 @@ class _ChatLeftTop extends State<ChatLeftTop> {
                     },
                   );
                 },
-                child:  Icon(
+                child:  const Icon(
                   Icons.delete_sweep_rounded,
                  // color: Colors.redAccent.withRed(20),
                 ),
