@@ -1,10 +1,12 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
 class httpUtils {
-  static Future<http.Response> get(String url) {
-    final response = http.get(
-      Uri.parse('$url/getAllHist'),
+  static Future<http.Response> get(String url) async {
+    final response =  await http.get(
+      Uri.parse(url),
       headers: {'Content-Type': 'application/json; charset=utf-8'},
     );
     return response;
@@ -17,7 +19,7 @@ class httpUtils {
     if (headers != null) {
       map.addAll(headers);
     }
-    final response = http.post(
+    final response =  http.post(
       Uri.parse('$url/getAllHist'),
       headers: map,
       body: body,

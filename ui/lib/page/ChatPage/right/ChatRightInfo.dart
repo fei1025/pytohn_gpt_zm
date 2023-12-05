@@ -5,8 +5,10 @@ import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:markdown_widget/config/all.dart';
 import 'package:markdown_widget/config/configs.dart';
 import 'package:markdown_widget/widget/blocks/leaf/code_block.dart';
+import 'package:open_ui/page/model/ChatDetails.dart';
 import 'package:provider/provider.dart';
 
+import '../../api/api_service.dart';
 import '../../md/code_wrapper.dart';
 import '../../state.dart';
 
@@ -17,46 +19,59 @@ class ChatRightInfo extends StatefulWidget {
   _ChatRightInfo createState() => _ChatRightInfo();
 }
 
+
+void init(BuildContext context){
+ // MyAppState appState =context.watch()<MyAppState>();
+  MyAppState appState = Provider.of<MyAppState>(context, listen: false);
+
+}
+
 class _ChatRightInfo extends State<ChatRightInfo> {
   _showToast(String msg, {int? duration, int? position}) {
     FlutterToastr.show(msg, context, duration: duration, position: position);
   }
-
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      // 在这里执行初始化操作，此时可以访问到 context。
+      init(context);
+    });
+  }
 
 
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    List msessage = [];
+    List<ChatDetails> list = appState.chatDetailsList;
     bool isDarkMode = appState.isDarkMode;
-
-    msessage.add({"user": "me", "conter": "##这是一个标题"});
-    msessage.add({"user": "me", "conter": "#### 这是一个普通内容"});
-    msessage.add({"user": "you", "conter": "#### 这是一个普通内容"});
-    msessage.add({"user": "you", "conter": "#### 这是一个普通内容"});
-    msessage.add({"user": "you", "conter": "#### 这是一个普通内容"});
-    msessage.add({"user": "you", "conter": "这是一个普通内容"});
-    msessage.add({
-      "user": "you",
-      "conter": ""
-          "### 这是一个普通内容 \r"
-          "``` "
-          "\r class MarkdownHelper {Map<String, Widget> getTitleWidget(m.Node node)  \r"
-          "=> title.getTitleWidget(node);   \r Widget getPWidget(m.Element node) => p.getPWidget(node); \r"
-          "Widget getPreWidget(m.Node node) => pre.getPreWidget(node); } \r"
-          " ```"
-    });
+    // List msessage = [];
+    //
+    // msessage.add({"user": "me", "conter": "##这是一个标题"});
+    // msessage.add({"user": "me", "conter": "#### 这是一个普通内容"});
+    // msessage.add({"user": "you", "conter": "#### 这是一个普通内容"});
+    // msessage.add({"user": "you", "conter": "#### 这是一个普通内容"});
+    // msessage.add({"user": "you", "conter": "#### 这是一个普通内容"});
+    // msessage.add({"user": "you", "conter": "这是一个普通内容"});
+    // msessage.add({
+    //   "user": "you",
+    //   "conter": ""
+    //       "### 这是一个普通内容 \r"
+    //       "``` "
+    //       "\r class MarkdownHelper {Map<String, Widget> getTitleWidget(m.Node node)  \r"
+    //       "=> title.getTitleWidget(node);   \r Widget getPWidget(m.Element node) => p.getPWidget(node); \r"
+    //       "Widget getPreWidget(m.Node node) => pre.getPreWidget(node); } \r"
+    //       " ```"
+    // });
 
     return Scaffold(
       body: SelectionArea(
         child: ListView.builder(
-            itemCount: msessage.length,
+            itemCount: list.length,
             itemBuilder: (context, index) {
+              ChatDetails chatDetails = list[index];
               return ListTile(
-                  leading: msessage[index]["user"] == "me"
-                      ? null
-                      : const CircleAvatar(child: Text("gpt")),
-                  trailing: msessage[index]["user"] == "me"
+                  leading: chatDetails.role != "user" ? const CircleAvatar(child: Text("gpt")):null,
+                  trailing: chatDetails.role== "user"
                       ? const CircleAvatar(child: Text("you"))
                       : null,
                   title: Column(
@@ -66,17 +81,17 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                           maxWidth:
                               MediaQuery.of(context).size.width * 0.6, // 限制宽度
                         ),
-                        alignment: msessage[index]["user"] == "me"
+                        alignment:  chatDetails.role== "user"
                             ? Alignment.centerRight
                             : Alignment.centerLeft,
-                        child: msessage[index]["user"] == "me"
+                        child:  chatDetails.role== "user"
                             ? Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   color: isDarkMode ? null : Colors.blue[100],
                                   borderRadius: BorderRadius.circular(5),
                                 ),
-                                child: Text(msessage[index]["conter"]),
+                                child: Text( chatDetails.content),
                               )
                             : Column(
                                 children: [
@@ -91,22 +106,22 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                                     child: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: getmd(context,
-                                            msessage[index]["conter"])),
+                                            chatDetails.content)),
                                   ),
                                 ],
                               ),
                       ),
-                      msessage[index]["user"] == "me"
-                          ? Row()
+                      chatDetails.role== "user"
+                          ? const Row()
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 IconButton(
                                     onPressed: () {
-                                      Clipboard.setData(ClipboardData(text: msessage[index]["conter"]));
+                                      Clipboard.setData(ClipboardData(text: chatDetails.content));
                                       _showToast("复制成功");
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.copy_all,
                                       size: 15,
                                     ))

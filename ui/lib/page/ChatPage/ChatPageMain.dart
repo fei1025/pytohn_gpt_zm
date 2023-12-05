@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';import 'package:open_ui/page/ChatPage/rig
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 
+import '../api/api_service.dart';
 import '../model.dart';
 import '../model/Chat_hist_list.dart';
 import '../state.dart';
@@ -65,6 +66,8 @@ class _ChatPageMain extends State<ChatPageMain> {
                             onTap: () {
                               appState.setCuChatId(title.chatId);
                               setState(() {
+                                ApiService.getChatDetails(appState.cuChatId).then((value) =>appState.setChatDetails(value));
+
                                 appState.setTitle(index);
                               });
                             },

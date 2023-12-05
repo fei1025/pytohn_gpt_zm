@@ -1,6 +1,7 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'model/ChatDetails.dart';
 import 'model/Chat_hist_list.dart';
 
 class MyAppState extends ChangeNotifier {
@@ -34,6 +35,11 @@ class MyAppState extends ChangeNotifier {
   List<ChatHist> chatHistList = [];
   void setChatHistList( List<ChatHist> list ){
     chatHistList=list;
+    notifyListeners();
+  }
+  List<ChatDetails> chatDetailsList=[];
+  void setChatDetails(List<ChatDetails> list){
+    chatDetailsList=list;
     notifyListeners();
   }
 }

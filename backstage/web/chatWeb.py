@@ -46,8 +46,8 @@ def get_all_Hist(db: Session = Depends(get_db)):
 
 
 @router.get("/getChatHistDetails")
-def get_chat_hist_details(db: Session = Depends(get_db), chat_id: str = Query(...)):
-    return Result.success(crud.get_chat_hist_details(db, chat_id))
+def get_chat_hist_details(db: Session = Depends(get_db), chatId: str = Query(...)):
+    return Result.success(crud.get_chat_hist_details(db, chatId))
 
 
 @router.post("/send_open_ai")
