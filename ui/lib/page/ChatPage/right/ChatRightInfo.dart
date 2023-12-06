@@ -42,25 +42,6 @@ class _ChatRightInfo extends State<ChatRightInfo> {
     var appState = context.watch<MyAppState>();
     List<ChatDetails> list = appState.chatDetailsList;
     bool isDarkMode = appState.isDarkMode;
-    // List msessage = [];
-    //
-    // msessage.add({"user": "me", "conter": "##这是一个标题"});
-    // msessage.add({"user": "me", "conter": "#### 这是一个普通内容"});
-    // msessage.add({"user": "you", "conter": "#### 这是一个普通内容"});
-    // msessage.add({"user": "you", "conter": "#### 这是一个普通内容"});
-    // msessage.add({"user": "you", "conter": "#### 这是一个普通内容"});
-    // msessage.add({"user": "you", "conter": "这是一个普通内容"});
-    // msessage.add({
-    //   "user": "you",
-    //   "conter": ""
-    //       "### 这是一个普通内容 \r"
-    //       "``` "
-    //       "\r class MarkdownHelper {Map<String, Widget> getTitleWidget(m.Node node)  \r"
-    //       "=> title.getTitleWidget(node);   \r Widget getPWidget(m.Element node) => p.getPWidget(node); \r"
-    //       "Widget getPreWidget(m.Node node) => pre.getPreWidget(node); } \r"
-    //       " ```"
-    // });
-
     return Scaffold(
       body: ListView.builder(
           itemCount: list.length,

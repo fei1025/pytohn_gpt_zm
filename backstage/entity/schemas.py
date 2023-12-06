@@ -1,6 +1,6 @@
 from typing import Union, Optional
 
-from marshmallow.fields import Bool
+from marshmallow.fields import Bool, Field
 from pydantic import BaseModel
 
 
@@ -50,10 +50,10 @@ class userSetting(BaseModel):
 
 # 请求聊天记录内容表
 class reqChat(BaseModel):
-    chat_id: str
-    role: str
-    content: str
-    model: str
-    token: int
-    temperature: float = 0.7
-    stream: bool = True
+    chat_id: Optional[str] = None
+    role: Optional[str] = None
+    content: Optional[str] = None
+    model: Optional[str] = None
+    token: Optional[int] = None
+    temperature: Optional[float] = 0.7
+    stream: Optional[bool]  = True

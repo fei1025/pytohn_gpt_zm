@@ -50,7 +50,7 @@ def get_chat_hist_details(db: Session = Depends(get_db), chatId: str = Query(...
     return Result.success(crud.get_chat_hist_details(db, chatId))
 
 
-@router.post("/send_open_ai")
+@router.get("/send_open_ai")
 def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
     if res.chat_id:
         print("没有保存")

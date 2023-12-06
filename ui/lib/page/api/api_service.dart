@@ -1,12 +1,19 @@
 import 'dart:convert';
+import 'dart:ffi';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_ui/page/api/http_utils.dart';
+import 'package:open_ui/page/state.dart';
 
 import '../model/ChatDetails.dart';
 import '../model/Chat_hist_list.dart';
 
 class ApiService {
   static const String _baseUrl = 'http://127.0.0.1:6688';
+
+  static String getOpenBaseUrl(){
+    return _baseUrl;
+  }
 
   static Future<List<ChatHist>> fetchData() async {
     // final response = await http.get(
@@ -44,4 +51,48 @@ class ApiService {
       throw Exception('Failed to load data');
     }
   }
+
+
+  static void senMsg(String msg) async{
+    final apiUrl = "$_baseUrl/send_open_ai?chat_id=${MyAppState().cuChatId}&content=$msg&role=user";
+    //MyAppState().chatHistList;
+    MyAppState().cuChatId;
+    // final response = await httpUtils.post(apiUrl,json.encode({
+    //   'chat_id': MyAppState().cuChatId,
+    //   'content':msg,
+    //   'role':'user'
+    // }),null);
+
+    // final response =await http.post(Uri.parse(apiUrl),body: json.encode({
+    //   'chat_id': MyAppState().cuChatId,
+    //   'content':msg,
+    //   'role':'user'
+    // }));
+
+    // final response  = await http.get(Uri.parse(apiUrl));
+    // response.stream;
+    final client = http.Client();
+
+    final request = http.Request('GET', Uri.parse(apiUrl));
+    // final request  =client.post(Uri.parse(apiUrl),body:json.encode({
+    //   'chat_id': MyAppState().cuChatId,
+    //   'content':msg,
+    //   'role':'user'
+    // }) );
+    final response = await client.send(request);
+
+    response.stream
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        .listen(  (event) {
+          getChatDetails(  MyAppState().cuChatId).then((value) => MyAppState().setChatDetails(value));
+      // String result = event.replaceAll('data:', '');
+    });
+
+  }
+
+
+
+
+
 }

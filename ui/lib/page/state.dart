@@ -5,6 +5,13 @@ import 'model/ChatDetails.dart';
 import 'model/Chat_hist_list.dart';
 
 class MyAppState extends ChangeNotifier {
+  static final MyAppState _instance = MyAppState._internal();
+
+  factory MyAppState() {
+    return _instance;
+  }
+
+  MyAppState._internal();
 
   bool isDarkMode = false;
   // 是否选中选择框
