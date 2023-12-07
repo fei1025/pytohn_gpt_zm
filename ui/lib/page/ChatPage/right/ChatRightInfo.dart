@@ -94,7 +94,7 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                                     child: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: getmd(
-                                            context, chatDetails.content)),
+                                            context,chatDetails.content)),
                                   ),
                                 ],
                               ),

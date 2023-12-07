@@ -64,12 +64,14 @@ class _ChatRightSenMsg extends State<ChatRightSenMsg> {
                 right: 10,
                 top: 60,
                 child: IconButton(
-                  icon: Icon(Icons.send),
+                  icon: appState.isSend
+                      ? const Icon(Icons.stop_circle_rounded)
+                      : const Icon(Icons.send),
                   onPressed: () {
-                    // 处理悬浮图标点击事件
-                    // 这里可以展示一些信息或执行其他操作
-                    print(appState.cuChatId);
-                    _sendMessage();
+                    if (!appState.isSend) {
+                      _sendMessage();
+                      _controller.clear();
+                    }
                   },
                 ),
               ),
