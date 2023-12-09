@@ -53,14 +53,12 @@ class ApiService {
     }
   }
 
-  static void senMsg(String msg) async {
+  static void senMsg(String msg, Function()? onComplete) async {
     const apiUrl = "$_baseUrl/send_open_ai";
     //MyAppState().chatHistList;
     int? cuId = MyAppState().cuChatId;
-
     final client = http.Client();
     List<ChatDetails> chatList = MyAppState().chatDetailsList;
-
     final request = http.Request('POST', Uri.parse(apiUrl));
     request.body = json.encode({
       'chat_id': MyAppState().cuChatId,
@@ -76,36 +74,35 @@ class ApiService {
     String currentResponse = "";
     final response = await client.send(request);
     bool isFirstEvent = true;
-    ChatDetails chatDetails =
-        ChatDetails(id: 0, chatId: 0, role: "user", content: msg);
+    ChatDetails chatDetails =ChatDetails(id: 0, chatId: 0, role: "user", content: msg);
     chatList.add(chatDetails);
     MyAppState().setChatDetails(chatList);
-    response.stream
-        .transform(utf8.decoder)
-        .transform(const LineSplitter())
-        .listen((event) {
-      String result = event.replaceAll('data:', '');
-      if (isFirstEvent) {
-        MyAppState().isSend = true;
-        isFirstEvent = false;
-        ChatDetails chatDetails =
-            ChatDetails(id: 0, chatId: 0, role: "assistant", content: result);
-        chatList.add(chatDetails);
-        MyAppState().setChatDetails(chatList);
-        _loadingMessageIndex = chatList.length - 1;
-      }
-      currentResponse = currentResponse + result;
-      ChatDetails chatDetails = ChatDetails(
-          id: 0, chatId: 0, role: "assistant", content: currentResponse);
-      chatList[_loadingMessageIndex!] = chatDetails;
-      MyAppState().setChatDetails(chatList);
+    response.stream.transform(utf8.decoder).transform(const LineSplitter()).listen((event) {
+        String result = event.replaceAll('data:', '');
+        if (isFirstEvent) {
+          MyAppState().isSend = true;
+          isFirstEvent = false;
+          ChatDetails chatDetails = ChatDetails(id: 0, chatId: 0, role: "assistant", content: result);
+          chatList.add(chatDetails);
+          MyAppState().setChatDetails(chatList);
+          _loadingMessageIndex = chatList.length - 1;
+        }
+        if(cuId == MyAppState().cuChatId){
+          currentResponse = currentResponse + result;
+          ChatDetails chatDetails = ChatDetails(id: 0, chatId: 0, role: "assistant", content: currentResponse);
+          chatList[_loadingMessageIndex!] = chatDetails;
+          MyAppState().setChatDetails(chatList);
+        }
     }, onDone: () {
       // 在流结束时执行特定的操作
-      getChatDetails(MyAppState().cuChatId)
-          .then((value) => MyAppState().setChatDetails(value));
+      getChatDetails(MyAppState().cuChatId).then((value) => MyAppState().setChatDetails(value));
       MyAppState().isSend = false;
       MyAppState().currentResponse = "";
       print('流结束了');
+      // 在异步操作完成时调用回调函数
+      if (onComplete != null) {
+        onComplete();
+      }
     });
   }
 }

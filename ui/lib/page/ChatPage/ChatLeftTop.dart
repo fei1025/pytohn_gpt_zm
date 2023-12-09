@@ -72,8 +72,7 @@ class _ChatLeftTop extends State<ChatLeftTop> {
                       border: const OutlineInputBorder(
                         borderRadius:
                             BorderRadius.all(Radius.circular(10.0)), //圆角边框
-                        // borderSide: BorderSide(color: Colors.redAccent)
-                        //borderSide: BorderSide.none
+
                       ),
                       suffixIcon: appState.isIconVisible
                           ? InkWell(
@@ -84,14 +83,7 @@ class _ChatLeftTop extends State<ChatLeftTop> {
                               ),
                             )
                           : null
-                      // suffixIcon: IconButton(//尾部叉叉图标
-                      //   icon: const Icon(
-                      //     Icons.close,
-                      //     size: 17,
-                      //   ),
-                      //   onPressed: (){print("删除操作");},//清空操作
-                      //   splashColor: Theme.of(context).primaryColor,
-                      // )
+
                       )),
             ),
           ),
@@ -103,6 +95,8 @@ class _ChatLeftTop extends State<ChatLeftTop> {
               padding: const EdgeInsets.only(left: 0, bottom: 0, top: 15),
               child: InkWell(
                 onTap: () {
+                  appState.setTitle(-1);
+                  appState.setChatDetails([]);
                 },
                 child: const Icon(
                     //Icons.add_circle_outline

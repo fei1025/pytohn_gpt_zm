@@ -17,7 +17,8 @@ class _ChatRightSenMsg extends State<ChatRightSenMsg> {
 
   void _sendMessage() async {
     if (_controller.text.isNotEmpty) {
-      ApiService.senMsg(_controller.text);
+      ApiService.senMsg(_controller.text,(){
+      });
     }
   }
 

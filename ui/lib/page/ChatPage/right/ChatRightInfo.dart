@@ -7,8 +7,6 @@ import 'package:markdown_widget/config/configs.dart';
 import 'package:markdown_widget/widget/blocks/leaf/code_block.dart';
 import 'package:open_ui/page/model/ChatDetails.dart';
 import 'package:provider/provider.dart';
-
-import '../../api/api_service.dart';
 import '../../md/code_wrapper.dart';
 import '../../state.dart';
 
@@ -18,31 +16,20 @@ class ChatRightInfo extends StatefulWidget {
   @override
   _ChatRightInfo createState() => _ChatRightInfo();
 }
-
-void init(BuildContext context) {
-  // MyAppState appState =context.watch()<MyAppState>();
-  MyAppState appState = Provider.of<MyAppState>(context, listen: false);
-}
-
 class _ChatRightInfo extends State<ChatRightInfo> {
   _showToast(String msg, {int? duration, int? position}) {
     FlutterToastr.show(msg, context, duration: duration, position: position);
   }
 
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      // 在这里执行初始化操作，此时可以访问到 context。
-      init(context);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     List<ChatDetails> list = appState.chatDetailsList;
     bool isDarkMode = appState.isDarkMode;
-    return Scaffold(
+    return list.length==0?Center(child:Text("今天我能帮助你吗?") ):
+
+      Scaffold(
       body: ListView.builder(
           itemCount: list.length,
           itemBuilder: (context, index) {

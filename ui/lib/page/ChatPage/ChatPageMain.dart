@@ -67,7 +67,6 @@ class _ChatPageMain extends State<ChatPageMain> {
                               appState.setCuChatId(title.chatId);
                               setState(() {
                                 ApiService.getChatDetails(appState.cuChatId).then((value) =>appState.setChatDetails(value));
-
                                 appState.setTitle(index);
                               });
                             },

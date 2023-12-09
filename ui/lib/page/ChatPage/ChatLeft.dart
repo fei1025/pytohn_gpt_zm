@@ -27,11 +27,6 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var titleIndex = appState.titleIndex;
-    final theme = Theme.of(context);
-    final style = theme.textTheme.titleMedium!.copyWith(
-      color: theme.colorScheme.onPrimary,
-    );
-
     return Card(
       //color: theme.colorScheme.primary,
       child: InkWell(
@@ -61,12 +56,6 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
             minVerticalPadding:10,
             dense: true,
             selected: widget.curIndex == titleIndex,
-            // leading: true
-            //     ? null
-            //     : const Padding(
-            //   padding: EdgeInsets.only(left: 1, top: 3),
-            //   child: Icon(Icons.chat_bubble_outline, size: 15),
-            // ),
             title: Text(widget.title),
             trailing: isHovered ||  (widget.curIndex == titleIndex)?
                 Row(
