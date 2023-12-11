@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_ui/page/api/http_utils.dart';
 import 'package:open_ui/page/model/ChatDetails.dart';
+import 'package:open_ui/page/model/Chat_model.dart';
 import 'package:open_ui/page/state.dart';
 
 import '../model/Chat_hist_list.dart';
@@ -16,22 +17,12 @@ class ApiService {
   }
 
   static Future<List<ChatHist>> fetchData() async {
-    // final response = await http.get(
-    //   Uri.parse('$_baseUrl/getAllHist'),
-    //   headers: {'Content-Type': 'application/json; charset=utf-8'},
-    // );
     final response = await httpUtils.get('$_baseUrl/getAllHist');
     if (response.statusCode == 200) {
       String responseBody = utf8.decode(response.bodyBytes);
 
       Map<String, dynamic> jsonMap = json.decode(responseBody);
       ChatHistList apiData = ChatHistList.fromJson(jsonMap);
-      // 访问映射后的数据
-      print('Code: ${apiData.code}, Msg: ${apiData.msg}');
-      for (ChatHist item in apiData.data) {
-        print(
-            'Model: ${item.model}, Chat ID: ${item.chatId}, Title: ${item.title}, Creation Time: ${item.creationTime}');
-      }
       return apiData.data;
     } else {
       throw Exception('Failed to load data');
@@ -55,7 +46,6 @@ class ApiService {
 
   static void senMsg(String msg, Function()? onComplete) async {
     const apiUrl = "$_baseUrl/send_open_ai";
-    //MyAppState().chatHistList;
     int? cuId = MyAppState().cuChatId;
     final client = http.Client();
     List<ChatDetails> chatList = MyAppState().chatDetailsList;
@@ -64,7 +54,7 @@ class ApiService {
       'chat_id': MyAppState().cuChatId,
       'content': msg,
       'role': 'user',
-      'model': '0'
+      'model': MyAppState().cuModel
     });
     request.headers.addAll({
       'accept': 'application/json',
@@ -97,12 +87,25 @@ class ApiService {
       // 在流结束时执行特定的操作
       getChatDetails(MyAppState().cuChatId).then((value) => MyAppState().setChatDetails(value));
       MyAppState().isSend = false;
-      MyAppState().currentResponse = "";
       print('流结束了');
       // 在异步操作完成时调用回调函数
       if (onComplete != null) {
         onComplete();
       }
     });
+  }
+
+  static Future<List<ChatModel>> getAllModel() async {
+    final response = await httpUtils.get('$_baseUrl/get_all_model');
+
+    if (response.statusCode == 200) {
+      String responseBody = utf8.decode(response.bodyBytes);
+
+      Map<String, dynamic> jsonMap = json.decode(responseBody);
+      ChatModelList apiData = ChatModelList.fromJson(jsonMap);
+      return apiData.data;
+    } else {
+      throw Exception('Failed to load data');
+    }
   }
 }

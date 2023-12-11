@@ -4,6 +4,8 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:open_ui/page/api/api_service.dart';
+import 'package:open_ui/page/model/Chat_model.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -22,7 +24,6 @@ class _ChatRightTop extends State<ChatRightTop> {
   @override
   void initState() {
     super.initState();
-
     // 在 initState 中执行异步操作
     windowManager.isMaximized().then((value) {
       setState(() {
@@ -42,14 +43,14 @@ class _ChatRightTop extends State<ChatRightTop> {
     var appState = context.watch<MyAppState>();
     return Scaffold(
       appBar: AppBar(
-        leadingWidth: 100,
+        leadingWidth: 200,
         leading: Container(
           height: 20,
           margin: EdgeInsets.only(top: 20,right: 5),
           padding: EdgeInsets.only(top: 5,left: 5,bottom: 5),
           child: MyPopupMenuButton(),
         ),
-        title: Center(
+        title: const Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -84,24 +85,41 @@ class MyPopupMenuButton extends StatefulWidget {
 }
 
 class _MyPopupMenuButtonState extends State<MyPopupMenuButton> {
-  String selectedValue = 'Option 1'; // 初始选中的值
-  List<String> menuItems = ['Option 1', 'Option 2', 'Option 3'];
+  String selectedValue ="0";
+  @override
+  void initState() {
+    print("执行初始化数据了");
+    ApiService.getAllModel().then((value) {
+      MyAppState().setChatModel(value);
+      List<ChatModel> chatModelList = MyAppState().chatModelList;
+      selectedValue = chatModelList[0].value; // 初始选中的值
+    });
+
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     //Color buttonColor = Theme.of(context).buttonTheme.colorScheme!.primary;
    TextStyle? textStyle = Theme.of(context).textTheme.titleSmall;
-    return PopupMenuButton<String>(
+   var appState = context.watch<MyAppState>();
+   List<ChatModel> chatModelList = MyAppState().chatModelList;
+   return PopupMenuButton<String>(
       onSelected: (String value) {
         setState(() {
-          selectedValue = value;
+          ChatModel chatModel = chatModelList[int.parse(value)];
+          selectedValue = chatModel.value;
+          appState.setCuMode(chatModel.key);
+          print("当前选择的值${appState.cuModel}");
         });
       },
       itemBuilder: (BuildContext context) {
-        return menuItems.map((String item) {
+        return   chatModelList.map((ChatModel chatModel) {
+          final index = chatModelList.indexOf(chatModel);
           return PopupMenuItem<String>(
-            value: item,
-            child: Text(item),
+            value: index.toString(),
+            child: Text(chatModel.value),
           );
         }).toList();
       },
@@ -109,7 +127,7 @@ class _MyPopupMenuButtonState extends State<MyPopupMenuButton> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(selectedValue,style: textStyle,), // 显示选中的值
+          Text(selectedValue,style: textStyle, overflow: TextOverflow.ellipsis,), // 显示选中的值
           SizedBox(width: 8),
           Icon(Icons.arrow_drop_down), // 向下箭头图标
         ],

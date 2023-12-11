@@ -16,7 +16,7 @@ token_4 = 4000
 token_16 = 8100
 token_32 = 32000
 model_max_token = {
-    "gpt-3.5-turbo":token_4,
+    "gpt-3.5-turbo": token_4,
     "gpt-3.5-turbo-0613": token_4,
     "gpt-3.5-turbo-16k-0613": token_16,
     "gpt-4-0613": token_4,
@@ -33,12 +33,18 @@ def get_open_model(key: str):
 
 
 def get_all_model():
-    models = []
-    models.append({"0": "gpt-3.5-turbo-0613"})
-    models.append({"1": "gpt-3.5-turbo-16k-0613"})
-    models.append({"2": "gpt-4-0613"})
-    models.append({"3": "gpt-4-32k-0613"})
-    return get_all_model
+    models = [{"value": "gpt-3.5-turbo-0613",
+               "key": "0"
+               },
+              {"value": "gpt-3.5-turbo-16k-0613",
+               "key": "1",
+               },
+              {"value": "gpt-4-0613",
+               "key": "2"
+               },
+              {"value": "gpt-4-32k-0613",
+               "key": "3" }]
+    return models
 
 
 def num_tokens_from_messages(messages: list, model="gpt-3.5-turbo-0613"):

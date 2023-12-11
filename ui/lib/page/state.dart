@@ -1,5 +1,6 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:open_ui/page/model/Chat_model.dart';
 
 import 'model/ChatDetails.dart';
 import 'model/Chat_hist_list.dart';
@@ -55,15 +56,22 @@ class MyAppState extends ChangeNotifier {
     chatDetailsList = list;
     notifyListeners();
   }
-
+  //设置是否要写人
   bool isSend = false;
   void setIsSend(bool l) {
     isSend = l;
     notifyListeners();
   }
-  String currentResponse = "";
-  void setResponse(String s) {
-    currentResponse = s;
+  // 查询出来的数据
+  List<ChatModel>  chatModelList=[];
+  void setChatModel( List<ChatModel>  list){
+    chatModelList=list;
+    notifyListeners();
+  }
+  //当前选择的model
+  String cuModel ="0";
+  void setCuMode(String s){
+    cuModel=s;
     notifyListeners();
   }
 }

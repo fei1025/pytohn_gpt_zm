@@ -3,8 +3,8 @@ from fastapi import APIRouter, Query
 from fastapi import Depends, Request
 from sqlalchemy.orm import Session
 
-import openAi.langChat
 import openAi.openAIChat as openAichat
+import openAi.openAiUtil as openAiUtil
 from Util.result import Result
 from db.database import engine, get_db
 from entity import models, schemas, crud
@@ -24,6 +24,11 @@ async def read_users():
 @router.get("/getUserSetting")
 async def get_user_setting(db: Session = Depends(get_db)):
     return Result.success(data=crud.get_user_setting(db))
+
+
+@router.get("/get_all_model")
+async def get_all_model():
+    return Result.success(data=openAiUtil.get_all_model())
 
 
 @router.post("/saveUserSetting")
