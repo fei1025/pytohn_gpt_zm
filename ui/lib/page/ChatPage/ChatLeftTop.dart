@@ -96,6 +96,7 @@ class _ChatLeftTop extends State<ChatLeftTop> {
               child: InkWell(
                 onTap: () {
                   appState.setTitle(-1);
+                  appState.setCuChatId(null);
                   appState.setChatDetails([]);
                 },
                 child: const Icon(

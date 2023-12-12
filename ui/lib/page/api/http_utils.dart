@@ -20,7 +20,7 @@ class httpUtils {
       map.addAll(headers);
     }
     final response =  http.post(
-      Uri.parse('$url/getAllHist'),
+      Uri.parse(url),
       headers: map,
       body: body,
     );

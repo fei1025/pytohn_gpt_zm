@@ -60,7 +60,7 @@ def save_chat_hist(res: reqChat, db: Session = Depends(get_db)):
     chatHist = models.chat_hist()
     chatHist.title = res.content
     crud.save_chat_hist(db, chatHist)
-    return Result.success(chatHist)
+    return Result.success([chatHist])
 
 
 @router.post("/send_open_ai")

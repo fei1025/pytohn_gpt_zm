@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:open_ui/page/model/Chat_hist_list.dart';
 import 'package:provider/provider.dart';
 
 import '../../api/api_service.dart';
@@ -15,9 +16,20 @@ class ChatRightSenMsg extends StatefulWidget {
 class _ChatRightSenMsg extends State<ChatRightSenMsg> {
   final TextEditingController _controller = TextEditingController();
 
-  void _sendMessage() async {
+  void _sendMessage(MyAppState appState) async {
     if (_controller.text.isNotEmpty) {
-      ApiService.senMsg(_controller.text,(){
+      int? chatId = appState.cuChatId;
+      String text = _controller.text;
+      if(chatId == null){
+        List<ChatHist> chatHistList  = await ApiService.saveChatHist(text);
+        ChatHist chatHist = chatHistList[0];
+        appState.setCuChatId(chatHist.chatId);
+        List<ChatHist> chatHistList2 =  await ApiService.fetchData();
+        appState.setChatHistList(chatHistList2);
+      }
+
+      ApiService.senMsg(text,(){
+        print("回调成功的数据");
       });
     }
   }
@@ -70,7 +82,7 @@ class _ChatRightSenMsg extends State<ChatRightSenMsg> {
                       : const Icon(Icons.send),
                   onPressed: () {
                     if (!appState.isSend) {
-                      _sendMessage();
+                      _sendMessage(appState);
                       _controller.clear();
                     }
                   },

@@ -44,6 +44,20 @@ class ApiService {
     }
   }
 
+  static Future<List<ChatHist>> saveChatHist(String msg) async{
+    final response = await httpUtils.post('$_baseUrl/save_chat_hist',json.encode({'content':msg}),null);
+    if (response.statusCode == 200) {
+      String responseBody = utf8.decode(response.bodyBytes);
+
+      Map<String, dynamic> jsonMap = json.decode(responseBody);
+      ChatHistList apiData = ChatHistList.fromJson(jsonMap);
+      return apiData.data;
+    } else {
+      throw Exception('Failed to load data');
+    }
+
+  }
+
   static void senMsg(String msg, Function()? onComplete) async {
     const apiUrl = "$_baseUrl/send_open_ai";
     int? cuId = MyAppState().cuChatId;

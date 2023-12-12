@@ -38,7 +38,7 @@ class MyAppState extends ChangeNotifier {
 
   int? cuChatId;
 
-  void setCuChatId(int id) {
+  void setCuChatId(int? id) {
     cuChatId = id;
     notifyListeners();
   }
