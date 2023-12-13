@@ -16,6 +16,7 @@ class ChatRightSenMsg extends StatefulWidget {
 class _ChatRightSenMsg extends State<ChatRightSenMsg> {
   final TextEditingController _controller = TextEditingController();
 
+
   void _sendMessage(MyAppState appState) async {
     if (_controller.text.isNotEmpty) {
       int? chatId = appState.cuChatId;

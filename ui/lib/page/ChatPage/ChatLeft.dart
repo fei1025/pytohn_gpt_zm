@@ -65,14 +65,14 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
                   offset: const Offset(10, 0), // 控制水平偏移量
                   child:     InkWell(
                     onTap:(){print("点击修改了");},
-                    child: const Icon(Icons.edit, size: 18, color: Colors.blueAccent),
+                    child: const Icon(Icons.edit, size: 20, color: Colors.blueAccent),
                   ),
                 ),
                 Transform.translate(
                   offset: const Offset(10, 0), // 控制水平偏移量
                   child:     InkWell(
                     onTap:(){print("点击修改了");},
-                    child:  Icon(Icons.delete_outlined, size: 18, color:Colors.red.shade400),
+                    child:  Icon(Icons.delete_outlined, size: 20, color:Colors.red.shade400),
                   ),
                 ),
               ],

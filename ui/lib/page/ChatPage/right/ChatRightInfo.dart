@@ -17,20 +17,33 @@ class ChatRightInfo extends StatefulWidget {
   _ChatRightInfo createState() => _ChatRightInfo();
 }
 class _ChatRightInfo extends State<ChatRightInfo> {
+  final ScrollController _scrollController = ScrollController();
+
+
   _showToast(String msg, {int? duration, int? position}) {
     FlutterToastr.show(msg, context, duration: duration, position: position);
   }
 
-
   @override
   Widget build(BuildContext context) {
+
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    });
+    _scrollController.addListener(() {
+      //判断是否到底
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+
+      }
+    });
+
     var appState = context.watch<MyAppState>();
     List<ChatDetails> list = appState.chatDetailsList;
     bool isDarkMode = appState.isDarkMode;
-    return list.length==0?Center(child:Text("今天我能帮助你吗?") ):
-
-      Scaffold(
+    return list.length==0?const Center(child:Text("今天我能帮助你吗?") ):
+Scaffold(
       body: ListView.builder(
+          controller: _scrollController,
           itemCount: list.length,
           itemBuilder: (context, index) {
             ChatDetails chatDetails = list[index];
