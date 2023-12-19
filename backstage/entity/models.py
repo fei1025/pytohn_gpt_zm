@@ -62,3 +62,5 @@ class chat_hist_details(Base):
     content = Column(String, default=None)
     token_num = Column(String, default=None)
     creation_time = Column(Date, default=datetime.now())
+
+
