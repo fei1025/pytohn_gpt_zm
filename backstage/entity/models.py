@@ -56,7 +56,7 @@ class chat_hist(Base):
 
 class chat_hist_details(Base):
     __tablename__ = "chat_hist_details"
-    id = Column(Integer, primary_key=True,autoincrement=True, index=True)
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     chat_id = Column(Integer, default=None)
     role = Column(String, default=None)
     content = Column(String, default=None)
@@ -64,3 +64,10 @@ class chat_hist_details(Base):
     creation_time = Column(Date, default=datetime.now())
 
 
+class knowledge(Base):
+    __tablename__ = "knowledge_info"
+    id = Column(Integer, primary_key=True,autoincrement=True, index=True)
+    file_name = Column(String, default=None)
+    file_path = Column(String, default=None, comment="文件路径")
+    file_summarize = Column(String, default=None, comment="文章总结")
+    index_name = Column(String, default=None, comment="索引名称")
