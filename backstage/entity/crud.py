@@ -93,8 +93,10 @@ def save_chat_hist_details(db: Session, chatHistDetails: models.chat_hist_detail
     db.commit()
     db.refresh(chatHistDetails)
 
+
 def get_all_Hist(db: Session):
     return db.query(models.chat_hist).all()
+
 
 def get_chat_hist_details(db: Session, chatId: str) -> List[models.chat_hist_details]:
     return db.query(models.chat_hist_details).filter(models.chat_hist_details.chat_id == chatId).all()
@@ -104,3 +106,9 @@ def delete_chat(db: Session, chatId: str):
     db.query(models.chat_hist_details).filter(models.chat_hist_details.chat_id == chatId).delete()
     db.query(models.chat_hist).filter(models.chat_hist.chat_id == chatId).delete()
     db.commit()
+
+
+def save_knowledge(db: Session, knowledge: models.knowledge):
+    db.add(knowledge)
+    db.commit()
+    db.refresh(knowledge)
