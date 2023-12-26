@@ -112,3 +112,7 @@ def save_knowledge(db: Session, knowledge: models.knowledge):
     db.add(knowledge)
     db.commit()
     db.refresh(knowledge)
+
+
+def get_knowledge(db: Session, knowledge: models.knowledge) -> models.knowledge:
+    return db.query(models.knowledge).filter(models.knowledge.id == knowledge.id)

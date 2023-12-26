@@ -12,9 +12,11 @@ from entity import models, crud
 
 # 创建一个知识库
 def create_knowledge(knowledge: models.knowledge, db: Session):
+    setting = crud.get_user_setting(db)
+
     index_path = "./index/paper"
-    embeddings = OpenAIEmbeddings(openai_api_base="https://api.openai-sb.com/v1",
-                                  openai_api_key="sb-48ce6279f88e82c385dfc0a1d0feb964f4ea485874f9aeb9")
+    embeddings = OpenAIEmbeddings(openai_api_base=setting.openai_api_base,
+                                  openai_api_key=setting.openai_api_key)
     file_src = knowledge.file_path
     documents = get_documents(file_src)
     index = FAISS.from_documents(documents, embeddings)
@@ -29,7 +31,21 @@ def create_knowledge(knowledge: models.knowledge, db: Session):
 
 def add_knowledge(knowledge: models.knowledge, db: Session):
     index_path = knowledge.index_path
-    pass
+    setting = crud.get_user_setting(db)
+    embeddings = OpenAIEmbeddings(openai_api_base=setting.openai_api_base, openai_api_key=setting.openai_api_key)
+    documents = get_documents(knowledge.file_path)
+    index = FAISS.load_local(index_path, embeddings)
+    index.aadd_documents(documents)
+    index.save_local(index_path)
+
+
+def get_knowledge(knowledge: models.knowledge, db: Session) -> FAISS:
+    load_knowledge = crud.get_knowledge(db, knowledge)
+    index_path = load_knowledge.index_path
+    setting = crud.get_user_setting(db)
+    embeddings = OpenAIEmbeddings(openai_api_base=setting.openai_api_base, openai_api_key=setting.openai_api_key)
+    return FAISS.load_local(index_path, embeddings)
+
 
 
 def get_documents(filepath):
