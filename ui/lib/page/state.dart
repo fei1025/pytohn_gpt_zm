@@ -56,22 +56,42 @@ class MyAppState extends ChangeNotifier {
     chatDetailsList = list;
     notifyListeners();
   }
+
   //设置是否要写人
   bool isSend = false;
+
   void setIsSend(bool l) {
     isSend = l;
     notifyListeners();
   }
+
   // 查询出来的数据
-  List<ChatModel>  chatModelList=[];
-  void setChatModel( List<ChatModel>  list){
-    chatModelList=list;
+  List<ChatModel> chatModelList = [];
+
+  void setChatModel(List<ChatModel> list) {
+    chatModelList = list;
     notifyListeners();
   }
+
   //当前选择的model
-  String cuModel ="0";
-  void setCuMode(String s){
-    cuModel=s;
+  String cuModel = "0";
+
+  void setCuMode(String s) {
+    cuModel = s;
+    notifyListeners();
+  }
+
+  // 当前标题
+  String cuTitle = "";
+  void setCuTitle(String s) {
+    cuTitle = s;
+    notifyListeners();
+  }
+
+  String subhead = "";
+
+  void setSubhead(String s) {
+    subhead = s;
     notifyListeners();
   }
 }

@@ -162,5 +162,5 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
 void init(BuildContext context){
-  ApiService.fetchData().then((value) =>context.read<MyAppState>().setChatHistList(value));
+  ApiService.getAllHist().then((value) =>context.read<MyAppState>().setChatHistList(value));
 }

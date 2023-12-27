@@ -3,6 +3,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:open_ui/page/api/api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -77,7 +78,7 @@ class _ChatLeftTop extends State<ChatLeftTop> {
                       suffixIcon: appState.isIconVisible
                           ? InkWell(
                               onTap: _clearTextField,
-                              child: Icon(
+                              child: const Icon(
                                 Icons.close,
                                 size: 20,
                               ),
@@ -122,6 +123,12 @@ class _ChatLeftTop extends State<ChatLeftTop> {
                           actions: <Widget>[
                             TextButton(
                                 onPressed: () {
+                                  ApiService.delete_all_chat();
+                                  ApiService.getAllHist().then((value) =>context.read<MyAppState>().setChatHistList(value));
+                                  appState.setTitle(-1);
+                                  appState.setCuTitle("");
+                                  appState.setCuChatId(null);
+                                  appState.setChatDetails([]);
                                   // 关闭弹窗
                                   Navigator.of(context).pop();
                                 },

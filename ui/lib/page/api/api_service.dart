@@ -16,7 +16,7 @@ class ApiService {
     return _baseUrl;
   }
 
-  static Future<List<ChatHist>> fetchData() async {
+  static Future<List<ChatHist>> getAllHist() async {
     final response = await httpUtils.get('$_baseUrl/getAllHist');
     if (response.statusCode == 200) {
       String responseBody = utf8.decode(response.bodyBytes);
@@ -44,8 +44,9 @@ class ApiService {
     }
   }
 
-  static Future<List<ChatHist>> saveChatHist(String msg) async{
-    final response = await httpUtils.post('$_baseUrl/save_chat_hist',json.encode({'content':msg}),null);
+  static Future<List<ChatHist>> saveChatHist(String msg) async {
+    final response = await httpUtils.post(
+        '$_baseUrl/save_chat_hist', json.encode({'content': msg}), null);
     if (response.statusCode == 200) {
       String responseBody = utf8.decode(response.bodyBytes);
 
@@ -55,7 +56,6 @@ class ApiService {
     } else {
       throw Exception('Failed to load data');
     }
-
   }
 
   static void senMsg(String msg, Function()? onComplete) async {
@@ -71,15 +71,16 @@ class ApiService {
       'model': MyAppState().cuModel
     });
     request.headers.addAll({
-      'accept':"application/json",
+      'accept': "application/json",
       'Content-Type': 'application/json',
     });
     int? _loadingMessageIndex;
     String currentResponse = "";
     final response = await client.send(request);
     print("这是返回的数据${response.statusCode}");
-    if(response.statusCode != 200){
-      ChatDetails chatDetails = ChatDetails(id: 0, chatId: 0, role: "error", content: "数据异常");
+    if (response.statusCode != 200) {
+      ChatDetails chatDetails =
+          ChatDetails(id: 0, chatId: 0, role: "error", content: "数据异常");
       chatList.add(chatDetails);
       MyAppState().setChatDetails(chatList);
       MyAppState().isSend = false;
@@ -91,28 +92,35 @@ class ApiService {
     }
 
     bool isFirstEvent = true;
-    ChatDetails chatDetails =ChatDetails(id: 0, chatId: 0, role: "user", content: msg);
+    ChatDetails chatDetails =
+        ChatDetails(id: 0, chatId: 0, role: "user", content: msg);
     chatList.add(chatDetails);
     MyAppState().setChatDetails(chatList);
-    response.stream.transform(utf8.decoder).transform(const LineSplitter()).listen((event) {
-        String result = event.replaceAll('data:', '');
-        if (isFirstEvent) {
-          MyAppState().isSend = true;
-          isFirstEvent = false;
-          ChatDetails chatDetails = ChatDetails(id: 0, chatId: 0, role: "assistant", content: result);
-          chatList.add(chatDetails);
-          MyAppState().setChatDetails(chatList);
-          _loadingMessageIndex = chatList.length - 1;
-        }
-        if(cuId == MyAppState().cuChatId){
-          currentResponse = currentResponse + result;
-          ChatDetails chatDetails = ChatDetails(id: 0, chatId: 0, role: "assistant", content: currentResponse);
-          chatList[_loadingMessageIndex!] = chatDetails;
-          MyAppState().setChatDetails(chatList);
-        }
+    response.stream
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        .listen((event) {
+      String result = event.replaceAll('data:', '');
+      if (isFirstEvent) {
+        MyAppState().isSend = true;
+        isFirstEvent = false;
+        ChatDetails chatDetails =
+            ChatDetails(id: 0, chatId: 0, role: "assistant", content: result);
+        chatList.add(chatDetails);
+        MyAppState().setChatDetails(chatList);
+        _loadingMessageIndex = chatList.length - 1;
+      }
+      if (cuId == MyAppState().cuChatId) {
+        currentResponse = currentResponse + result;
+        ChatDetails chatDetails = ChatDetails(
+            id: 0, chatId: 0, role: "assistant", content: currentResponse);
+        chatList[_loadingMessageIndex!] = chatDetails;
+        MyAppState().setChatDetails(chatList);
+      }
     }, onDone: () {
       // 在流结束时执行特定的操作
-      getChatDetails(MyAppState().cuChatId).then((value) => MyAppState().setChatDetails(value));
+      getChatDetails(MyAppState().cuChatId)
+          .then((value) => MyAppState().setChatDetails(value));
       MyAppState().isSend = false;
       print('流结束了');
       // 在异步操作完成时调用回调函数
@@ -120,6 +128,16 @@ class ApiService {
         onComplete();
       }
     });
+  }
+
+  // 删除指定聊天记录
+  static void delete_chat(int id) async {
+    await httpUtils.get('$_baseUrl/delete_chat?chatId=$id');
+  }
+
+  // 删除全部聊天记录
+  static void delete_all_chat() async {
+    await httpUtils.get('$_baseUrl/delete_all_chat');
   }
 
   static Future<List<ChatModel>> getAllModel() async {

@@ -108,6 +108,12 @@ def delete_chat(db: Session, chatId: str):
     db.commit()
 
 
+def delete_all_chat(db: Session):
+    db.query(models.chat_hist_details).delete()
+    db.query(models.chat_hist).delete()
+    db.commit()
+
+
 def save_knowledge(db: Session, knowledge: models.knowledge):
     db.add(knowledge)
     db.commit()

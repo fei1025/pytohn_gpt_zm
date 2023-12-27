@@ -28,7 +28,12 @@ class _ChatRightInfo extends State<ChatRightInfo> {
   Widget build(BuildContext context) {
 
     WidgetsBinding.instance?.addPostFrameCallback((_) {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      if (_scrollController.positions.isNotEmpty) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      } else {
+        // 处理ScrollController未连接到滚动视图的情况
+      }
+
     });
     _scrollController.addListener(() {
       //判断是否到底

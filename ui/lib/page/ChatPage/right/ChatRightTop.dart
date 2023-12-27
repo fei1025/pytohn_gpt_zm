@@ -41,6 +41,7 @@ class _ChatRightTop extends State<ChatRightTop> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 200,
@@ -50,14 +51,19 @@ class _ChatRightTop extends State<ChatRightTop> {
           padding: EdgeInsets.only(top: 5,left: 5,bottom: 5),
           child: MyPopupMenuButton(),
         ),
-        title: const Center(
+        title:  Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text("这是标题"),
+          Transform.translate(
+            offset: const Offset(-60, 0), // 控制水平偏移量
+            child:  Text(appState.cuTitle, style: const TextStyle(
+              fontWeight: FontWeight.bold, // 设置为黑体字
+            )),
+          ),
               Text(
-                "这是副标题",
-                style: TextStyle(
+                appState.subhead,
+                style: const TextStyle(
                   fontSize: 14.0,
                   color: Colors.grey,
                 ),

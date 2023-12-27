@@ -44,19 +44,31 @@ async def save_user_setting(setting: userSetting, db: Session = Depends(get_db))
     return Result.success()
 
 
+@router.get("/delete_chat")
+async def delete_chat(chatId: str, db: Session = Depends(get_db)):
+    crud.delete_chat(db, chatId)
+    return Result.success()
+
+
+@router.get("/delete_all_chat")
+async def delete_all_chat(db: Session = Depends(get_db)):
+    crud.delete_all_chat(db)
+    return Result.success()
+
+
 @router.get("/getAllHist")
-def get_all_Hist(db: Session = Depends(get_db)):
+async def get_all_Hist(db: Session = Depends(get_db)):
     list = crud.get_all_Hist(db)
     return Result.success(list)
 
 
 @router.get("/getChatHistDetails")
-def get_chat_hist_details(db: Session = Depends(get_db), chatId: str = Query(...)):
+async def get_chat_hist_details(db: Session = Depends(get_db), chatId: str = Query(...)):
     return Result.success(crud.get_chat_hist_details(db, chatId))
 
 
 @router.post("/save_chat_hist")
-def save_chat_hist(res: reqChat, db: Session = Depends(get_db)):
+async def save_chat_hist(res: reqChat, db: Session = Depends(get_db)):
     chatHist = models.chat_hist()
     chatHist.title = res.content
     crud.save_chat_hist(db, chatHist)

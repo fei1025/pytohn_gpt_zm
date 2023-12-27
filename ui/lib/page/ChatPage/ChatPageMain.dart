@@ -62,8 +62,12 @@ class _ChatPageMain extends State<ChatPageMain> {
                           ChatHist title = chatHistList[index];
                           return ChatTitleCard(
                             title: title.title,
+                            chatHist:title,
                             curIndex: index,
                             onTap: () {
+                              //print(title.title);
+                              appState.setCuTitle(title.title);
+                              // 点击了标题
                               appState.setCuChatId(title.chatId);
                               setState(() {
                                 ApiService.getChatDetails(appState.cuChatId).then((value) =>appState.setChatDetails(value));
