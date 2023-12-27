@@ -1,4 +1,6 @@
-import openai
+#import openai
+from openai import OpenAI
+
 from sqlalchemy.orm import Session
 
 from entity import crud
@@ -25,16 +27,26 @@ def send_open_ai(db: Session, res: reqChat):
     print(setting.openai_api_key)
     #with retrieve_proxy(db):
     # openai.proxy=""
-    response = openai.ChatCompletion.create(
-            model=openAiUtil.get_open_model(res.model),  # The name of the OpenAI chatbot model to use
-            messages=messageNum['messages'],  # The conversation history up to this point, as a list of dictionaries
-            max_tokens=max_token,  # The maximum number of tokens (words or subwords) in the generated response
-            stop=None,  # The stopping sequence for the generated response, if any (not used here)
-            temperature=res.temperature,  # The "creativity" of the generated response (higher temperature = more creative)
-            stream=True,
-            api_base=setting.openai_api_base,
-            api_key=setting.openai_api_key
-        )
+    client = OpenAI(base_url=setting.openai_api_base, api_key=setting.openai_api_key)
+
+    # response = openai.ChatCompletion.create(
+    #         model=openAiUtil.get_open_model(res.model),  # The name of the OpenAI chatbot model to use
+    #         messages=messageNum['messages'],  # The conversation history up to this point, as a list of dictionaries
+    #         max_tokens=max_token,  # The maximum number of tokens (words or subwords) in the generated response
+    #         stop=None,  # The stopping sequence for the generated response, if any (not used here)
+    #         temperature=res.temperature,  # The "creativity" of the generated response (higher temperature = more creative)
+    #         stream=True,
+    #         api_base=setting.openai_api_base,
+    #         api_key=setting.openai_api_key,
+    #     )
+    response = client.chat.completions.create(
+        model=openAiUtil.get_open_model(res.model),  # The name of the OpenAI chatbot model to use
+        messages=messageNum['messages'],  # The conversation history up to this point, as a list of dictionaries
+        max_tokens=max_token,  # The maximum number of tokens (words or subwords) in the generated response
+        stop=None,  # The stopping sequence for the generated response, if any (not used here)
+        temperature=res.temperature,  # The "creativity" of the generated response (higher temperature = more creative)
+        stream=True
+    )
     return response
 
 def get_history(db: Session, res: reqChat) -> list:

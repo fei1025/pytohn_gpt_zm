@@ -84,6 +84,7 @@ def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
 
     async def event_generator():
         result = openAichat.send_open_ai(db, res)
+        print(result)
         content = ""
         # assistant
         for i in result:

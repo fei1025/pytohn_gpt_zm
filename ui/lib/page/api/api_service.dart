@@ -71,12 +71,25 @@ class ApiService {
       'model': MyAppState().cuModel
     });
     request.headers.addAll({
-      'accept': 'application/json',
+      'accept':"application/json",
       'Content-Type': 'application/json',
     });
     int? _loadingMessageIndex;
     String currentResponse = "";
     final response = await client.send(request);
+    print("这是返回的数据${response.statusCode}");
+    if(response.statusCode != 200){
+      ChatDetails chatDetails = ChatDetails(id: 0, chatId: 0, role: "error", content: "数据异常");
+      chatList.add(chatDetails);
+      MyAppState().setChatDetails(chatList);
+      MyAppState().isSend = false;
+      print('流结束了');
+      // 在异步操作完成时调用回调函数
+      if (onComplete != null) {
+        onComplete();
+      }
+    }
+
     bool isFirstEvent = true;
     ChatDetails chatDetails =ChatDetails(id: 0, chatId: 0, role: "user", content: msg);
     chatList.add(chatDetails);
