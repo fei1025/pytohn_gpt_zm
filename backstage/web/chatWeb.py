@@ -75,6 +75,16 @@ async def save_chat_hist(res: reqChat, db: Session = Depends(get_db)):
     return Result.success([chatHist])
 
 
+#@router.post("/send_open_ai")
+async def send_open_ai1(request: Request):
+    # 获取请求中的所有数据
+    all_data = await  request.json()
+    print(f"接受到的所有数据:{all_data}")
+    # 获取reqChat对象中的特定字段
+    # chat_id = res.chat_id
+    # content = res.content
+    # role = res.role
+
 @router.post("/send_open_ai")
 def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
     if res.chat_id:

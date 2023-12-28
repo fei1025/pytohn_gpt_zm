@@ -67,6 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _demo() {
     final appState = context.read<MyAppState>();
     appState.toggleTheme();
+
   }
   @override
   Widget build(BuildContext context) {
@@ -76,20 +77,33 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     var appState = context.watch<MyAppState>();
 
-    Widget page;
-    switch (selectedIndex) {
-      case 0:
-        page = ChatPageMain();
-        break;
-      case 1:
-        page = FavoritesPage();
-        break;
-      case 2:
-        page = GeneratorPage();
-        break;
-      default:
-        throw UnimplementedError('no widget for $selectedIndex');
+    Widget buildPage() {
+      switch (selectedIndex) {
+        case 0:
+          return ChatPageMain();
+        case 1:
+          return FavoritesPage();
+        case 2:
+          return GeneratorPage();
+        default:
+          throw UnimplementedError('no widget for $selectedIndex');
+      }
     }
+
+    // Widget page;
+    // switch (selectedIndex) {
+    //   case 0:
+    //     page = ChatPageMain();
+    //     break;
+    //   case 1:
+    //     page = FavoritesPage();
+    //     break;
+    //   case 2:
+    //     page = GeneratorPage();
+    //     break;
+    //   default:
+    //     throw UnimplementedError('no widget for $selectedIndex');
+    // }
     return Scaffold(
       body: Row(
         children: [
@@ -111,8 +125,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   NavigationRailDestination(
                     icon: Icon(Icons.favorite),
-                    label: Text('收藏'),
+                    label: Text('知识库'),
                   ),
+
                 ],
                 trailing: Expanded(
                   child: Align(
@@ -126,11 +141,15 @@ class _MyHomePageState extends State<MyHomePage> {
                             onPressed: _demo, // 添加新聊天
                             icon: appState.isDarkMode? const Icon(Icons.brightness_5_outlined):const Icon(Icons.brightness_2_outlined),
                           ),
-
-                          IconButton(
-                            onPressed: _demo, // 添加新聊天
-                            icon: const Icon(Icons.settings),
+                           Text(
+                            appState.isDarkMode?"月":"日",
+                            style: TextStyle(fontSize: 12.0),
                           ),
+                          IconButton(onPressed: (){
+                            setState(() {
+                              selectedIndex = 2;
+                            });
+                          }, icon: const Icon(Icons.settings)),
                           const Text(
                             "设置",
                             style: TextStyle(fontSize: 12.0),
@@ -140,7 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
-                selectedIndex: selectedIndex,
+                selectedIndex: null,
                 onDestinationSelected: (value) {
                   setState(() {
                     selectedIndex = value;
@@ -151,7 +170,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Expanded(
             child: Container(
-              child: page,
+              child: buildPage(),
             ),
           ),
         ],

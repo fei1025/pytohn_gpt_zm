@@ -10,6 +10,7 @@ import 'package:open_ui/page/state.dart';
 import '../model/Chat_hist_list.dart';
 
 class ApiService {
+  //static const String _baseUrl = 'http://127.0.0.1:9011/';
   static const String _baseUrl = 'http://127.0.0.1:6688';
 
   static String getOpenBaseUrl() {
@@ -64,16 +65,20 @@ class ApiService {
     final client = http.Client();
     List<ChatDetails> chatList = MyAppState().chatDetailsList;
     final request = http.Request('POST', Uri.parse(apiUrl));
+    request.headers.addAll({
+      'accept': "application/json",
+      'content-type': 'application/json',
+    });
+
+   //request._contentType
     request.body = json.encode({
       'chat_id': MyAppState().cuChatId,
       'content': msg,
       'role': 'user',
       'model': MyAppState().cuModel
     });
-    request.headers.addAll({
-      'accept': "application/json",
-      'Content-Type': 'application/json',
-    });
+    print("请请求体数据${request.body}");
+
     int? _loadingMessageIndex;
     String currentResponse = "";
     final response = await client.send(request);

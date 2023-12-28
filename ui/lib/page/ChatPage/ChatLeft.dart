@@ -93,7 +93,6 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
                                     actions: <Widget>[
                                       TextButton(
                                           onPressed: () {
-                                            print("chatId:${widget.chatHist.chatId}");
                                             ApiService.delete_chat(widget.chatHist.chatId);
                                             ApiService.getAllHist().then((value) =>context.read<MyAppState>().setChatHistList(value));
                                             appState.setTitle(-1);

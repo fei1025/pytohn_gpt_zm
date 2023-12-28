@@ -50,7 +50,7 @@ class userSetting(BaseModel):
 
 # 请求聊天记录内容表
 class reqChat(BaseModel):
-    chat_id: Optional[str] = None
+    chat_id: Optional[int] = None
     role: Optional[str] = None
     content: Optional[str] = None
     model: Optional[str] = None
