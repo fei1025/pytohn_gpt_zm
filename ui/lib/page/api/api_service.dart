@@ -70,7 +70,7 @@ class ApiService {
       'content-type': 'application/json',
     });
 
-   //request._contentType
+    //request._contentType
     request.body = json.encode({
       'chat_id': MyAppState().cuChatId,
       'content': msg,
@@ -145,6 +145,7 @@ class ApiService {
     await httpUtils.get('$_baseUrl/delete_all_chat');
   }
 
+  // 获取全部的模型
   static Future<List<ChatModel>> getAllModel() async {
     final response = await httpUtils.get('$_baseUrl/get_all_model');
 
@@ -157,5 +158,10 @@ class ApiService {
     } else {
       throw Exception('Failed to load data');
     }
+  }
+
+  static void update_chat(int id, String? model, String? title) async {
+    await httpUtils.post('$_baseUrl/update_chat',
+        json.encode({'chat_id': id, "model": model, "title": title}), null);
   }
 }

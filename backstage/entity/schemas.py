@@ -55,5 +55,6 @@ class reqChat(BaseModel):
     content: Optional[str] = None
     model: Optional[str] = None
     token: Optional[int] = None
+    title: Optional[int] = None
     temperature: Optional[float] = 0.7
-    stream: Optional[bool]  = True
+    stream: Optional[bool] = True

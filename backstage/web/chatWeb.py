@@ -74,8 +74,17 @@ async def save_chat_hist(res: reqChat, db: Session = Depends(get_db)):
     crud.save_chat_hist(db, chatHist)
     return Result.success([chatHist])
 
+@router.post("/update_chat")
+async def update_chat(res: reqChat, db: Session = Depends(get_db)):
+    chatHist = models.chat_hist()
+    chatHist.chat_id = res.chat_id
+    chatHist.model = res.model
+    chatHist.title = reqChat.title
+    crud.update_chat(db, chatHist)
+    return Result.success()
 
-#@router.post("/send_open_ai")
+
+# @router.post("/send_open_ai")
 async def send_open_ai1(request: Request):
     # 获取请求中的所有数据
     all_data = await  request.json()
@@ -84,6 +93,7 @@ async def send_open_ai1(request: Request):
     # chat_id = res.chat_id
     # content = res.content
     # role = res.role
+
 
 @router.post("/send_open_ai")
 def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):

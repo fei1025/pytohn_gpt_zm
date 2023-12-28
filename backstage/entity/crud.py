@@ -88,6 +88,14 @@ def save_chat_hist(db: Session, chatHist: models.chat_hist):
     db.refresh(chatHist)
 
 
+def update_chat(db: Session, chatHist: models.chat_hist):
+    chat_hist = db.query(models.chat_hist).filter(models.chat_hist.chat_id == chatHist.chat_id).first()
+    if chatHist.model:
+        chat_hist.model = chatHist.model
+    if chatHist.title:
+        chat_hist.title = chatHist.title
+
+
 def save_chat_hist_details(db: Session, chatHistDetails: models.chat_hist_details):
     db.add(chatHistDetails)
     db.commit()
