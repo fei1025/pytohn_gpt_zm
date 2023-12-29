@@ -15,14 +15,13 @@ class ChatTitleCard extends StatefulWidget {
   final ChatHist chatHist;
   final VoidCallback onTap;
 
-  const ChatTitleCard({
-    super.key,
-    required this.title,
-    required this.curIndex,
-    required this.onTap,
-    required this.selectIndex,
-    required this.chatHist
-  });
+  const ChatTitleCard(
+      {super.key,
+      required this.title,
+      required this.curIndex,
+      required this.onTap,
+      required this.selectIndex,
+      required this.chatHist});
 
   @override
   _ChatTitleCardState createState() => _ChatTitleCardState();
@@ -31,6 +30,41 @@ class ChatTitleCard extends StatefulWidget {
 class _ChatTitleCardState extends State<ChatTitleCard> {
   bool isHovered = false;
   var isSelect = false;
+
+  void _showEditDialog(String title,int chatId) async {
+   await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        TextEditingController controller = TextEditingController();
+        controller.text=title;
+        return AlertDialog(
+          title: const Text('修改标题'),
+          content: TextField(
+            controller: controller,
+            //decoration: InputDecoration(labelText: title),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                if(title!=controller.text){
+                  ApiService.update_chat(chatId, null, controller.text);
+                  ApiService.getAllHist().then((value) =>context.read<MyAppState>().setChatHistList(value));
+                }
+                Navigator.of(context).pop();
+              },
+              child: Text('确认'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // 取消
+              },
+              child: Text('取消'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +112,7 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
                         InkWell(
                           onTap: () {
                             print("点击修改了");
+                            _showEditDialog(widget.title,widget.chatHist.chatId);
                           },
                           child: const Icon(Icons.edit,
                               size: 20, color: Colors.blueAccent),
@@ -93,8 +128,12 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
                                     actions: <Widget>[
                                       TextButton(
                                           onPressed: () {
-                                            ApiService.delete_chat(widget.chatHist.chatId);
-                                            ApiService.getAllHist().then((value) =>context.read<MyAppState>().setChatHistList(value));
+                                            ApiService.delete_chat(
+                                                widget.chatHist.chatId);
+                                            ApiService.getAllHist().then(
+                                                (value) => context
+                                                    .read<MyAppState>()
+                                                    .setChatHistList(value));
                                             appState.setTitle(-1);
                                             appState.setCuTitle("");
                                             appState.setCuChatId(null);
@@ -112,8 +151,6 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
                                     ]);
                               },
                             );
-
-
                           },
                           child: Icon(Icons.delete_outlined,
                               size: 20, color: Colors.red.shade400),

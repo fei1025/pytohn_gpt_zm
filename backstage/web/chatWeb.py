@@ -76,15 +76,17 @@ async def save_chat_hist(res: reqChat, db: Session = Depends(get_db)):
 
 @router.post("/update_chat")
 async def update_chat(res: reqChat, db: Session = Depends(get_db)):
+    print(res)
     chatHist = models.chat_hist()
     chatHist.chat_id = res.chat_id
     chatHist.model = res.model
-    chatHist.title = reqChat.title
+    chatHist.title = res.title
     crud.update_chat(db, chatHist)
     return Result.success()
 
 
 # @router.post("/send_open_ai")
+#@router.post("/update_chat")
 async def send_open_ai1(request: Request):
     # 获取请求中的所有数据
     all_data = await  request.json()
