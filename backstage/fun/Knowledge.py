@@ -47,7 +47,6 @@ def get_knowledge(knowledge: models.knowledge, db: Session) -> FAISS:
     return FAISS.load_local(index_path, embeddings)
 
 
-
 def get_documents(filepath):
     documents = []
     from langchain.text_splitter import TokenTextSplitter

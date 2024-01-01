@@ -5,7 +5,8 @@
 import 'package:flutter/material.dart';
 import 'package:open_ui/page/ChatPage/ChatPageMain.dart';
 import 'package:open_ui/page/FavoritesPage.dart';
-import 'package:open_ui/page/GeneratorPage/generator.dart';
+import 'package:open_ui/page/knowledge/KnowledgePage.dart';
+import 'package:open_ui/page/setting/SettingPage.dart';
 import 'package:open_ui/page/api/api_service.dart';
 import 'package:open_ui/page/state.dart';
 import 'package:open_ui/windowsUtil.dart';
@@ -82,28 +83,13 @@ class _MyHomePageState extends State<MyHomePage> {
         case 0:
           return ChatPageMain();
         case 1:
-          return FavoritesPage();
+          return KnowledgePage();
         case 2:
-          return GeneratorPage();
+          return SettingPage();
         default:
           throw UnimplementedError('no widget for $selectedIndex');
       }
     }
-
-    // Widget page;
-    // switch (selectedIndex) {
-    //   case 0:
-    //     page = ChatPageMain();
-    //     break;
-    //   case 1:
-    //     page = FavoritesPage();
-    //     break;
-    //   case 2:
-    //     page = GeneratorPage();
-    //     break;
-    //   default:
-    //     throw UnimplementedError('no widget for $selectedIndex');
-    // }
     return Scaffold(
       body: Row(
         children: [

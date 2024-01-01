@@ -27,6 +27,8 @@ dependencies:
   flutter_math_fork: ^0.7.1
   #html tag parser
   html: ^0.15.4
+  # 文件选择器
+  file_selector: ^1.0.1
 
 
 
