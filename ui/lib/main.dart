@@ -55,7 +55,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var selectedIndex = 0; // ← Add this property.
+  int? selectedIndex = 0; // ← Add this property.
+  var curSelectedIndex = 0;
   bool isDarkMode = false;
   @override
   void initState() {
@@ -79,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var appState = context.watch<MyAppState>();
 
     Widget buildPage() {
-      switch (selectedIndex) {
+      switch (curSelectedIndex) {
         case 0:
           return ChatPageMain();
         case 1:
@@ -133,7 +134,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           IconButton(onPressed: (){
                             setState(() {
-                              selectedIndex = 2;
+                              curSelectedIndex = 2;
+                              selectedIndex=null;
                             });
                           }, icon: const Icon(Icons.settings)),
                           const Text(
@@ -145,10 +147,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
-                selectedIndex: null,
+                selectedIndex: selectedIndex,
                 onDestinationSelected: (value) {
                   setState(() {
                     selectedIndex = value;
+                    curSelectedIndex = value;
                   });
                 },
               ),

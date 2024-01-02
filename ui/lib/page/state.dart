@@ -28,6 +28,13 @@ class MyAppState extends ChangeNotifier {
     isDarkMode = !isDarkMode;
     notifyListeners();
   }
+  bool isAlway = false;
+
+  void setIsAlway(bool alway){
+    isAlway=alway;
+    notifyListeners();
+  }
+
 
   int titleIndex = -1;
 

@@ -10,12 +10,12 @@ import 'package:window_manager/window_manager.dart';
 
 import '../../state.dart';
 
-class ChatRightTop extends StatefulWidget {
+class KnowledgeRightTop extends StatefulWidget {
   @override
-  _ChatRightTop createState() => _ChatRightTop();
+  _KnowledgeRightTop createState() => _KnowledgeRightTop();
 }
 
-class _ChatRightTop extends State<ChatRightTop> {
+class _KnowledgeRightTop extends State<KnowledgeRightTop> {
   final FocusNode _focusNode = FocusNode();
   final TextEditingController _textController = TextEditingController();
   bool isMax = false;
@@ -54,12 +54,12 @@ class _ChatRightTop extends State<ChatRightTop> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-          Transform.translate(
-            offset: const Offset(-60, 0), // 控制水平偏移量
-            child:  Text(appState.cuTitle, style: const TextStyle(
-              fontWeight: FontWeight.bold, // 设置为黑体字
-            )),
-          ),
+              Transform.translate(
+                offset: const Offset(-60, 0), // 控制水平偏移量
+                child:  Text(appState.cuTitle, style: const TextStyle(
+                  fontWeight: FontWeight.bold, // 设置为黑体字
+                )),
+              ),
               Text(
                 appState.subhead,
                 style: const TextStyle(
@@ -107,10 +107,10 @@ class _MyPopupMenuButtonState extends State<MyPopupMenuButton> {
   @override
   Widget build(BuildContext context) {
     //Color buttonColor = Theme.of(context).buttonTheme.colorScheme!.primary;
-   TextStyle? textStyle = Theme.of(context).textTheme.titleSmall;
-   var appState = context.watch<MyAppState>();
-   List<ChatModel> chatModelList = MyAppState().chatModelList;
-   return PopupMenuButton<String>(
+    TextStyle? textStyle = Theme.of(context).textTheme.titleSmall;
+    var appState = context.watch<MyAppState>();
+    List<ChatModel> chatModelList = MyAppState().chatModelList;
+    return PopupMenuButton<String>(
       onSelected: (String value) {
         setState(() {
           ChatModel chatModel = chatModelList[int.parse(value)];
