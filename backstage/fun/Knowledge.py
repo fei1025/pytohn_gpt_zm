@@ -3,11 +3,14 @@ import logging
 import os
 
 from langchain.embeddings import OpenAIEmbeddings
-from langchain import FAISS
+from langchain.vectorstores import FAISS
+
 from sqlalchemy.orm import Session
 
 from langchain.document_loaders import PyPDFLoader
 from entity import models, crud
+import pandas as pd
+from langchain.schema import Document
 
 
 # 创建一个知识库
@@ -29,6 +32,7 @@ def create_knowledge(knowledge: models.knowledge, db: Session):
     crud.save_knowledge(db, knowledge)
 
 
+
 def add_knowledge(knowledge: models.knowledge, db: Session):
     index_path = knowledge.index_path
     setting = crud.get_user_setting(db)
@@ -47,36 +51,48 @@ def get_knowledge(knowledge: models.knowledge, db: Session) -> FAISS:
     return FAISS.load_local(index_path, embeddings)
 
 
-def get_documents(filepath):
+def get_documents(filepath) -> []:
     documents = []
     from langchain.text_splitter import TokenTextSplitter
     text_splitter = TokenTextSplitter(chunk_size=500, chunk_overlap=30)
     filename = os.path.basename(filepath)
     file_type = os.path.splitext(filename)[1]
     texts = None
-    if file_type == ".pdf":
-        loader = PyPDFLoader(filepath)
-        texts = loader.load()
-    elif file_type == ".docx":
-        logging.debug("Loading Word...")
-        from langchain.document_loaders import UnstructuredWordDocumentLoader
-        loader = UnstructuredWordDocumentLoader(filepath)
-        texts = loader.load()
-    elif file_type == ".pptx":
-        logging.debug("Loading PowerPoint...")
-        from langchain.document_loaders import UnstructuredPowerPointLoader
-        loader = UnstructuredPowerPointLoader(filepath)
-        texts = loader.load()
-    elif file_type == ".epub":
-        logging.debug("Loading EPUB...")
-        from langchain.document_loaders import UnstructuredEPubLoader
-        loader = UnstructuredEPubLoader(filepath)
-        texts = loader.load()
-    else:
-        logging.debug("Loading text file...")
-        from langchain.document_loaders import TextLoader
-        loader = TextLoader(filepath, "utf8")
-        texts = loader.load()
+    try:
+        if file_type == ".pdf":
+            loader = PyPDFLoader(filepath)
+            texts = loader.load()
+        elif file_type == ".docx":
+            logging.debug("Loading Word...")
+            from langchain.document_loaders import UnstructuredWordDocumentLoader
+            loader = UnstructuredWordDocumentLoader(filepath)
+            texts = loader.load()
+        elif file_type == ".pptx":
+            logging.debug("Loading PowerPoint...")
+            from langchain.document_loaders import UnstructuredPowerPointLoader
+            loader = UnstructuredPowerPointLoader(filepath)
+            texts = loader.load()
+        elif file_type == ".epub":
+            logging.debug("Loading EPUB...")
+            from langchain.document_loaders import UnstructuredEPubLoader
+            loader = UnstructuredEPubLoader(filepath)
+            texts = loader.load()
+        elif file_type == ".xlsx":
+            logging.debug("Loading Excel...")
+            text_list = excel_to_string(filepath)
+            texts = []
+            for elem in text_list:
+                texts.append(Document(page_content=elem,
+                                      metadata={"source": filepath}))
+        else:
+            logging.debug("Loading text file...")
+            from langchain.document_loaders import TextLoader
+            loader = TextLoader(filepath, "utf8")
+            texts = loader.load()
+    except Exception as e:
+        import traceback
+        logging.error(f"Error loading file: {filename}")
+        traceback.print_exc()
     if texts is not None:
         texts = text_splitter.split_documents(texts)
         documents.extend(texts)
@@ -91,3 +107,30 @@ def string_to_md5(string):
     # 获取 MD5 哈希值
     md5_value = md5_hash.hexdigest()
     return md5_value
+
+
+def excel_to_string(file_path):
+    # 读取Excel文件中的所有工作表
+    excel_file = pd.read_excel(file_path, engine='openpyxl', sheet_name=None)
+
+    # 初始化结果字符串
+    result = []
+
+    # 遍历每一个工作表
+    for sheet_name, sheet_data in excel_file.items():
+        # 处理当前工作表并添加到结果字符串
+        result += sheet_to_string(sheet_data, sheet_name=sheet_name)
+
+    return result
+
+
+def sheet_to_string(sheet, sheet_name=None):
+    result = []
+    for index, row in sheet.iterrows():
+        row_string = ""
+        for column in sheet.columns:
+            row_string += f"{column}: {row[column]}, "
+        row_string = row_string.rstrip(", ")
+        row_string += "."
+        result.append(row_string)
+    return result

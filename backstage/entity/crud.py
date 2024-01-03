@@ -97,7 +97,6 @@ def update_chat(db: Session, chatHist: models.chat_hist):
     db.commit()
 
 
-
 def save_chat_hist_details(db: Session, chatHistDetails: models.chat_hist_details):
     db.add(chatHistDetails)
     db.commit()
@@ -132,3 +131,27 @@ def save_knowledge(db: Session, knowledge: models.knowledge):
 
 def get_knowledge(db: Session, knowledge: models.knowledge) -> models.knowledge:
     return db.query(models.knowledge).filter(models.knowledge.id == knowledge.id)
+
+
+def delete_knowledge(db: Session, knowledge: models.knowledge):
+    db.query(models.knowledge).filter(models.knowledge.id == knowledge.id).delete()
+    db.query(models.knowledge_file).filter(models.knowledge_file.knowledge_id == knowledge.id).delete()
+    db.commit()
+
+
+def get_all_knowledge(db: Session):
+    return db.query(models.knowledge).all()
+
+
+def save_knowledge_file(db: Session, file: models.knowledge_file) -> [models.knowledge_file]:
+    db.add(file)
+    db.commit()
+    db.refresh(file)
+
+
+def get_knowledge_file(db: Session, knowledge: models.knowledge):
+    return db.query(models.knowledge_file).filter(models.knowledge_file.knowledge_id == knowledge.id).all()
+
+
+def get_knowledge_file_ma5(db: Session, md5: str) -> models.knowledge_file:
+    return db.query(models.knowledge_file).filter(models.knowledge_file.content_md5 == md5).first()

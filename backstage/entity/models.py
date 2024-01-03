@@ -66,9 +66,18 @@ class chat_hist_details(Base):
 
 class knowledge(Base):
     __tablename__ = "knowledge_info"
-    id = Column(Integer, primary_key=True,autoincrement=True, index=True)
-    knowledge_name = Column(String, default=None,comment="知识库的名字")
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    knowledge_name = Column(String, default=None, comment="知识库的名字")
     file_path = Column(String, default=None, comment="文件路径")
     file_summarize = Column(String, default=None, comment="文章总结")
     index_name = Column(String, default=None, comment="索引名称")
     index_path = Column(String, default=None, comment="索引名称")
+
+
+class knowledge_file(Base):
+    __tablename__ = "knowledge_file"
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    knowledge_id = Column(String, default=None, comment="主表id")
+    content_md5 = Column(String, default=None, comment="文件md5")
+    file_name = Column(String, default=None, comment="文件名字")
+    file_path = Column(String, default=None, comment="文件路径")

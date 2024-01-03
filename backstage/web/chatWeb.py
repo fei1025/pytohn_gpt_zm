@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Query
+import os
+
+from fastapi import APIRouter, Query, UploadFile, File, Form
 
 from fastapi import Depends, Request
 from sqlalchemy.orm import Session
@@ -12,6 +14,7 @@ from entity import models, schemas, crud
 from sse_starlette.sse import EventSourceResponse
 
 from entity.schemas import reqChat, userSetting
+import fun.Knowledge as kn
 
 router = APIRouter()
 
@@ -74,6 +77,7 @@ async def save_chat_hist(res: reqChat, db: Session = Depends(get_db)):
     crud.save_chat_hist(db, chatHist)
     return Result.success([chatHist])
 
+
 @router.post("/update_chat")
 async def update_chat(res: reqChat, db: Session = Depends(get_db)):
     print(res)
@@ -86,7 +90,7 @@ async def update_chat(res: reqChat, db: Session = Depends(get_db)):
 
 
 # @router.post("/send_open_ai")
-#@router.post("/update_chat")
+# @router.post("/update_chat")
 async def send_open_ai1(request: Request):
     # 获取请求中的所有数据
     all_data = await  request.json()
@@ -136,3 +140,51 @@ def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
 
     g = event_generator()
     return EventSourceResponse(g)
+
+
+file_type = [
+    ".pdf", ".docx", ".pptx", ".epub", ".xlsx"
+]
+
+
+@router.post("/upload_check")
+async def upload_check(request: Request, db: Session = Depends(get_db)):
+    all_data = await  request.json()
+    knowledge_file = crud.get_knowledge_file_ma5(db, all_data['md5'])
+    if knowledge_file is None:
+        return Result.success()
+    else:
+        return Result.error("文件已存在")
+
+
+@router.post("/uploadKnowledge")
+async def upload_file_Knowledge(file: UploadFile = File(...), fileId: str = Form(...), md5: str = Form(...),
+                                db: Session = Depends(get_db)):
+    # 获取文件内容
+    file_content = await file.read()
+    # 指定保存路径
+    save_directory = "uploads"
+
+    # 如果目录不存在，递归创建目录
+    if not os.path.exists(save_directory):
+        os.makedirs(save_directory)
+
+    # 拼接保存路径
+    save_path = os.path.join(save_directory, file.filename)
+    # 保存文件到指定路径
+    with open(save_path, "wb") as f:
+        f.write(file_content)
+    know = models.knowledge(file_path=save_path)
+    kn.create_knowledge(know, db)
+    kow_file = models.knowledge_file(
+        knowledge_id=know.id,
+        content_md5=md5,
+        file_name=file.filename,
+        file_path=save_path
+    )
+    crud.save_knowledge_file(db, kow_file)
+    return {"filename": file.filename, "fileId": fileId, "save_path": save_path}
+
+
+async def get_all_Knowledge():
+    pass

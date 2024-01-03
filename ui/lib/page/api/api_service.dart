@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:convert';
 import 'dart:ffi';
 import 'package:flutter/cupertino.dart';
@@ -148,7 +150,6 @@ class ApiService {
   // 获取全部的模型
   static Future<List<ChatModel>> getAllModel() async {
     final response = await httpUtils.get('$_baseUrl/get_all_model');
-
     if (response.statusCode == 200) {
       String responseBody = utf8.decode(response.bodyBytes);
 
@@ -160,8 +161,36 @@ class ApiService {
     }
   }
 
+  // 修改标题
   static void update_chat(int id, String? model, String? title) async {
     await httpUtils.post('$_baseUrl/update_chat',
         json.encode({'chat_id': id, "model": model, "title": title}), null);
+  }
+
+  // 检查数据
+  static Future<Map<String, dynamic>> upload_check(String? md5) async {
+    final response = await httpUtils.post(
+        '$_baseUrl/upload_check', json.encode({'md5': md5}), null);
+    String responseBody = utf8.decode(response.bodyBytes);
+    print("返回数据:${responseBody}");
+    Map<String, dynamic> jsonMap = json.decode(responseBody);
+    return jsonMap;
+  }
+
+  //创建新的知识库
+  static void uploadFileWithParams(String path, String? id,String md5) async {
+    var request =
+        http.MultipartRequest('POST', Uri.parse('$_baseUrl/uploadKnowledge'));
+    request.files.add(await http.MultipartFile.fromPath('file', path));
+    // Add additional parameters
+    request.fields['fileId'] = 'id';
+    request.fields['md5'] = md5;
+    try {
+      http.Response response =
+          await http.Response.fromStream(await request.send());
+      print('Response: ${response.body}');
+    } catch (e) {
+      print('Error uploading file: $e');
+    }
   }
 }

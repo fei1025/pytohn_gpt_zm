@@ -28,7 +28,9 @@ dependencies:
   #html tag parser
   html: ^0.15.4
   # 文件选择器
-  file_selector: ^1.0.1
+  #file_selector: ^1.0.1
+  file_picker: ^6.1.1
+  crypto: ^3.0.1
 
 
 
