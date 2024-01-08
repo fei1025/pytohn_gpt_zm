@@ -25,7 +25,7 @@ class _ChatRightSenMsg extends State<ChatRightSenMsg> {
         List<ChatHist> chatHistList  = await ApiService.saveChatHist(text);
         ChatHist chatHist = chatHistList[0];
         appState.setCuChatId(chatHist.chatId);
-        List<ChatHist> chatHistList2 =  await ApiService.getAllHist();
+        List<ChatHist> chatHistList2 =  await ApiService.getAllHist("0");
         appState.setChatHistList(chatHistList2);
       }
 

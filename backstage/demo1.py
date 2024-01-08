@@ -12,9 +12,8 @@ from entity import models, schemas, crud
 
 from sse_starlette.sse import EventSourceResponse
 
-from web import chatWeb
+from web import chatWeb,knowledgeWeb
 
-from entity.schemas import reqChat
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -24,6 +23,7 @@ app = FastAPI()
 
 
 app.include_router(chatWeb.router)
+app.include_router(knowledgeWeb.router)
 
 
 @app.post("/users/", response_model=schemas.User)

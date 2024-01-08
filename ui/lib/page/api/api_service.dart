@@ -19,8 +19,8 @@ class ApiService {
     return _baseUrl;
   }
 
-  static Future<List<ChatHist>> getAllHist() async {
-    final response = await httpUtils.get('$_baseUrl/getAllHist');
+  static Future<List<ChatHist>> getAllHist(String type) async {
+    final response = await httpUtils.get('$_baseUrl/getAllHist?type=$type');
     if (response.statusCode == 200) {
       String responseBody = utf8.decode(response.bodyBytes);
 

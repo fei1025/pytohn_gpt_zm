@@ -32,7 +32,6 @@ def create_knowledge(knowledge: models.knowledge, db: Session):
     crud.save_knowledge(db, knowledge)
 
 
-
 def add_knowledge(knowledge: models.knowledge, db: Session):
     index_path = knowledge.index_path
     setting = crud.get_user_setting(db)
@@ -45,6 +44,7 @@ def add_knowledge(knowledge: models.knowledge, db: Session):
 
 def get_knowledge(knowledge: models.knowledge, db: Session) -> FAISS:
     load_knowledge = crud.get_knowledge(db, knowledge)
+    print(f"load_knowledge{load_knowledge}")
     index_path = load_knowledge.index_path
     setting = crud.get_user_setting(db)
     embeddings = OpenAIEmbeddings(openai_api_base=setting.openai_api_base, openai_api_key=setting.openai_api_key)
