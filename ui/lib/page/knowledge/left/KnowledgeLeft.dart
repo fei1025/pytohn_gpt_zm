@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'KnowledgeLeftMain.dart';
 import 'KnowledgeLeftTop.dart';
 
 class KnowledgeLeft extends StatefulWidget {
@@ -16,10 +17,9 @@ class _KnowledgeLeftState extends State<KnowledgeLeft> {
     return const Column(
       children: [
         Expanded(flex: 1, child: KnowledgeLeftTop()),
-         Divider(
-          height: 0.1,
-        ),
-        Expanded(flex:9,child: Text("这里是主要内容"))
+        Divider( height: 0.1, ),
+
+        Expanded(flex:9,child: KnowledgeLeftMain())
       ],
     );
   }

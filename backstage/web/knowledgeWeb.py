@@ -30,13 +30,14 @@ def loadVectorstore(knowledgeId: int, db: Session = Depends(get_db)):
     return Result.success()
 
 
-@router.post("/getAllKnowledge")
+@router.get("/getAllKnowledge")
 def getAllKnowledge(db: Session = Depends(get_db)):
     knowledgeList = crud.get_all_knowledge(db)
     return Result.success(knowledgeList)
 
+
 @router.post("/getKnowledgeDetail")
-def getKnowledgeDetail(knowledgeId:int,db: Session = Depends(get_db)):
+def getKnowledgeDetail(knowledgeId: int, db: Session = Depends(get_db)):
     pass
 
 
@@ -49,7 +50,7 @@ def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
         print("保存历史记录")
         chatHist = models.chat_hist()
         chatHist.title = res.content
-        chatHist.type='1'
+        chatHist.type = '1'
         crud.save_chat_hist(db, chatHist)
         res.chat_id = chatHist.chat_id
 
@@ -82,7 +83,7 @@ async def upload_check(request: Request, db: Session = Depends(get_db)):
 
 
 @router.post("/uploadKnowledge")
-async def upload_file_Knowledge(file: UploadFile = File(...), fileId: str = Form(...), md5: str = Form(...),
+async def upload_file_Knowledge(file: UploadFile = File(...), knowledge_name: str = Form(...), md5: str = Form(...),
                                 db: Session = Depends(get_db)):
     # 获取文件内容
     file_content = await file.read()
@@ -99,6 +100,7 @@ async def upload_file_Knowledge(file: UploadFile = File(...), fileId: str = Form
     with open(save_path, "wb") as f:
         f.write(file_content)
     know = models.knowledge(file_path=save_path)
+    know.knowledge_name=knowledge_name
     kn.create_knowledge(know, db)
     kow_file = models.knowledge_file(
         knowledge_id=know.id,
@@ -107,6 +109,4 @@ async def upload_file_Knowledge(file: UploadFile = File(...), fileId: str = Form
         file_path=save_path
     )
     crud.save_knowledge_file(db, kow_file)
-    return {"filename": file.filename, "fileId": fileId, "save_path": save_path}
-
-
+    return {"filename": file.filename, "fileId": knowledge_name, "save_path": save_path}
