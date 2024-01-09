@@ -13,6 +13,8 @@ import pandas as pd
 from langchain.schema import Document
 
 
+
+
 # 创建一个知识库
 def create_knowledge(knowledge: models.knowledge, db: Session):
     setting = crud.get_user_setting(db)
@@ -30,7 +32,6 @@ def create_knowledge(knowledge: models.knowledge, db: Session):
     knowledge.index_name = index_name
     knowledge.index_path = index_path
     crud.save_knowledge(db, knowledge)
-
 
 
 def add_knowledge(knowledge: models.knowledge, db: Session):
