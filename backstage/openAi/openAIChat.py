@@ -1,4 +1,4 @@
-#import openai
+# import openai
 from openai import OpenAI
 
 from sqlalchemy.orm import Session
@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from entity import crud
 from entity.openAi_entity import TrimMessagesInput
 from entity.schemas import reqChat
-from openAi  import openAiUtil
+from openAi import openAiUtil
 from openAi.config import retrieve_proxy
 
 
@@ -25,7 +25,7 @@ def send_open_ai(db: Session, res: reqChat):
     max_token = openAiUtil.get_max_tokens(openAiUtil.get_open_model(res.model)) - messageNum['num']
     print(setting.openai_api_base)
     print(setting.openai_api_key)
-    #with retrieve_proxy(db):
+    # with retrieve_proxy(db):
     client = OpenAI(base_url=setting.openai_api_base, api_key=setting.openai_api_key)
     response = client.chat.completions.create(
         model=openAiUtil.get_open_model(res.model),  # The name of the OpenAI chatbot model to use
@@ -36,6 +36,7 @@ def send_open_ai(db: Session, res: reqChat):
         stream=True
     )
     return response
+
 
 def get_history(db: Session, res: reqChat) -> list:
     chat_id = res.chat_id

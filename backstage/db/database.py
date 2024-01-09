@@ -12,7 +12,8 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
-
+# https://zhuanlan.zhihu.com/p/455265421
+# 数据库更新 使用python -m 执行新的命令
 # Dependency
 def get_db():
     db = SessionLocal()

@@ -48,7 +48,7 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
               onPressed: () {
                 if(title!=controller.text){
                   ApiService.update_chat(chatId, null, controller.text);
-                  ApiService.getAllHist().then((value) =>context.read<MyAppState>().setChatHistList(value));
+                  ApiService.getAllHist("0").then((value) =>context.read<MyAppState>().setChatHistList(value));
                 }
                 Navigator.of(context).pop();
               },
@@ -130,7 +130,7 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
                                           onPressed: () {
                                             ApiService.delete_chat(
                                                 widget.chatHist.chatId);
-                                            ApiService.getAllHist().then(
+                                            ApiService.getAllHist("0").then(
                                                 (value) => context
                                                     .read<MyAppState>()
                                                     .setChatHistList(value));

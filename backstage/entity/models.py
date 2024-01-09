@@ -52,12 +52,14 @@ class chat_hist(Base):
     title = Column(String, index=True)
     creation_time = Column(Date, default=datetime.now())
     model = Column(String)
+    type = Column(String)
 
 
 class chat_hist_details(Base):
     __tablename__ = "chat_hist_details"
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     chat_id = Column(Integer, default=None)
+    other_data= Column(String, default=None,comment="其他备注数据")
     role = Column(String, default=None)
     content = Column(String, default=None)
     token_num = Column(String, default=None)
