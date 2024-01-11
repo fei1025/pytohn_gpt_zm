@@ -116,7 +116,7 @@ class _KnowledgeLeftTopState extends State<KnowledgeLeftTop> {
                     children: [
                       SizedBox(width: 10),
                       Icon(Icons.add),
-                      Text("添加",
+                      Text("新增",
                           style: TextStyle(
                             fontWeight: FontWeight.bold, // 设置字体粗细
                           ))
@@ -137,7 +137,7 @@ class _KnowledgeLeftTopState extends State<KnowledgeLeftTop> {
                       builder: (BuildContext context) {
                         return AlertDialog(
                             title: const Text('删除'),
-                            content: const Text('你确定要删除全部聊天记录吗?'),
+                            content: const Text('你确定要删除全部知识库吗?'),
                             actions: <Widget>[
                               TextButton(
                                   onPressed: () {

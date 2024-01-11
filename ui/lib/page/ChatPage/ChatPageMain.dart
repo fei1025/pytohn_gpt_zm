@@ -22,7 +22,6 @@ class _ChatPageMain extends State<ChatPageMain> {
 
   @override
   Widget build(BuildContext context) {
-    int selectInt = -1;
     var appState = context.watch<MyAppState>();
     List<ChatHist> chatHistList = appState.chatHistList;
 
@@ -73,8 +72,7 @@ class _ChatPageMain extends State<ChatPageMain> {
                                 ApiService.getChatDetails(appState.cuChatId).then((value) =>appState.setChatDetails(value));
                                 appState.setTitle(index);
                               });
-                            },
-                            selectIndex: selectInt,
+                            }
                           );
                         }),
                   ),

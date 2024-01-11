@@ -101,4 +101,16 @@ class MyAppState extends ChangeNotifier {
     subhead = s;
     notifyListeners();
   }
+
+  // 知识库信息数据
+
+  int KnowledgelIndex = -1;
+  void setKnowledgelIndex(int index) {
+    KnowledgelIndex = index;
+    notifyListeners();
+  }
+
+
+
+
 }

@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:open_ui/page/api/api_service.dart';
+import 'package:open_ui/page/knowledge/left/KnowledgeLeftCard.dart';
 import 'package:open_ui/page/model/knowledgeInfo.dart';
+import 'package:open_ui/page/state.dart';
+import 'package:provider/provider.dart';
 
 class KnowledgeLeftMain extends StatefulWidget {
   const KnowledgeLeftMain({super.key});
@@ -11,9 +14,13 @@ class KnowledgeLeftMain extends StatefulWidget {
 }
 
 class _KnowledgeLeftMainState extends State<KnowledgeLeftMain> {
- // List<KnowledgeInfo> knowledgeInfoList =  ApiService.getAllKnowledge() as List<KnowledgeInfo>;
+  int selectInt = -1;
+
+  // List<KnowledgeInfo> knowledgeInfoList =  ApiService.getAllKnowledge() as List<KnowledgeInfo>;
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+
     return FutureBuilder<List<KnowledgeInfo>>(
       future: ApiService.getAllKnowledge(),
       builder: (context, snapshot) {
@@ -31,7 +38,11 @@ class _KnowledgeLeftMainState extends State<KnowledgeLeftMain> {
               itemCount: knowledgeInfoList.length,
               itemBuilder: (context, index) {
                 KnowledgeInfo title = knowledgeInfoList[index];
-                return Text(title.knowledge_name);
+                return KnowledgeLeftCard(curIndex:index,selectIndex:selectInt,knowledgeInfo:title,onTap:(){
+                  appState.setKnowledgelIndex(index);
+
+
+                });
               },
             ),
           );
