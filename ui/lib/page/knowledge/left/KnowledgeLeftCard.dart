@@ -42,16 +42,19 @@ class _KnowledgeLeftCardState extends State<KnowledgeLeftCard> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                if (title != controller.text) {}
+                if (title != controller.text) {
+
+
+                }
                 Navigator.of(context).pop();
               },
-              child: Text('确认'),
+              child: const Text('确认'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // 取消
               },
-              child: Text('取消'),
+              child: const Text('取消'),
             ),
           ],
         );
@@ -103,7 +106,6 @@ class _KnowledgeLeftCardState extends State<KnowledgeLeftCard> {
                       children: [
                         InkWell(
                           onTap: () {
-                            print("点击修改了");
                             _showEditDialog(widget.knowledgeInfo.knowledge_name,
                                 widget.knowledgeInfo.id);
                           },

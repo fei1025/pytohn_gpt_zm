@@ -96,10 +96,7 @@ async def send_open_ai1(request: Request):
     # 获取请求中的所有数据
     all_data = await  request.json()
     print(f"接受到的所有数据:{all_data}")
-    # 获取reqChat对象中的特定字段
-    # chat_id = res.chat_id
-    # content = res.content
-    # role = res.role
+
 
 
 @router.post("/send_open_ai")

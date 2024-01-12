@@ -103,8 +103,8 @@ def save_chat_hist_details(db: Session, chatHistDetails: models.chat_hist_detail
     db.refresh(chatHistDetails)
 
 
-def get_all_Hist(db: Session,type:str):
-    return db.query(models.chat_hist).filter(models.chat_hist.type==type).all()
+def get_all_Hist(db: Session, type: str):
+    return db.query(models.chat_hist).filter(models.chat_hist.type == type).all()
 
 
 def get_chat_hist_details(db: Session, chatId: int) -> List[models.chat_hist_details]:
@@ -141,6 +141,12 @@ def delete_knowledge(db: Session, knowledge: models.knowledge):
 
 def get_all_knowledge(db: Session) -> [models.knowledge]:
     return db.query(models.knowledge).all()
+
+
+def edit_knowledge_name(db: Session, knowledge: models.knowledge):
+    data = db.query(models.knowledge).filter(models.knowledge.id == knowledge.id).first()
+    data.knowledge_name = knowledge.knowledge_name
+    db.commit()
 
 
 def save_knowledge_file(db: Session, file: models.knowledge_file) -> [models.knowledge_file]:

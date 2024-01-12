@@ -25,7 +25,7 @@ class _KnowledgeLeftMainState extends State<KnowledgeLeftMain> {
       future: ApiService.getAllKnowledge(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return Text("");
         } else if (snapshot.hasError) {
           return Text('错误：${snapshot.error}');
         } else if (!snapshot.hasData) {
@@ -40,7 +40,6 @@ class _KnowledgeLeftMainState extends State<KnowledgeLeftMain> {
                 KnowledgeInfo title = knowledgeInfoList[index];
                 return KnowledgeLeftCard(curIndex:index,selectIndex:selectInt,knowledgeInfo:title,onTap:(){
                   appState.setKnowledgelIndex(index);
-
 
                 });
               },

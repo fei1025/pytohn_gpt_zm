@@ -30,6 +30,13 @@ def loadVectorstore(knowledgeId: int, db: Session = Depends(get_db)):
     return Result.success()
 
 
+@router.post("/editKnowledgeName")
+def editKnowledgeName(res: reqChat, db: Session = Depends(get_db)):
+    knowledge = models.knowledge(id=res.knowledge_id,knowledge_name=res.title)
+
+    pass
+
+
 @router.get("/getAllKnowledge")
 def getAllKnowledge(db: Session = Depends(get_db)):
     knowledgeList = crud.get_all_knowledge(db)
@@ -100,7 +107,7 @@ async def upload_file_Knowledge(file: UploadFile = File(...), knowledge_name: st
     with open(save_path, "wb") as f:
         f.write(file_content)
     know = models.knowledge(file_path=save_path)
-    know.knowledge_name=knowledge_name
+    know.knowledge_name = knowledge_name
     kn.create_knowledge(know, db)
     kow_file = models.knowledge_file(
         knowledge_id=know.id,
