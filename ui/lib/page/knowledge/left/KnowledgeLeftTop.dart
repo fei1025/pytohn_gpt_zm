@@ -17,28 +17,16 @@ class KnowledgeLeftTop extends StatefulWidget {
 
 class _KnowledgeLeftTopState extends State<KnowledgeLeftTop> {
   bool isButtonDisabled = false;
+  List<File> fileList = [];
 
   void _openFile1() async {
     print("开始上传文件了");
 
     FilePickerResult? result = await FilePicker.platform.pickFiles();
-    print("选择文件");
-    print("isButtonDisabled:$isButtonDisabled");
-
     if (result != null) {
-      print("文件名字:${result.files.single.name}");
       File file = File(result.files.single.path!);
-      var md51 = md5.convert(await file.readAsBytes());
-      print("当前文件的的md5:${md51.toString()}");
-      //Map<String, dynamic> map = await ApiService.upload_check(md51.toString());
-      // if(map['code'] == 500){
-      //   showToast("",context);
-      // }
-      ApiService.uploadFileWithParams(result.files.single.path!, "", md51.toString());
-      print("isButtonDisabled:$isButtonDisabled");
-      _showToast("文件上传完成");
+      fileList.add(file);
     } else {
-      // User canceled the picker
     }
   }
 
@@ -77,8 +65,18 @@ class _KnowledgeLeftTopState extends State<KnowledgeLeftTop> {
           ),
           actions: <Widget>[
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 print(controller.text);
+                for (var i = 0; i < fileList.length; i++) {
+                 File file = fileList[i];
+                 var md51 = md5.convert( await file.readAsBytes());
+                 ApiService.uploadFileWithParams(file.path, controller.text, md51.toString());
+
+                }
+
+                _showToast("文件上传完成");
+
+
                 Navigator.of(context).pop();
               },
               child: Text('确认'),
@@ -118,7 +116,7 @@ class _KnowledgeLeftTopState extends State<KnowledgeLeftTop> {
                     children: [
                       SizedBox(width: 10),
                       Icon(Icons.add),
-                      Text("添加",
+                      Text("新增",
                           style: TextStyle(
                             fontWeight: FontWeight.bold, // 设置字体粗细
                           ))
@@ -139,7 +137,7 @@ class _KnowledgeLeftTopState extends State<KnowledgeLeftTop> {
                       builder: (BuildContext context) {
                         return AlertDialog(
                             title: const Text('删除'),
-                            content: const Text('你确定要删除全部聊天记录吗?'),
+                            content: const Text('你确定要删除全部知识库吗?'),
                             actions: <Widget>[
                               TextButton(
                                   onPressed: () {

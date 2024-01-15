@@ -10,6 +10,7 @@ import 'package:open_ui/page/model/Chat_model.dart';
 import 'package:open_ui/page/state.dart';
 
 import '../model/Chat_hist_list.dart';
+import '../model/knowledgeInfo.dart';
 
 class ApiService {
   //static const String _baseUrl = 'http://127.0.0.1:9011/';
@@ -170,7 +171,7 @@ class ApiService {
   // 检查数据
   static Future<Map<String, dynamic>> upload_check(String? md5) async {
     final response = await httpUtils.post(
-        '$_baseUrl/upload_check', json.encode({'md5': md5}), null);
+        '$_baseUrl/knowledge/upload_check', json.encode({'md5': md5}), null);
     String responseBody = utf8.decode(response.bodyBytes);
     print("返回数据:${responseBody}");
     Map<String, dynamic> jsonMap = json.decode(responseBody);
@@ -178,12 +179,12 @@ class ApiService {
   }
 
   //创建新的知识库
-  static void uploadFileWithParams(String path, String? id,String md5) async {
+  static void uploadFileWithParams(String path, String knowledge_name,String md5) async {
     var request =
-        http.MultipartRequest('POST', Uri.parse('$_baseUrl/uploadKnowledge'));
+        http.MultipartRequest('POST', Uri.parse('$_baseUrl/knowledge/uploadKnowledge'));
     request.files.add(await http.MultipartFile.fromPath('file', path));
     // Add additional parameters
-    request.fields['fileId'] = 'id';
+    request.fields['knowledge_name'] = 'knowledge_name';
     request.fields['md5'] = md5;
     try {
       http.Response response =
@@ -193,4 +194,21 @@ class ApiService {
       print('Error uploading file: $e');
     }
   }
+  // 获取全部的知识库
+  static Future<List<KnowledgeInfo>> getAllKnowledge() async{
+//index_path
+    final response = await httpUtils.get('$_baseUrl/knowledge/getAllKnowledge');
+    if (response.statusCode == 200) {
+      String responseBody = utf8.decode(response.bodyBytes);
+
+      Map<String, dynamic> jsonMap = json.decode(responseBody);
+      KnowledgeInfoList apiData = KnowledgeInfoList.fromJson(jsonMap);
+      print("返回的数据${apiData.data}");
+      return apiData.data;
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+
 }

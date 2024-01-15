@@ -1,42 +1,40 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:open_ui/page/api/api_service.dart';
-import 'package:open_ui/page/model/Chat_hist_list.dart';
+import 'package:open_ui/page/model/knowledgeInfo.dart';
+import 'package:open_ui/page/state.dart';
 import 'package:provider/provider.dart';
 
-import '../state.dart';
-
-class ChatTitleCard extends StatefulWidget {
-  final String title;
+class KnowledgeLeftCard extends StatefulWidget {
   final int curIndex;
-  final ChatHist chatHist;
+  final int selectIndex;
+  final KnowledgeInfo knowledgeInfo;
   final VoidCallback onTap;
 
-  const ChatTitleCard(
+  const KnowledgeLeftCard(
       {super.key,
-      required this.title,
       required this.curIndex,
-      required this.onTap,
-      required this.chatHist});
+      required this.selectIndex,
+      required this.knowledgeInfo,
+      required this.onTap});
 
   @override
-  _ChatTitleCardState createState() => _ChatTitleCardState();
+  State<KnowledgeLeftCard> createState() => _KnowledgeLeftCardState();
 }
 
-class _ChatTitleCardState extends State<ChatTitleCard> {
+class _KnowledgeLeftCardState extends State<KnowledgeLeftCard> {
+  // 是否悬浮上去
   bool isHovered = false;
   var isSelect = false;
 
-  void _showEditDialog(String title,int chatId) async {
-   await showDialog(
+  void _showEditDialog(String title, int chatId) async {
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
         TextEditingController controller = TextEditingController();
-        controller.text=title;
+        controller.text = title;
         return AlertDialog(
-          title: const Text('修改标题'),
+          title: const Text('修改名字'),
           content: TextField(
             controller: controller,
             //decoration: InputDecoration(labelText: title),
@@ -44,19 +42,19 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                if(title!=controller.text){
-                  ApiService.update_chat(chatId, null, controller.text);
-                  ApiService.getAllHist("0").then((value) =>context.read<MyAppState>().setChatHistList(value));
+                if (title != controller.text) {
+
+
                 }
                 Navigator.of(context).pop();
               },
-              child: Text('确认'),
+              child: const Text('确认'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // 取消
               },
-              child: Text('取消'),
+              child: const Text('取消'),
             ),
           ],
         );
@@ -67,9 +65,8 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    var titleIndex = appState.titleIndex;
+    var knowledgelIndex = appState.KnowledgelIndex;
     return Card(
-      //color: theme.colorScheme.primary,
       child: InkWell(
         borderRadius: BorderRadius.circular(10.0),
         onHover: (bool key) {
@@ -86,10 +83,10 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: widget.curIndex == titleIndex
+              color: widget.curIndex == knowledgelIndex
                   ? !appState.isDarkMode
-                      ? Theme.of(context).primaryColor
-                      : Theme.of(context).primaryColorDark.withOpacity(0.5)
+                  ? Theme.of(context).primaryColor
+                  : Theme.of(context).primaryColorDark.withOpacity(0.5)
                   : Colors.transparent,
               width: 2.0,
             ),
@@ -99,9 +96,9 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
             minLeadingWidth: 10,
             minVerticalPadding: 10,
             dense: true,
-            selected: widget.curIndex == titleIndex,
-            title: Text(widget.title),
-            trailing: isHovered || (widget.curIndex == titleIndex)
+            selected: widget.curIndex == knowledgelIndex,
+            title: Text(widget.knowledgeInfo.knowledge_name),
+            trailing: isHovered || (widget.curIndex == knowledgelIndex)
                 ? Transform.translate(
                     offset: const Offset(10, 0),
                     child: Row(
@@ -109,8 +106,8 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
                       children: [
                         InkWell(
                           onTap: () {
-                            print("点击修改了");
-                            _showEditDialog(widget.title,widget.chatHist.chatId);
+                            _showEditDialog(widget.knowledgeInfo.knowledge_name,
+                                widget.knowledgeInfo.id);
                           },
                           child: const Icon(Icons.edit,
                               size: 20, color: Colors.blueAccent),
@@ -126,16 +123,10 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
                                     actions: <Widget>[
                                       TextButton(
                                           onPressed: () {
-                                            ApiService.delete_chat(
-                                                widget.chatHist.chatId);
-                                            ApiService.getAllHist("0").then(
-                                                (value) => context
-                                                    .read<MyAppState>()
-                                                    .setChatHistList(value));
-                                            appState.setTitle(-1);
-                                            appState.setCuTitle("");
-                                            appState.setCuChatId(null);
-                                            appState.setChatDetails([]);
+                                            // appState.setTitle(-1);
+                                            // appState.setCuTitle("");
+                                            // appState.setCuChatId(null);
+                                            // appState.setChatDetails([]);
                                             // 关闭弹窗
                                             Navigator.of(context).pop();
                                           },
