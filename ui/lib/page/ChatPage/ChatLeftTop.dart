@@ -95,8 +95,9 @@ class _ChatLeftTop extends State<ChatLeftTop> {
             appState.setTitle(-1);
             appState.setCuChatId(null);
             appState.setChatDetails([]);
-          }, child:Row(children:[ const SizedBox(width: 10),Icon(Icons.add),Text("新的聊天",style: TextStyle(
-            fontWeight: FontWeight.bold, // 设置字体粗细
+          }, child:const Row(children:[ SizedBox(width: 10),Icon(Icons.add),Text("新的聊天",style: TextStyle(
+            //fontWeight: FontWeight.bold, // 设置字体粗细
+            fontSize: 15
           ))],),
           ),
         ),

@@ -42,6 +42,7 @@ class MyApp extends StatelessWidget {
                //colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
               visualDensity: VisualDensity.adaptivePlatformDensity,
               brightness:themeProvider.isDarkMode ? Brightness.dark : Brightness.light,
+              fontFamily: "微软雅黑",
             ),
             home: MyHomePage(),
           );
