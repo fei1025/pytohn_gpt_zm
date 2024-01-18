@@ -101,16 +101,17 @@ class MyAppState extends ChangeNotifier {
     subhead = s;
     notifyListeners();
   }
-
   // 知识库信息数据
-
-  int KnowledgelIndex = -1;
-  void setKnowledgelIndex(int index) {
-    KnowledgelIndex = index;
+  int knowledgeIndex = -1;
+  void setKnowledgeIndex(int index) {
+    knowledgeIndex = index;
     notifyListeners();
   }
-
-
-
+  String knowledgeTitle="";
+  void setKnowledgeTitle(String s){
+    knowledgeTitle=s;
+    notifyListeners();
+  }
+  String cuKnowledgeModel = "0";
 
 }

@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:open_ui/page/api/api_service.dart';
+import 'package:open_ui/page/state.dart';
+import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:crypto/crypto.dart';
 
@@ -16,85 +18,12 @@ class KnowledgeLeftTop extends StatefulWidget {
 }
 
 class _KnowledgeLeftTopState extends State<KnowledgeLeftTop> {
-  bool isButtonDisabled = false;
-  List<File> fileList = [];
 
-  void _openFile1() async {
-    print("开始上传文件了");
-
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-    if (result != null) {
-      File file = File(result.files.single.path!);
-      fileList.add(file);
-    } else {
-    }
-  }
-
-  _showToast(String msg, {int? duration, int? position}) {
-    FlutterToastr.show(msg, context, duration: duration, position: position);
-  }
-
-  void _showEditDialog() async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        TextEditingController controller = TextEditingController();
-        return AlertDialog(
-          title: const Text('添加知识库'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: controller,
-                decoration: const InputDecoration(labelText: "名字"),
-              ),
-              TextButton(
-                onPressed: isButtonDisabled ? null : () => {_openFile1()},
-                child: const Row(
-                  children: [
-                    Text("点击上传文件",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold, // 设置字体粗细
-                        )),
-                    SizedBox(height: 30),
-                    Icon(Icons.file_upload),
-                  ],
-                ),
-              )
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () async {
-                print(controller.text);
-                for (var i = 0; i < fileList.length; i++) {
-                 File file = fileList[i];
-                 var md51 = md5.convert( await file.readAsBytes());
-                 ApiService.uploadFileWithParams(file.path, controller.text, md51.toString());
-
-                }
-
-                _showToast("文件上传完成");
-
-
-                Navigator.of(context).pop();
-              },
-              child: Text('确认'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // 取消
-              },
-              child: Text('取消'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+
     return GestureDetector(
         behavior: HitTestBehavior.translucent,
         onPanUpdate: (details) {
@@ -111,15 +40,14 @@ class _KnowledgeLeftTopState extends State<KnowledgeLeftTop> {
                 // margin: const EdgeInsets.only(right: 15,top: 25,bottom: 10,left: 5),
                 padding: const EdgeInsets.only(left: 0, bottom: 0, top: 15),
                 child: TextButton(
-                  onPressed: () => _showEditDialog(),
+                  onPressed: () => {
+                    appState.setKnowledgeIndex(-1)
+                  },
                   child: const Row(
                     children: [
                       SizedBox(width: 10),
                       Icon(Icons.add),
-                      Text("新增",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold, // 设置字体粗细
-                          ))
+                      Text("新的聊天",style: TextStyle(fontSize: 15),)
                     ],
                   ),
                 ),

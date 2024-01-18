@@ -29,12 +29,12 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
   bool isHovered = false;
   var isSelect = false;
 
-  void _showEditDialog(String title,int chatId) async {
-   await showDialog(
+  void _showEditDialog(String title, int chatId) async {
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
         TextEditingController controller = TextEditingController();
-        controller.text=title;
+        controller.text = title;
         return AlertDialog(
           title: const Text('修改标题'),
           content: TextField(
@@ -44,9 +44,12 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                if(title!=controller.text){
-                  ApiService.update_chat(chatId, null, controller.text);
-                  ApiService.getAllHist("0").then((value) =>context.read<MyAppState>().setChatHistList(value));
+                if (title != controller.text) {
+                  ApiService.update_chat(chatId, null, controller.text)
+                      .then((value) {
+                    ApiService.getAllHist("0").then((value) =>
+                        context.read<MyAppState>().setChatHistList(value));
+                  });
                 }
                 Navigator.of(context).pop();
               },
@@ -110,7 +113,8 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
                         InkWell(
                           onTap: () {
                             print("点击修改了");
-                            _showEditDialog(widget.title,widget.chatHist.chatId);
+                            _showEditDialog(
+                                widget.title, widget.chatHist.chatId);
                           },
                           child: const Icon(Icons.edit,
                               size: 20, color: Colors.blueAccent),

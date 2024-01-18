@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:open_ui/page/api/api_service.dart';
 import 'package:open_ui/page/knowledge/left/KnowledgeLeftCard.dart';
+import 'package:open_ui/page/model/Chat_hist_list.dart';
 import 'package:open_ui/page/model/knowledgeInfo.dart';
 import 'package:open_ui/page/state.dart';
 import 'package:provider/provider.dart';
@@ -21,8 +22,9 @@ class _KnowledgeLeftMainState extends State<KnowledgeLeftMain> {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
 
-    return FutureBuilder<List<KnowledgeInfo>>(
-      future: ApiService.getAllKnowledge(),
+    return FutureBuilder<List<ChatHist>>(
+        //ApiService.getAllHist("0").then((value) =>context.read<MyAppState>().setChatHistList(value));
+      future:  ApiService.getAllHist("1"),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Text("");
@@ -31,16 +33,14 @@ class _KnowledgeLeftMainState extends State<KnowledgeLeftMain> {
         } else if (!snapshot.hasData) {
           return Text('没有可用的数据'); // 处理没有数据的情况
         } else {
-          List<KnowledgeInfo> knowledgeInfoList = snapshot.data!;
-        print("长度${knowledgeInfoList[0].knowledge_name}");
+          List<ChatHist> knowledgeInfoList = snapshot.data!;
           return Scaffold(
             body: ListView.builder(
               itemCount: knowledgeInfoList.length,
               itemBuilder: (context, index) {
-                KnowledgeInfo title = knowledgeInfoList[index];
+                ChatHist title = knowledgeInfoList[index];
                 return KnowledgeLeftCard(curIndex:index,selectIndex:selectInt,knowledgeInfo:title,onTap:(){
-                  appState.setKnowledgelIndex(index);
-
+                  appState.setKnowledgeIndex(index);
                 });
               },
             ),

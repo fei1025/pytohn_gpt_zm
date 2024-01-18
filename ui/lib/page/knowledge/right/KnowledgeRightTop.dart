@@ -16,8 +16,6 @@ class KnowledgeRightTop extends StatefulWidget {
 }
 
 class _KnowledgeRightTop extends State<KnowledgeRightTop> {
-  final FocusNode _focusNode = FocusNode();
-  final TextEditingController _textController = TextEditingController();
   bool isMax = false;
 
   @override
@@ -31,11 +29,6 @@ class _KnowledgeRightTop extends State<KnowledgeRightTop> {
     });
   }
 
-  @override
-  void dispose() {
-    _focusNode.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +39,8 @@ class _KnowledgeRightTop extends State<KnowledgeRightTop> {
         leadingWidth: 200,
         leading: Container(
           height: 20,
-          margin: EdgeInsets.only(top: 20,right: 5),
-          padding: EdgeInsets.only(top: 5,left: 5,bottom: 5),
+          margin: const EdgeInsets.only(top: 20,right: 5),
+          padding: const EdgeInsets.only(top: 5,left: 5,bottom: 5),
           child: MyPopupMenuButton(),
         ),
         title:  Center(
@@ -56,7 +49,7 @@ class _KnowledgeRightTop extends State<KnowledgeRightTop> {
             children: [
               Transform.translate(
                 offset: const Offset(-60, 0), // 控制水平偏移量
-                child:  Text(appState.cuTitle, style: const TextStyle(
+                child:  Text(appState.knowledgeTitle, style: const TextStyle(
                   fontWeight: FontWeight.bold, // 设置为黑体字
                 )),
               ),
@@ -130,10 +123,9 @@ class _MyPopupMenuButtonState extends State<MyPopupMenuButton> {
       },
       offset: Offset(0, 40),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(selectedValue,style: textStyle, overflow: TextOverflow.ellipsis,), // 显示选中的值
-          SizedBox(width: 8),
           Icon(Icons.arrow_drop_down), // 向下箭头图标
         ],
       ), // 设置弹出菜单的位置

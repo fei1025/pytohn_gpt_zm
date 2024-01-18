@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:open_ui/page/api/api_service.dart';
+import 'package:open_ui/page/model/Chat_hist_list.dart';
 import 'package:open_ui/page/model/knowledgeInfo.dart';
 import 'package:open_ui/page/state.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +9,7 @@ import 'package:provider/provider.dart';
 class KnowledgeLeftCard extends StatefulWidget {
   final int curIndex;
   final int selectIndex;
-  final KnowledgeInfo knowledgeInfo;
+  final ChatHist knowledgeInfo;
   final VoidCallback onTap;
 
   const KnowledgeLeftCard(
@@ -34,7 +35,7 @@ class _KnowledgeLeftCardState extends State<KnowledgeLeftCard> {
         TextEditingController controller = TextEditingController();
         controller.text = title;
         return AlertDialog(
-          title: const Text('修改名字'),
+          title: const Text('修改标题'),
           content: TextField(
             controller: controller,
             //decoration: InputDecoration(labelText: title),
@@ -43,18 +44,21 @@ class _KnowledgeLeftCardState extends State<KnowledgeLeftCard> {
             TextButton(
               onPressed: () {
                 if (title != controller.text) {
-
-
+                  ApiService.update_chat(chatId, null, controller.text)
+                      .then((value) {
+                    ApiService.getAllHist("0").then((value) =>
+                        context.read<MyAppState>().setChatHistList(value));
+                  });
                 }
                 Navigator.of(context).pop();
               },
-              child: const Text('确认'),
+              child: Text('确认'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // 取消
               },
-              child: const Text('取消'),
+              child: Text('取消'),
             ),
           ],
         );
@@ -62,10 +66,11 @@ class _KnowledgeLeftCardState extends State<KnowledgeLeftCard> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    var knowledgelIndex = appState.KnowledgelIndex;
+    var knowledgelIndex = appState.knowledgeIndex;
     return Card(
       child: InkWell(
         borderRadius: BorderRadius.circular(10.0),
@@ -97,7 +102,7 @@ class _KnowledgeLeftCardState extends State<KnowledgeLeftCard> {
             minVerticalPadding: 10,
             dense: true,
             selected: widget.curIndex == knowledgelIndex,
-            title: Text(widget.knowledgeInfo.knowledge_name),
+            title: Text(widget.knowledgeInfo.title),
             trailing: isHovered || (widget.curIndex == knowledgelIndex)
                 ? Transform.translate(
                     offset: const Offset(10, 0),
@@ -106,8 +111,7 @@ class _KnowledgeLeftCardState extends State<KnowledgeLeftCard> {
                       children: [
                         InkWell(
                           onTap: () {
-                            _showEditDialog(widget.knowledgeInfo.knowledge_name,
-                                widget.knowledgeInfo.id);
+                            _showEditDialog(widget.knowledgeInfo.title,widget.knowledgeInfo.chatId);
                           },
                           child: const Icon(Icons.edit,
                               size: 20, color: Colors.blueAccent),

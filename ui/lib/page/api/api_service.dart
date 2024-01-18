@@ -163,7 +163,7 @@ class ApiService {
   }
 
   // 修改标题
-  static void update_chat(int id, String? model, String? title) async {
+  static Future<void> update_chat(int id, String? model, String? title) async {
     await httpUtils.post('$_baseUrl/update_chat',
         json.encode({'chat_id': id, "model": model, "title": title}), null);
   }
