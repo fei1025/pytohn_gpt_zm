@@ -6,6 +6,7 @@ import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:open_ui/page/api/api_service.dart';
 import 'package:open_ui/page/model/knowledgeInfo.dart';
 import 'package:open_ui/page/state.dart';
+import 'package:open_ui/page/uiModule/uiModel.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
 
@@ -19,14 +20,20 @@ class HorizontalList extends StatefulWidget {
 class _HorizontalListState extends State<HorizontalList> {
   bool isButtonDisabled = false;
   List<File> fileList = [];
+  List<String> fileName=[];
 
-  void _openFile1() async {
+  void _openFile1(StateSetter _setState) async {
+    print("_setState${_setState}");
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
       File file = File(result.files.single.path!);
-      fileList.add(file);
-    } else {
-    }
+      print("名字${result.files.single.name}");
+      _setState(() {
+        fileName.add( result.files.single.name);
+        fileList.add(file);
+
+      });
+    } else {}
   }
 
   _showToast(String msg, {int? duration, int? position}) {
@@ -34,33 +41,54 @@ class _HorizontalListState extends State<HorizontalList> {
   }
 
   void _showEditDialog() async {
+    StateSetter _setState;
     await showDialog(
       context: context,
       builder: (BuildContext context) {
         TextEditingController controller = TextEditingController();
         return AlertDialog(
+            contentPadding: EdgeInsets.all(0.0),
           title: const Text('添加知识库'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: controller,
-                decoration: const InputDecoration(labelText: "名字"),
-              ),
-              TextButton(
-                onPressed: isButtonDisabled ? null : () => {_openFile1()},
-                child: const Row(
-                  children: [
-                    Text("点击上传文件",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold, // 设置字体粗细
-                        )),
-                    SizedBox(height: 30),
-                    Icon(Icons.file_upload),
-                  ],
-                ),
-              )
-            ],
+          content: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                _setState = setState;
+                return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: controller,
+                    decoration: const InputDecoration(labelText: "名字"),
+                  ),
+                  SizedBox(
+                    height: 100,
+                    child: Scaffold(
+                      body: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: fileName.length,
+                          itemBuilder: (context, index) {
+                            return Text(fileName[index],style: TextStyle(fontSize: 12),);
+                          }
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: isButtonDisabled ? null : () => {_openFile1(_setState)},
+                    child: const Row(
+                      children: [
+                        Text("点击上传文件",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold, // 设置字体粗细
+                            )),
+                        SizedBox(height: 30),
+                 //       Spacer(), // 添加这个以增加间距
+
+                        Icon(Icons.file_upload),
+                      ],
+                    ),
+                  )
+                ],
+              );
+            }
           ),
           actions: <Widget>[
             TextButton(
@@ -68,9 +96,9 @@ class _HorizontalListState extends State<HorizontalList> {
                 print(controller.text);
                 for (var i = 0; i < fileList.length; i++) {
                   File file = fileList[i];
-                  var md51 = md5.convert( await file.readAsBytes());
-                  ApiService.uploadFileWithParams(file.path, controller.text, md51.toString());
-
+                  var md51 = md5.convert(await file.readAsBytes());
+                  ApiService.uploadFileWithParams(
+                      file.path, controller.text, md51.toString());
                 }
                 _showToast("文件上传完成");
                 Navigator.of(context).pop();
@@ -104,7 +132,7 @@ class _HorizontalListState extends State<HorizontalList> {
         } else {
           List<KnowledgeInfo> knowledgeInfoList = snapshot.data!;
           return ListView.builder(
-            itemCount: 1 , // 设置为实际数据的长度
+            itemCount: 1, // 设置为实际数据的长度
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.all(2.0),
@@ -115,7 +143,8 @@ class _HorizontalListState extends State<HorizontalList> {
                   // 列之间的间距
                   runSpacing: 8.0,
                   // 行之间的间距
-                  children: List.generate(knowledgeInfoList.length + 1, (index) {
+                  children:
+                      List.generate(knowledgeInfoList.length + 1, (index) {
                     if (index == 0) {
                       return InkWell(
                           onTap: _showEditDialog,
@@ -129,8 +158,8 @@ class _HorizontalListState extends State<HorizontalList> {
                           },
                           child: Card(
                               elevation: 3.0, // 卡片的阴影
-                              child:
-                              buildContent(knowledgeInfoList[index-1], context)));
+                              child: buildContent(
+                                  knowledgeInfoList[index - 1], context)));
                     }
                   }),
                 ),
@@ -148,7 +177,7 @@ class _HorizontalListState extends State<HorizontalList> {
         height: 0.618 * 150,
         padding: const EdgeInsets.all(10),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
                 flex: 8,
@@ -161,7 +190,17 @@ class _HorizontalListState extends State<HorizontalList> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        editTitleDialog(context, knowledgeInfo.knowledge_name,
+                            knowledgeInfo.id, (s) {
+                          if (knowledgeInfo.knowledge_name != s) {
+                            ApiService.editKnowledgeName(knowledgeInfo.id, s)
+                                .then((value) {
+                              setState(() {});
+                            });
+                          }
+                        });
+                      },
                       child: const Icon(Icons.edit,
                           size: 20, color: Colors.blueAccent),
                     ),
@@ -176,10 +215,9 @@ class _HorizontalListState extends State<HorizontalList> {
                                 actions: <Widget>[
                                   TextButton(
                                       onPressed: () {
-                                        // appState.setTitle(-1);
-                                        // appState.setCuTitle("");
-                                        // appState.setCuChatId(null);
-                                        // appState.setChatDetails([]);
+                                        ApiService.delete_Knowledge(
+                                                knowledgeInfo.id)
+                                            .then((value) => setState(() {}));
                                         // 关闭弹窗
                                         Navigator.of(context).pop();
                                       },

@@ -14,7 +14,6 @@ import json
 
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
-# from langchain_openai import  OpenAIEmbeddings
 from langchain_community.chat_models.openai import ChatOpenAI
 
 

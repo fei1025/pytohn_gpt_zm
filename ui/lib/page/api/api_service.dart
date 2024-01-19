@@ -210,5 +210,12 @@ class ApiService {
     }
   }
 
+  static Future<void> editKnowledgeName(int id,  String title) async{
+    await httpUtils.post('$_baseUrl/knowledge/editKnowledgeName',
+        json.encode({'knowledge_id': id,  "title": title}), null);
+  }
 
+  static Future<void> delete_Knowledge(int id) async {
+    await httpUtils.get('$_baseUrl/knowledge/deleteKnowledge?knowledgeId=$id');
+  }
 }

@@ -133,9 +133,9 @@ def get_knowledge(db: Session, knowledge: models.knowledge) -> models.knowledge:
     return db.query(models.knowledge).filter(models.knowledge.id == knowledge.id).first()
 
 
-def delete_knowledge(db: Session, knowledge: models.knowledge):
-    db.query(models.knowledge).filter(models.knowledge.id == knowledge.id).delete()
-    db.query(models.knowledge_file).filter(models.knowledge_file.knowledge_id == knowledge.id).delete()
+def delete_knowledge(db: Session, id: int):
+    db.query(models.knowledge).filter(models.knowledge.id == id).delete()
+    db.query(models.knowledge_file).filter(models.knowledge_file.knowledge_id == id).delete()
     db.commit()
 
 

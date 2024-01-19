@@ -32,15 +32,21 @@ def loadVectorstore(knowledgeId: int, db: Session = Depends(get_db)):
 
 @router.post("/editKnowledgeName")
 def editKnowledgeName(res: reqChat, db: Session = Depends(get_db)):
-    knowledge = models.knowledge(id=res.knowledge_id,knowledge_name=res.title)
-
-    pass
+    knowledge = models.knowledge(id=res.knowledge_id, knowledge_name=res.title)
+    crud.edit_knowledge_name(db=db, knowledge=knowledge)
+    return Result.success()
 
 
 @router.get("/getAllKnowledge")
 def getAllKnowledge(db: Session = Depends(get_db)):
     knowledgeList = crud.get_all_knowledge(db)
     return Result.success(knowledgeList)
+
+
+@router.get("/deleteKnowledge")
+def deleteKnowledge(knowledgeId: int, db: Session = Depends(get_db)):
+    crud.delete_knowledge(db, knowledgeId)
+    return Result.success()
 
 
 @router.post("/getKnowledgeDetail")
