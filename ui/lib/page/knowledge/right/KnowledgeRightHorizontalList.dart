@@ -75,13 +75,13 @@ class _HorizontalListState extends State<HorizontalList> {
                 _showToast("文件上传完成");
                 Navigator.of(context).pop();
               },
-              child: Text('确认'),
+              child: const Text('确认'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // 取消
               },
-              child: Text('取消'),
+              child: const Text('取消'),
             ),
           ],
         );

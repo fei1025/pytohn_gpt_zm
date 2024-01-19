@@ -8,11 +8,10 @@ from langchain.agents import initialize_agent, AgentType
 from langchain.callbacks import StdOutCallbackHandler
 from langchain.callbacks.base import BaseCallbackHandler
 
-from langchain.callbacks.manager import CallbackManager
-from langchain.chat_models import ChatOpenAI
-from langchain.embeddings import OpenAIEmbeddings
+# from langchain_community.chat_models import ChatOpenAI
+from langchain_community.chat_models.openai import ChatOpenAI
 from langchain.schema import LLMResult, AgentAction, AgentFinish
-from langchain.tools import WolframAlphaQueryRun, format_tool_to_openai_function
+from langchain_community.tools import WolframAlphaQueryRun, format_tool_to_openai_function
 from langchain.utils import print_text
 
 os.environ['OPENAI_API_KEY'] = 'sb-48ce6279f88e82c385dfc0a1d0feb964f4ea485874f9aeb9'

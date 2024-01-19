@@ -1,7 +1,7 @@
 import os
 # 流输出
 # https://blog.csdn.net/q506610466/article/details/132790633
-from langchain.llms import OpenAI
+from langchain_community.llms import OpenAI
 from langchain.schema import HumanMessage
 from langchain.memory import ConversationSummaryMemory
 
@@ -10,7 +10,7 @@ from langchain.memory import ConversationSummaryMemory
 #openai_api_key=   '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'
 openai_api_key = 'sb-48ce6279f88e82c385dfc0a1d0feb964f4ea485874f9aeb9'
 
-from langchain.chat_models import ChatOpenAI
+from langchain_community.chat_models.openai import ChatOpenAI
 
 # 设置HTTP代理的地址和端口
 http_proxy = "http://127.0.0.1:3208"

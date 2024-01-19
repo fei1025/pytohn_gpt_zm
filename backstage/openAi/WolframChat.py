@@ -8,12 +8,12 @@ from langchain.callbacks.manager import CallbackManager
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.utilities.wolfram_alpha import WolframAlphaAPIWrapper
 from langchain.chains import LLMMathChain
-from langchain.llms import OpenAI
+from langchain_community.llms import OpenAI
 from langchain.utilities import SerpAPIWrapper
 from langchain.utilities import SQLDatabase
 from langchain.agents import initialize_agent, Tool
 from langchain.agents import AgentType
-from langchain.chat_models import ChatOpenAI
+from langchain_community.chat_models.openai import ChatOpenAI
 from langchain.agents.agent_toolkits import SQLDatabaseToolkit
 from langchain.schema import SystemMessage, HumanMessage, LLMResult
 from langchain.tools import WolframAlphaQueryRun, format_tool_to_openai_function

@@ -2,12 +2,12 @@ import hashlib
 import logging
 import os
 
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import FAISS
+from langchain_community.embeddings.openai import OpenAIEmbeddings
+from langchain_community.vectorstores import FAISS
 
 from sqlalchemy.orm import Session
 
-from langchain.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader
 from entity import models, crud
 import pandas as pd
 from langchain.schema import Document
@@ -23,8 +23,10 @@ def create_knowledge(knowledge: models.knowledge, db: Session):
     embeddings = OpenAIEmbeddings(openai_api_base=setting.openai_api_base,
                                   openai_api_key=setting.openai_api_key)
     file_src = knowledge.file_path
+    print("开始加载索引")
     documents = get_documents(file_src)
     index = FAISS.from_documents(documents, embeddings)
+    print("索引加载完成")
     # os.makedirs("./index", exist_ok=True)
     index_name = string_to_md5(file_src)
     index_path = index_path + "/" + index_name
@@ -62,21 +64,22 @@ def get_documents(filepath) -> []:
     texts = None
     try:
         if file_type == ".pdf":
+
             loader = PyPDFLoader(filepath)
             texts = loader.load()
         elif file_type == ".docx":
             logging.debug("Loading Word...")
-            from langchain.document_loaders import UnstructuredWordDocumentLoader
+            from langchain_community.document_loaders import UnstructuredWordDocumentLoader
             loader = UnstructuredWordDocumentLoader(filepath)
             texts = loader.load()
         elif file_type == ".pptx":
             logging.debug("Loading PowerPoint...")
-            from langchain.document_loaders import UnstructuredPowerPointLoader
+            from langchain_community.document_loaders import UnstructuredPowerPointLoader
             loader = UnstructuredPowerPointLoader(filepath)
             texts = loader.load()
         elif file_type == ".epub":
             logging.debug("Loading EPUB...")
-            from langchain.document_loaders import UnstructuredEPubLoader
+            from langchain_community.document_loaders import UnstructuredEPubLoader
             loader = UnstructuredEPubLoader(filepath)
             texts = loader.load()
         elif file_type == ".xlsx":
@@ -88,7 +91,7 @@ def get_documents(filepath) -> []:
                                       metadata={"source": filepath}))
         else:
             logging.debug("Loading text file...")
-            from langchain.document_loaders import TextLoader
+            from langchain_community.document_loaders import TextLoader
             loader = TextLoader(filepath, "utf8")
             texts = loader.load()
     except Exception as e:
