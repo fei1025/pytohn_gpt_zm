@@ -13,10 +13,8 @@ import pandas as pd
 from langchain.schema import Document
 
 
-
-
 # 创建一个知识库
-def create_knowledge(knowledge: models.knowledge, db: Session):
+async def create_knowledge(knowledge: models.knowledge, db: Session):
     setting = crud.get_user_setting(db)
 
     index_path = "./index/paper"
@@ -36,7 +34,7 @@ def create_knowledge(knowledge: models.knowledge, db: Session):
     crud.save_knowledge(db, knowledge)
 
 
-def add_knowledge(knowledge: models.knowledge, db: Session):
+async def add_knowledge(knowledge: models.knowledge, db: Session):
     index_path = knowledge.index_path
     setting = crud.get_user_setting(db)
     embeddings = OpenAIEmbeddings(openai_api_base=setting.openai_api_base, openai_api_key=setting.openai_api_key)

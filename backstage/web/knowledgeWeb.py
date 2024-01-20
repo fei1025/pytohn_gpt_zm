@@ -114,7 +114,7 @@ async def upload_file_Knowledge(file: UploadFile = File(...), knowledge_name: st
         f.write(file_content)
     know = models.knowledge(file_path=save_path)
     know.knowledge_name = knowledge_name
-    kn.create_knowledge(know, db)
+    await kn.create_knowledge(know, db)
     kow_file = models.knowledge_file(
         knowledge_id=know.id,
         content_md5=md5,

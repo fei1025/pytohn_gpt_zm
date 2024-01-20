@@ -21,6 +21,9 @@ class _HorizontalListState extends State<HorizontalList> {
   bool isButtonDisabled = false;
   List<File> fileList = [];
   List<String> fileName=[];
+  //var commentWidgets = List<Widget>;
+  List<Widget> commentWidgets=[];
+
 
   void _openFile1(StateSetter _setState) async {
     print("_setState${_setState}");
@@ -31,6 +34,7 @@ class _HorizontalListState extends State<HorizontalList> {
       _setState(() {
         fileName.add( result.files.single.name);
         fileList.add(file);
+        commentWidgets.add(Text(result.files.single.name));
 
       });
     } else {}
@@ -47,7 +51,7 @@ class _HorizontalListState extends State<HorizontalList> {
       builder: (BuildContext context) {
         TextEditingController controller = TextEditingController();
         return AlertDialog(
-            contentPadding: EdgeInsets.all(0.0),
+            contentPadding: EdgeInsets.all(10.0),
           title: const Text('添加知识库'),
           content: StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
@@ -59,15 +63,17 @@ class _HorizontalListState extends State<HorizontalList> {
                     controller: controller,
                     decoration: const InputDecoration(labelText: "名字"),
                   ),
-                  SizedBox(
-                    height: 100,
-                    child: Scaffold(
-                      body: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: fileName.length,
-                          itemBuilder: (context, index) {
-                            return Text(fileName[index],style: TextStyle(fontSize: 12),);
-                          }
+                  SelectionArea(
+                    child: SizedBox(
+                      height: 100,
+                      child: Scaffold(
+                        body: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: fileName.length,
+                            itemBuilder: (context, index) {
+                              return Text(fileName[index],style: TextStyle(fontSize: 12),);
+                            }
+                        ),
                       ),
                     ),
                   ),
