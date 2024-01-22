@@ -20,22 +20,17 @@ class HorizontalList extends StatefulWidget {
 class _HorizontalListState extends State<HorizontalList> {
   bool isButtonDisabled = false;
   List<File> fileList = [];
-  List<String> fileName=[];
-  //var commentWidgets = List<Widget>;
-  List<Widget> commentWidgets=[];
-
+  List<String> fileName = [];
 
   void _openFile1(StateSetter _setState) async {
-    print("_setState${_setState}");
+
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
       File file = File(result.files.single.path!);
       print("名字${result.files.single.name}");
       _setState(() {
-        fileName.add( result.files.single.name);
+        fileName.add(result.files.single.name);
         fileList.add(file);
-        commentWidgets.add(Text(result.files.single.name));
-
       });
     } else {}
   }
@@ -45,57 +40,67 @@ class _HorizontalListState extends State<HorizontalList> {
   }
 
   void _showEditDialog() async {
+    fileList.clear();
+    fileName.clear();
     StateSetter _setState;
     await showDialog(
       context: context,
       builder: (BuildContext context) {
         TextEditingController controller = TextEditingController();
         return AlertDialog(
-            contentPadding: EdgeInsets.all(10.0),
+          contentPadding: EdgeInsets.all(10.0),
           title: const Text('添加知识库'),
           content: StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
-                _setState = setState;
-                return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: controller,
-                    decoration: const InputDecoration(labelText: "名字"),
+            _setState = setState;
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: controller,
+                  decoration: const InputDecoration(
+                    filled: true,
+                    labelText: "名字",
+                    // border: const OutlineInputBorder(
+                    //   borderRadius:
+                    //       BorderRadius.all(Radius.circular(10.0)), //圆角边框
+                    // ),
                   ),
-                  SelectionArea(
-                    child: SizedBox(
-                      height: 100,
-                      child: Scaffold(
-                        body: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: fileName.length,
-                            itemBuilder: (context, index) {
-                              return Text(fileName[index],style: TextStyle(fontSize: 12),);
-                            }
-                        ),
-                      ),
+                ),
+                const SizedBox(height: 10),
+                fileName.isNotEmpty? SelectionArea(
+                  child: SizedBox(
+                    height: 50,
+                    width: 300,
+                    child: Scaffold(
+                      body: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: fileName.length,
+                          itemBuilder: (context, index) {
+                            return _buildListItem(context,index,_setState);
+                          }),
                     ),
                   ),
-                  TextButton(
-                    onPressed: isButtonDisabled ? null : () => {_openFile1(_setState)},
-                    child: const Row(
-                      children: [
-                        Text("点击上传文件",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold, // 设置字体粗细
-                            )),
-                        SizedBox(height: 30),
-                 //       Spacer(), // 添加这个以增加间距
+                ):
+                TextButton(
+                  onPressed:
+                      isButtonDisabled ? null : () => {_openFile1(_setState)},
+                  child: const Row(
+                    children: [
+                      Text("点击上传文件",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold, // 设置字体粗细
+                          )),
+                      SizedBox(height: 30),
+                      //       Spacer(), // 添加这个以增加间距
 
-                        Icon(Icons.file_upload),
-                      ],
-                    ),
-                  )
-                ],
-              );
-            }
-          ),
+                      Icon(Icons.file_upload),
+                    ],
+                  ),
+                )
+              ],
+            );
+          }),
           actions: <Widget>[
             TextButton(
               onPressed: () async {
@@ -122,6 +127,26 @@ class _HorizontalListState extends State<HorizontalList> {
       },
     );
   }
+
+  Widget _buildListItem(BuildContext context, int index,StateSetter _setState) {
+    final theme = Theme.of(context);
+    final downloadController = fileName[index];
+
+    return ListTile(
+      title: Text(
+        downloadController,
+        overflow: TextOverflow.ellipsis,
+        style: theme.textTheme.titleSmall,
+      ),
+      trailing: IconButton(onPressed: (){
+        _setState(() {
+          fileList.removeAt(index);
+          fileName.removeAt(index);
+        });
+      }, icon: Icon(Icons.delete)),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -196,6 +221,11 @@ class _HorizontalListState extends State<HorizontalList> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     InkWell(
+                      onTap:_showEditDialog,
+                      child: Icon(Icons.add_circle_outline,
+                          size: 20,color: Colors.blueAccent),
+                    ),
+                    InkWell(
                       onTap: () {
                         editTitleDialog(context, knowledgeInfo.knowledge_name,
                             knowledgeInfo.id, (s) {
@@ -241,6 +271,7 @@ class _HorizontalListState extends State<HorizontalList> {
                       child: Icon(Icons.delete_outlined,
                           size: 20, color: Colors.red.shade400),
                     ),
+
                   ],
                 ))
           ],
