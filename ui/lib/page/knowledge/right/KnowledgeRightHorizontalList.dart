@@ -39,7 +39,7 @@ class _HorizontalListState extends State<HorizontalList> {
     FlutterToastr.show(msg, context, duration: duration, position: position);
   }
 
-  void _showEditDialog() async {
+  void _showEditDialog(KnowledgeInfo? knowledgeInfo) async {
     fileList.clear();
     fileName.clear();
     StateSetter _setState;
@@ -47,6 +47,9 @@ class _HorizontalListState extends State<HorizontalList> {
       context: context,
       builder: (BuildContext context) {
         TextEditingController controller = TextEditingController();
+        if(knowledgeInfo!=null){
+          controller.text=knowledgeInfo.knowledge_name;
+        }
         return AlertDialog(
           contentPadding: EdgeInsets.all(10.0),
           title: const Text('添加知识库'),
@@ -58,6 +61,7 @@ class _HorizontalListState extends State<HorizontalList> {
               children: [
                 TextField(
                   controller: controller,
+                  readOnly:knowledgeInfo!=null,
                   decoration: const InputDecoration(
                     filled: true,
                     labelText: "名字",
@@ -108,8 +112,12 @@ class _HorizontalListState extends State<HorizontalList> {
                 for (var i = 0; i < fileList.length; i++) {
                   File file = fileList[i];
                   var md51 = md5.convert(await file.readAsBytes());
+                  int id =-1;
+                  if(knowledgeInfo != null){
+                    id=knowledgeInfo.id;
+                  }
                   ApiService.uploadFileWithParams(
-                      file.path, controller.text, md51.toString());
+                      file.path, controller.text, md51.toString(),id);
                 }
                 _showToast("文件上传完成");
                 Navigator.of(context).pop();
@@ -178,7 +186,9 @@ class _HorizontalListState extends State<HorizontalList> {
                       List.generate(knowledgeInfoList.length + 1, (index) {
                     if (index == 0) {
                       return InkWell(
-                          onTap: _showEditDialog,
+                          onTap: (){
+                            _showEditDialog(null);
+                          },
                           child: Card(
                               elevation: 3.0, // 卡片的阴影
                               child: AddContent()));
@@ -221,8 +231,10 @@ class _HorizontalListState extends State<HorizontalList> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     InkWell(
-                      onTap:_showEditDialog,
-                      child: Icon(Icons.add_circle_outline,
+                      onTap:(){
+                        _showEditDialog(knowledgeInfo);
+                      },
+                      child: const Icon(Icons.add_circle_outline,
                           size: 20,color: Colors.blueAccent),
                     ),
                     InkWell(

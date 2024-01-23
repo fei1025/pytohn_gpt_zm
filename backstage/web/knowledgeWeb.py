@@ -97,6 +97,7 @@ async def upload_check(request: Request, db: Session = Depends(get_db)):
 
 @router.post("/uploadKnowledge")
 async def upload_file_Knowledge(file: UploadFile = File(...), knowledge_name: str = Form(...), md5: str = Form(...),
+                                id: str = Form(...),
                                 db: Session = Depends(get_db)):
     # 获取文件内容
     file_content = await file.read()
@@ -113,10 +114,15 @@ async def upload_file_Knowledge(file: UploadFile = File(...), knowledge_name: st
     with open(save_path, "wb") as f:
         f.write(file_content)
     know = models.knowledge(file_path=save_path)
-    know.knowledge_name = knowledge_name
-    await kn.create_knowledge(know, db)
+    if "-1" != id:
+        know.id = int(id)
+        await kn.add_knowledge(know, db)
+    else:
+        know.knowledge_name = knowledge_name
+        await kn.create_knowledge(know, db)
+
     kow_file = models.knowledge_file(
-        knowledge_id=know.id,
+        knowledge_id=str(know.id),
         content_md5=md5,
         file_name=file.filename,
         file_path=save_path

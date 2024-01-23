@@ -179,13 +179,14 @@ class ApiService {
   }
 
   //创建新的知识库
-  static void uploadFileWithParams(String path, String knowledge_name,String md5) async {
+  static void uploadFileWithParams(String path, String knowledge_name,String md5,int id) async {
     var request =
         http.MultipartRequest('POST', Uri.parse('$_baseUrl/knowledge/uploadKnowledge'));
     request.files.add(await http.MultipartFile.fromPath('file', path));
     // Add additional parameters
     request.fields['knowledge_name'] = 'knowledge_name';
     request.fields['md5'] = md5;
+    request.fields['id'] = id.toString();
     try {
       http.Response response =
           await http.Response.fromStream(await request.send());
