@@ -43,7 +43,7 @@ class _ChatRightTop extends State<ChatRightTop> {
 
     return Scaffold(
       appBar: AppBar(
-        leadingWidth: 200,
+        leadingWidth: 220,
         leading: Container(
           height: 20,
           margin: EdgeInsets.only(top: 20,right: 5),

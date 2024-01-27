@@ -41,7 +41,7 @@ async def add_knowledge(knowledge: models.knowledge, db: Session):
     embeddings = OpenAIEmbeddings(openai_api_base=setting.openai_api_base, openai_api_key=setting.openai_api_key)
     documents = get_documents(knowledge.file_path)
     index = FAISS.load_local(index_path, embeddings)
-    index.aadd_documents(documents)
+    await index.aadd_documents(documents)
     index.save_local(index_path)
 
 

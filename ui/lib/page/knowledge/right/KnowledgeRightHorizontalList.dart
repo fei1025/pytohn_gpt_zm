@@ -23,7 +23,6 @@ class _HorizontalListState extends State<HorizontalList> {
   List<String> fileName = [];
 
   void _openFile1(StateSetter _setState) async {
-
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
       File file = File(result.files.single.path!);
@@ -39,6 +38,62 @@ class _HorizontalListState extends State<HorizontalList> {
     FlutterToastr.show(msg, context, duration: duration, position: position);
   }
 
+  // showDialog(
+  // context: context,
+  // builder: (context) {
+  // return Material(
+  // type: MaterialType.transparency,
+  // child: Center(
+  // child: Container(
+  // constraints: BoxConstraints(
+  // minHeight:100,
+  // maxHeight:500),
+  // color: Colors.red,
+  // child: Column(
+  // mainAxisSize: MainAxisSize.min,
+  // children: [
+  // Text('Title'),
+  // Flexible(
+  // child: ListView.builder(
+  // shrinkWrap: true,
+  // itemBuilder: (cont, index) {
+  // return Row(
+  // children: [
+  // Text('11112321443'),
+  // Text('dfsgfdgrg'),
+  // ],
+  // );
+  // },
+  // itemCount: 70,
+  // ),
+  // )
+  // ],
+  // ),
+  // ),
+  // ),
+  // );
+  // });
+
+  // Function to show the upload dialog
+  void _showUploadDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text("上传中，请稍候..."),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   void _showEditDialog(KnowledgeInfo? knowledgeInfo) async {
     fileList.clear();
     fileName.clear();
@@ -47,8 +102,8 @@ class _HorizontalListState extends State<HorizontalList> {
       context: context,
       builder: (BuildContext context) {
         TextEditingController controller = TextEditingController();
-        if(knowledgeInfo!=null){
-          controller.text=knowledgeInfo.knowledge_name;
+        if (knowledgeInfo != null) {
+          controller.text = knowledgeInfo.knowledge_name;
         }
         return AlertDialog(
           contentPadding: EdgeInsets.all(10.0),
@@ -61,7 +116,7 @@ class _HorizontalListState extends State<HorizontalList> {
               children: [
                 TextField(
                   controller: controller,
-                  readOnly:knowledgeInfo!=null,
+                  readOnly: knowledgeInfo != null,
                   decoration: const InputDecoration(
                     filled: true,
                     labelText: "名字",
@@ -72,55 +127,81 @@ class _HorizontalListState extends State<HorizontalList> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                fileName.isNotEmpty? SelectionArea(
-                  child: SizedBox(
-                    height: 50,
-                    width: 300,
-                    child: Scaffold(
-                      body: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: fileName.length,
-                          itemBuilder: (context, index) {
-                            return _buildListItem(context,index,_setState);
-                          }),
-                    ),
-                  ),
-                ):
-                TextButton(
-                  onPressed:
-                      isButtonDisabled ? null : () => {_openFile1(_setState)},
-                  child: const Row(
-                    children: [
-                      Text("点击上传文件",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold, // 设置字体粗细
-                          )),
-                      SizedBox(height: 30),
-                      //       Spacer(), // 添加这个以增加间距
+                fileName.isNotEmpty
+                    ? SelectionArea(
+                        child: SizedBox(
+                          height: 50,
+                          width: 300,
+                          child: Scaffold(
+                            body: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: fileName.length,
+                                itemBuilder: (context, index) {
+                                  return _buildListItem(
+                                      context, index, _setState);
+                                }),
+                          ),
+                        ),
+                      )
+                    : TextButton(
+                        onPressed: isButtonDisabled
+                            ? null
+                            : () => {_openFile1(_setState)},
+                        child: const Row(
+                          children: [
+                            Text("点击上传文件",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold, // 设置字体粗细
+                                )),
+                            SizedBox(height: 30),
+                            //       Spacer(), // 添加这个以增加间距
 
-                      Icon(Icons.file_upload),
-                    ],
-                  ),
-                )
+                            Icon(Icons.file_upload),
+                          ],
+                        ),
+                      )
               ],
             );
           }),
           actions: <Widget>[
             TextButton(
               onPressed: () async {
-                print(controller.text);
-                for (var i = 0; i < fileList.length; i++) {
-                  File file = fileList[i];
-                  var md51 = md5.convert(await file.readAsBytes());
-                  int id =-1;
-                  if(knowledgeInfo != null){
-                    id=knowledgeInfo.id;
-                  }
-                  ApiService.uploadFileWithParams(
-                      file.path, controller.text, md51.toString(),id);
+                // for (var i = 0; i < fileList.length; i++) {
+                //   File file = fileList[i];
+                //   var md51 = md5.convert(await file.readAsBytes());
+                //   int id = -1;
+                //   if (knowledgeInfo != null) {
+                //     id = knowledgeInfo.id;
+                //   }
+                //   ApiService.uploadFileWithParams(
+                //       file.path, controller.text, md51.toString(), id);
+                // }
+                if (fileList.isEmpty) {
+                  _showToast("请选择文件");
+                  return;
                 }
-                _showToast("文件上传完成");
-                Navigator.of(context).pop();
+                if (fileList.length > 1) {
+                  _showToast("请选择一个文件");
+                  return;
+                }
+                File file = fileList[0];
+                var md51 = md5.convert(await file.readAsBytes());
+                int id = -1;
+                if (knowledgeInfo != null) {
+                  id = knowledgeInfo.id;
+                }
+                if(controller.text.isEmpty){
+                  _showToast("请输入名字");
+                  return;
+                }
+                _showUploadDialog();
+                ApiService.uploadFileWithParams(file.path, controller.text, md51.toString(), id)
+                    .then((value) {
+                  //_showToast("文件上传完成");
+                  setState(() {});
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                });
               },
               child: const Text('确认'),
             ),
@@ -136,7 +217,8 @@ class _HorizontalListState extends State<HorizontalList> {
     );
   }
 
-  Widget _buildListItem(BuildContext context, int index,StateSetter _setState) {
+  Widget _buildListItem(
+      BuildContext context, int index, StateSetter _setState) {
     final theme = Theme.of(context);
     final downloadController = fileName[index];
 
@@ -146,15 +228,16 @@ class _HorizontalListState extends State<HorizontalList> {
         overflow: TextOverflow.ellipsis,
         style: theme.textTheme.titleSmall,
       ),
-      trailing: IconButton(onPressed: (){
-        _setState(() {
-          fileList.removeAt(index);
-          fileName.removeAt(index);
-        });
-      }, icon: Icon(Icons.delete)),
+      trailing: IconButton(
+          onPressed: () {
+            _setState(() {
+              fileList.removeAt(index);
+              fileName.removeAt(index);
+            });
+          },
+          icon: Icon(Icons.delete)),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -186,7 +269,7 @@ class _HorizontalListState extends State<HorizontalList> {
                       List.generate(knowledgeInfoList.length + 1, (index) {
                     if (index == 0) {
                       return InkWell(
-                          onTap: (){
+                          onTap: () {
                             _showEditDialog(null);
                           },
                           child: Card(
@@ -231,11 +314,11 @@ class _HorizontalListState extends State<HorizontalList> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     InkWell(
-                      onTap:(){
+                      onTap: () {
                         _showEditDialog(knowledgeInfo);
                       },
                       child: const Icon(Icons.add_circle_outline,
-                          size: 20,color: Colors.blueAccent),
+                          size: 20, color: Colors.blueAccent),
                     ),
                     InkWell(
                       onTap: () {
@@ -283,7 +366,6 @@ class _HorizontalListState extends State<HorizontalList> {
                       child: Icon(Icons.delete_outlined,
                           size: 20, color: Colors.red.shade400),
                     ),
-
                   ],
                 ))
           ],
