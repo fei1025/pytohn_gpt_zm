@@ -75,18 +75,18 @@ class _HorizontalListState extends State<HorizontalList> {
   // });
 
   // Function to show the upload dialog
-  void _showUploadDialog() {
+  void _showUploadDialog(String s) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return const AlertDialog(
+        return  AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 16),
-              Text("上传中，请稍候..."),
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(s),
             ],
           ),
         );
@@ -194,7 +194,7 @@ class _HorizontalListState extends State<HorizontalList> {
                   _showToast("请输入名字");
                   return;
                 }
-                _showUploadDialog();
+                _showUploadDialog("上传中，请稍候...");
                 ApiService.uploadFileWithParams(file.path, controller.text, md51.toString(), id)
                     .then((value) {
                   //_showToast("文件上传完成");
@@ -246,11 +246,11 @@ class _HorizontalListState extends State<HorizontalList> {
       future: ApiService.getAllKnowledge(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text("");
+          return const Text("");
         } else if (snapshot.hasError) {
           return Text('错误：${snapshot.error}');
         } else if (!snapshot.hasData) {
-          return Text('没有可用的数据'); // 处理没有数据的情况
+          return const Text('没有可用的数据'); // 处理没有数据的情况
         } else {
           List<KnowledgeInfo> knowledgeInfoList = snapshot.data!;
           return ListView.builder(
@@ -278,7 +278,17 @@ class _HorizontalListState extends State<HorizontalList> {
                     } else {
                       return InkWell(
                           onTap: () {
-                            print("点击了");
+                            var know= knowledgeInfoList[index-1];
+                            _showUploadDialog("加载索引中");
+                            ApiService.loadVectorstore(know.id).then((value){
+                              Navigator.of(context).pop();
+                              ApiService.saveChatHist(know.knowledge_name,"1").then((value){
+
+                              });
+
+                              //appState.setKnowledgeIndex(list)
+
+                            });
                           },
                           child: Card(
                               elevation: 3.0, // 卡片的阴影

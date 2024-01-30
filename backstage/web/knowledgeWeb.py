@@ -23,7 +23,7 @@ router = APIRouter(
 )
 
 
-@router.post("/load_vectorstore")
+@router.get("/load_vectorstore")
 def loadVectorstore(knowledgeId: int, db: Session = Depends(get_db)):
     knowledge = models.knowledge(id=knowledgeId)
     knowledgeChat.loadVectorstore(db, knowledge)

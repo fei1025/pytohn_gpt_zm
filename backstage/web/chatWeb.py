@@ -75,6 +75,7 @@ async def get_chat_hist_details(db: Session = Depends(get_db), chatId: str = Que
 async def save_chat_hist(res: reqChat, db: Session = Depends(get_db)):
     chatHist = models.chat_hist()
     chatHist.title = res.content
+    chatHist.type=res.type
     crud.save_chat_hist(db, chatHist)
     return Result.success([chatHist])
 

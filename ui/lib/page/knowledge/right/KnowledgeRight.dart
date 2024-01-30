@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:open_ui/page/api/api_service.dart';
 import 'package:open_ui/page/knowledge/right/KnowledgeRightHorizontalList.dart';
+import 'package:open_ui/page/knowledge/right/KnowledgeRightInfo.dart';
 import 'package:open_ui/page/knowledge/right/KnowledgeRightTop.dart';
 import 'package:open_ui/page/model/knowledgeInfo.dart';
 import 'package:open_ui/page/state.dart';
@@ -35,7 +36,7 @@ class _KnowledgeRightState extends State<KnowledgeRight> {
         const Divider(
           height: 0.1,
         ),
-         Expanded(flex: 9, child: appState.knowledgeIndex== -1? const HorizontalList():Text("新数据"))
+         Expanded(flex: 9, child: appState.knowledgeIndex== -1? const HorizontalList():const KnowledgeRightInfo())
       ],
     );
   }

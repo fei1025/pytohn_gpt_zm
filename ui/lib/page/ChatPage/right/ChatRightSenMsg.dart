@@ -22,7 +22,7 @@ class _ChatRightSenMsg extends State<ChatRightSenMsg> {
       int? chatId = appState.cuChatId;
       String text = _controller.text;
       if(chatId == null){
-        List<ChatHist> chatHistList  = await ApiService.saveChatHist(text);
+        List<ChatHist> chatHistList  = await ApiService.saveChatHist(text,"0");
         ChatHist chatHist = chatHistList[0];
         appState.setCuChatId(chatHist.chatId);
         List<ChatHist> chatHistList2 =  await ApiService.getAllHist("0");

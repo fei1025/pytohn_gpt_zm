@@ -48,9 +48,9 @@ class ApiService {
     }
   }
 
-  static Future<List<ChatHist>> saveChatHist(String msg) async {
+  static Future<List<ChatHist>> saveChatHist(String msg,String type) async {
     final response = await httpUtils.post(
-        '$_baseUrl/save_chat_hist', json.encode({'content': msg}), null);
+        '$_baseUrl/save_chat_hist', json.encode({'content': msg,'type':type}), null);
     if (response.statusCode == 200) {
       String responseBody = utf8.decode(response.bodyBytes);
 
@@ -219,4 +219,8 @@ class ApiService {
   static Future<void> delete_Knowledge(int id) async {
     await httpUtils.get('$_baseUrl/knowledge/deleteKnowledge?knowledgeId=$id');
   }
+  static Future<void> loadVectorstore(int id) async{
+    await httpUtils.get('$_baseUrl/knowledge/load_vectorstore?knowledgeId=$id');
+  }
+
 }
