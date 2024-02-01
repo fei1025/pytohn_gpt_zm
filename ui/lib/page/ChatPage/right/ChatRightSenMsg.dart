@@ -7,7 +7,9 @@ import '../../api/api_service.dart';
 import '../../state.dart';
 
 class ChatRightSenMsg extends StatefulWidget {
-  const ChatRightSenMsg({super.key});
+  final Function onPressedWithParam;
+
+  const ChatRightSenMsg({super.key,required this.onPressedWithParam});
 
   @override
   State<ChatRightSenMsg> createState() => _ChatRightSenMsg();
@@ -18,20 +20,22 @@ class _ChatRightSenMsg extends State<ChatRightSenMsg> {
 
 
   void _sendMessage(MyAppState appState) async {
-    if (_controller.text.isNotEmpty) {
-      int? chatId = appState.cuChatId;
-      String text = _controller.text;
-      if(chatId == null){
-        List<ChatHist> chatHistList  = await ApiService.saveChatHist(text,"0");
-        ChatHist chatHist = chatHistList[0];
-        appState.setCuChatId(chatHist.chatId);
-        List<ChatHist> chatHistList2 =  await ApiService.getAllHist("0");
-        appState.setChatHistList(chatHistList2);
-      }
 
-      ApiService.senMsg(text,(){
-        print("回调成功的数据");
-      });
+    if (_controller.text.isNotEmpty) {
+      widget.onPressedWithParam(_controller.text);
+      // int? chatId = appState.cuChatId;
+      // String text = _controller.text;
+      // if(chatId == null){
+      //   List<ChatHist> chatHistList  = await ApiService.saveChatHist(text,"0");
+      //   ChatHist chatHist = chatHistList[0];
+      //   appState.setCuChatId(chatHist.chatId);
+      //   List<ChatHist> chatHistList2 =  await ApiService.getAllHist("0");
+      //   appState.setChatHistList(chatHistList2);
+      // }
+      //
+      // ApiService.senMsg(text,(){
+      //   print("回调成功的数据");
+      // });
     }
   }
 

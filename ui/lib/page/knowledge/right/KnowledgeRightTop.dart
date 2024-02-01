@@ -92,6 +92,10 @@ class _MyPopupMenuButtonState extends State<MyPopupMenuButton> {
       List<ChatModel> chatModelList = MyAppState().chatModelList;
       selectedValue = chatModelList[0].value; // 初始选中的值
     });
+    // 查询所有的聊天记录
+    ApiService.getAllHist("1").then((value) =>  MyAppState().setKnowledgeHistList(value));
+
+
 
     // TODO: implement initState
     super.initState();

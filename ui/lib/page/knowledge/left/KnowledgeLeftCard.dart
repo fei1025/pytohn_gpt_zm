@@ -46,8 +46,8 @@ class _KnowledgeLeftCardState extends State<KnowledgeLeftCard> {
                 if (title != controller.text) {
                   ApiService.update_chat(chatId, null, controller.text)
                       .then((value) {
-                    ApiService.getAllHist("0").then((value) =>
-                        context.read<MyAppState>().setChatHistList(value));
+                    ApiService.getAllHist("1").then((value) =>
+                        context.read<MyAppState>().setKnowledgeHistList(value));
                   });
                 }
                 Navigator.of(context).pop();
@@ -127,6 +127,10 @@ class _KnowledgeLeftCardState extends State<KnowledgeLeftCard> {
                                     actions: <Widget>[
                                       TextButton(
                                           onPressed: () {
+                                            ApiService.delete_chat( widget.knowledgeInfo.chatId);
+                                            ApiService.getAllHist("1").then( (value) => context
+                                                    .read<MyAppState>()
+                                                    .setKnowledgeHistList(value));
                                             // appState.setTitle(-1);
                                             // appState.setCuTitle("");
                                             // appState.setCuChatId(null);

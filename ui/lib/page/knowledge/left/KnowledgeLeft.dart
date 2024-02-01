@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:open_ui/page/state.dart';
 
 import 'KnowledgeLeftMain.dart';
 import 'KnowledgeLeftTop.dart';
@@ -12,6 +13,15 @@ class KnowledgeLeft extends StatefulWidget {
 }
 
 class _KnowledgeLeftState extends State<KnowledgeLeft> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    MyAppState().setChatDetails([]);
+    MyAppState().setKnowledgeTitle("");
+    MyAppState().setKnowledgeIndex(-1);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return const Column(

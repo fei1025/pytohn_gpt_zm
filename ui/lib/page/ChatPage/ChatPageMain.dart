@@ -21,6 +21,16 @@ class _ChatPageMain extends State<ChatPageMain> {
   clearKeywords() {}
 
   @override
+  void initState() {
+    // TODO: implement initState
+    MyAppState().setTitle(-1);
+    MyAppState().setCuTitle("");
+    MyAppState().setCuChatId(null);
+    MyAppState().setChatDetails([]);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     List<ChatHist> chatHistList = appState.chatHistList;

@@ -1,6 +1,7 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:open_ui/page/model/Chat_model.dart';
+import 'package:open_ui/page/model/knowledgeInfo.dart';
 
 import 'model/ChatDetails.dart';
 import 'model/Chat_hist_list.dart';
@@ -113,5 +114,18 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
   String cuKnowledgeModel = "0";
+
+  List<ChatHist> knowledgeHistList = [];
+  void setKnowledgeHistList(List<ChatHist> list) {
+    knowledgeHistList = list;
+    notifyListeners();
+  }
+  List<KnowledgeInfo> knowledgeList =[];
+
+  void setKnowledgeList(List<KnowledgeInfo> list) {
+    knowledgeList = list;
+    notifyListeners();
+  }
+
 
 }

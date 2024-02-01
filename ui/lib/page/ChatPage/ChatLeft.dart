@@ -132,14 +132,16 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
                                           onPressed: () {
                                             ApiService.delete_chat(
                                                 widget.chatHist.chatId);
+                                            if(widget.curIndex == titleIndex){
+                                              appState.setTitle(-1);
+                                              appState.setCuTitle("");
+                                              appState.setCuChatId(null);
+                                              appState.setChatDetails([]);
+                                            }
                                             ApiService.getAllHist("0").then(
-                                                (value) => context
+                                                    (value) => context
                                                     .read<MyAppState>()
                                                     .setChatHistList(value));
-                                            appState.setTitle(-1);
-                                            appState.setCuTitle("");
-                                            appState.setCuChatId(null);
-                                            appState.setChatDetails([]);
                                             // 关闭弹窗
                                             Navigator.of(context).pop();
                                           },

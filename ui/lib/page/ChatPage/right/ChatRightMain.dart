@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:open_ui/page/api/api_service.dart';
+import 'package:open_ui/page/model/Chat_hist_list.dart';
+import 'package:open_ui/page/state.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'ChatRightInfo.dart';
@@ -31,20 +34,41 @@ class _ChatPageMain extends State<ChatRightMain> {
         const Divider(
           height: 0.1,
         ),
-        const Expanded(
+         Expanded(
           flex: 9,
           child: Column(
             children: [
-              Expanded(
+              const Expanded(
               flex:7,
                   child:    ChatRightInfo()),
-              Divider(
+              const Divider(
                 height: 0.1,
               ),
               Expanded(
                 flex:2,
-                child:  ChatRightSenMsg() ,)
+                child:  ChatRightSenMsg(onPressedWithParam:(text){
+                  int? chatId = MyAppState().cuChatId;
+                  //String text = _controller.text;
+                  if(chatId == null){
+                    ApiService.saveChatHist(text,"0").then((chatHistList){
+                      ChatHist chatHist = chatHistList[0];
+                     ApiService.getAllHist("0").then((chatHistList2){
+                       MyAppState().setChatHistList(chatHistList2);
+                     });
 
+                    });
+                    //
+                    // List<ChatHist> chatHistList  =  ApiService.saveChatHist(text,"0");
+                    // appState.setCuChatId(chatHist.chatId);
+                    // List<ChatHist> chatHistList2 =  await ApiService.getAllHist("0");
+
+                  }
+                  ApiService.senMsg(text,(){
+                    print("回调成功的数据");
+                  });
+
+                })
+              )
             ],
           ),
         )

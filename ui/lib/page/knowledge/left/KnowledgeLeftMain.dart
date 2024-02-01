@@ -16,37 +16,28 @@ class KnowledgeLeftMain extends StatefulWidget {
 
 class _KnowledgeLeftMainState extends State<KnowledgeLeftMain> {
   int selectInt = -1;
-
-  // List<KnowledgeInfo> knowledgeInfoList =  ApiService.getAllKnowledge() as List<KnowledgeInfo>;
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-
-    return FutureBuilder<List<ChatHist>>(
-        //ApiService.getAllHist("0").then((value) =>context.read<MyAppState>().setChatHistList(value));
-      future:  ApiService.getAllHist("1"),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text("");
-        } else if (snapshot.hasError) {
-          return Text('错误：${snapshot.error}');
-        } else if (!snapshot.hasData) {
-          return Text('没有可用的数据'); // 处理没有数据的情况
-        } else {
-          List<ChatHist> knowledgeInfoList = snapshot.data!;
-          return Scaffold(
+    List<ChatHist> knowledgeInfoList = appState.knowledgeHistList;
+    return Scaffold(
             body: ListView.builder(
               itemCount: knowledgeInfoList.length,
               itemBuilder: (context, index) {
                 ChatHist title = knowledgeInfoList[index];
                 return KnowledgeLeftCard(curIndex:index,selectIndex:selectInt,knowledgeInfo:title,onTap:(){
                   appState.setKnowledgeIndex(index);
+                  appState.setKnowledgeTitle(title.title);
+                  // 点击了标题
+                  appState.setCuChatId(title.chatId);
+                  setState(() {
+                    ApiService.getChatDetails(appState.cuChatId).then((value) =>appState.setChatDetails(value));
+                    appState.setKnowledgeIndex(index);
+                  });
+
                 });
               },
             ),
           );
-        }
-      },
-    );
   }
 }

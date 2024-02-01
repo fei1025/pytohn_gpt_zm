@@ -22,6 +22,12 @@ class _HorizontalListState extends State<HorizontalList> {
   List<File> fileList = [];
   List<String> fileName = [];
 
+  @override
+  void initState() {
+    ApiService.getAllKnowledge().then((value) => MyAppState().setKnowledgeList(value));
+  }
+
+
   void _openFile1(StateSetter _setState) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
@@ -198,7 +204,7 @@ class _HorizontalListState extends State<HorizontalList> {
                 ApiService.uploadFileWithParams(file.path, controller.text, md51.toString(), id)
                     .then((value) {
                   //_showToast("文件上传完成");
-                  setState(() {});
+                  ApiService.getAllKnowledge().then((value) => MyAppState().setKnowledgeList(value));
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();
                 });
@@ -242,65 +248,53 @@ class _HorizontalListState extends State<HorizontalList> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    return FutureBuilder<List<KnowledgeInfo>>(
-      future: ApiService.getAllKnowledge(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text("");
-        } else if (snapshot.hasError) {
-          return Text('错误：${snapshot.error}');
-        } else if (!snapshot.hasData) {
-          return const Text('没有可用的数据'); // 处理没有数据的情况
-        } else {
-          List<KnowledgeInfo> knowledgeInfoList = snapshot.data!;
-          return ListView.builder(
-            itemCount: 1, // 设置为实际数据的长度
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: Wrap(
-                  alignment: WrapAlignment.start,
-                  crossAxisAlignment: WrapCrossAlignment.start,
-                  spacing: 8.0,
-                  // 列之间的间距
-                  runSpacing: 8.0,
-                  // 行之间的间距
-                  children:
-                      List.generate(knowledgeInfoList.length + 1, (index) {
-                    if (index == 0) {
-                      return InkWell(
-                          onTap: () {
-                            _showEditDialog(null);
-                          },
-                          child: Card(
-                              elevation: 3.0, // 卡片的阴影
-                              child: AddContent()));
-                    } else {
-                      return InkWell(
-                          onTap: () {
-                            var know= knowledgeInfoList[index-1];
-                            _showUploadDialog("加载索引中");
-                            ApiService.loadVectorstore(know.id).then((value){
-                              Navigator.of(context).pop();
-                              ApiService.saveChatHist(know.knowledge_name,"1").then((value){
+    List<KnowledgeInfo> knowledgeInfoList = appState.knowledgeList;
+    return  ListView.builder(
+      itemCount: 1, // 设置为实际数据的长度
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Wrap(
+            alignment: WrapAlignment.start,
+            crossAxisAlignment: WrapCrossAlignment.start,
+            spacing: 8.0,
+            // 列之间的间距
+            runSpacing: 8.0,
+            // 行之间的间距
+            children:
+            List.generate(knowledgeInfoList.length + 1, (index) {
+              if (index == 0) {
+                return InkWell(
+                    onTap: () {
+                      _showEditDialog(null);
+                    },
+                    child: Card(
+                        elevation: 3.0, // 卡片的阴影
+                        child: AddContent()));
+              } else {
+                return InkWell(
+                    onTap: () {
+                      var know= knowledgeInfoList[index-1];
+                      _showUploadDialog("加载索引中");
+                      ApiService.loadVectorstore(know.id).then((value){
+                        Navigator.of(context).pop();
+                        ApiService.saveChatHist(know.knowledge_name,"1").then((value){
+                          ApiService.getAllHist("1").then((value) =>  appState.setKnowledgeHistList(value));
 
-                              });
+                        });
 
-                              //appState.setKnowledgeIndex(list)
+                        //appState.setKnowledgeIndex(list)
 
-                            });
-                          },
-                          child: Card(
-                              elevation: 3.0, // 卡片的阴影
-                              child: buildContent(
-                                  knowledgeInfoList[index - 1], context)));
-                    }
-                  }),
-                ),
-              );
-            },
-          );
-        }
+                      });
+                    },
+                    child: Card(
+                        elevation: 3.0, // 卡片的阴影
+                        child: buildContent(
+                            knowledgeInfoList[index - 1], context)));
+              }
+            }),
+          ),
+        );
       },
     );
   }
@@ -337,7 +331,7 @@ class _HorizontalListState extends State<HorizontalList> {
                           if (knowledgeInfo.knowledge_name != s) {
                             ApiService.editKnowledgeName(knowledgeInfo.id, s)
                                 .then((value) {
-                              setState(() {});
+                              ApiService.getAllKnowledge().then((value) => MyAppState().setKnowledgeList(value));
                             });
                           }
                         });
@@ -358,7 +352,8 @@ class _HorizontalListState extends State<HorizontalList> {
                                       onPressed: () {
                                         ApiService.delete_Knowledge(
                                                 knowledgeInfo.id)
-                                            .then((value) => setState(() {}));
+                                            .then((value) => ApiService.getAllKnowledge().then((value) => MyAppState().setKnowledgeList(value))
+                                        );
                                         // 关闭弹窗
                                         Navigator.of(context).pop();
                                       },
