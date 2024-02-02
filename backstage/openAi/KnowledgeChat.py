@@ -107,8 +107,6 @@ def send_open_ai(db: Session, res: reqChat):
     # return rag_chain.stream({"question": question.content, "chat_history": message})
     content: str = ""
     for chunk in rag_chain.stream({"question": question.content, "chat_history": message}):
-        print(chunk.content)
-        print(type(chunk))
         if chunk.content is not None:
             yield chunk.content
             content = content + chunk.content

@@ -106,8 +106,8 @@ class MyCustomHandlerTwo11(BaseCallbackHandler):
             self, action: AgentAction, color: Optional[str] = None, **kwargs: Any
     ) -> Any:
         """Run on agent action."""
-        print(f"action111111111111:{action.tool}")
-        print_text(action.log, color='red')
+        print(f"这里会显示调用的工具:{action.tool}")
+        #print_text(action.log, color='red')
 
     def on_tool_end(
             self,

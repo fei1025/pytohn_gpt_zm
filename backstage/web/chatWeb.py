@@ -61,8 +61,8 @@ async def delete_all_chat(db: Session = Depends(get_db)):
 
 
 @router.get("/getAllHist")
-async def get_all_Hist(type:str,db: Session = Depends(get_db)):
-    list = crud.get_all_Hist(db,type)
+async def get_all_Hist(type: str, db: Session = Depends(get_db)):
+    list = crud.get_all_Hist(db, type)
     return Result.success(list)
 
 
@@ -75,7 +75,8 @@ async def get_chat_hist_details(db: Session = Depends(get_db), chatId: str = Que
 async def save_chat_hist(res: reqChat, db: Session = Depends(get_db)):
     chatHist = models.chat_hist()
     chatHist.title = res.content
-    chatHist.type=res.type
+    chatHist.type = res.type
+    chatHist.knowledge_id = res.knowledge_id
     crud.save_chat_hist(db, chatHist)
     return Result.success([chatHist])
 
@@ -99,47 +100,57 @@ async def send_open_ai1(request: Request):
     print(f"接受到的所有数据:{all_data}")
 
 
-
 @router.post("/send_open_ai")
 def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
-    if res.chat_id:
-        print("没有保存")
-        pass
-    else:
-        print("保存历史记录")
-        chatHist = models.chat_hist()
-        chatHist.title = res.content
-        chatHist.type = '0'
-        crud.save_chat_hist(db, chatHist)
-        res.chat_id = chatHist.chat_id
+    # if res.chat_id:
+    #     print("没有保存")
+    #     pass
+    # else:
+    #     print("保存历史记录")
+    #     chatHist = models.chat_hist()
+    #     chatHist.title = res.content
+    #     chatHist.type = '0'
+    #     crud.save_chat_hist(db, chatHist)
+    #     res.chat_id = chatHist.chat_id
 
     # 保存历史记录
+    print(res.chat_id)
     chatHistDetails = models.chat_hist_details()
     chatHistDetails.chat_id = res.chat_id
     chatHistDetails.content = res.content
     chatHistDetails.role = res.role
     crud.save_chat_hist_details(db, chatHistDetails)
+    chatHist = crud.get_Hist_by_id(db,res.chat_id)
+    res.knowledge_id=chatHist.knowledge_id
+    if chatHist.type == "0":
+        async def event_generator():
+            result = openAichat.send_open_ai(db, res)
+            content = ""
+            for i in result:
+                if await request.is_disconnected():
+                    print("连接已中断")
+                    break
+                if "stop" != i.choices[0].finish_reason:
+                    content = content + i.choices[0].delta.content
+                    yield i.choices[0].delta.content
+            chatHistDetails = models.chat_hist_details()
+            chatHistDetails.chat_id = res.chat_id
+            chatHistDetails.content = content
+            chatHistDetails.role = "assistant"
+            crud.save_chat_hist_details(db, chatHistDetails)
 
-    async def event_generator():
-        result = openAichat.send_open_ai(db, res)
-        print(result)
-        content = ""
-        # assistant
-        for i in result:
+        g = event_generator()
+        return EventSourceResponse(g)
+    elif chatHist.type == "1":
+        async def event_generator():
+            data_generator = knowledgeChat.send_open_ai(db, res)
             if await request.is_disconnected():
                 print("连接已中断")
-                break
-            if "stop" != i.choices[0].finish_reason:
-                content = content + i.choices[0].delta.content
-                yield i.choices[0].delta.content
-        chatHistDetails = models.chat_hist_details()
-        chatHistDetails.chat_id = res.chat_id
-        chatHistDetails.content = content
-        chatHistDetails.role = "assistant"
-        crud.save_chat_hist_details(db, chatHistDetails)
+            for data_point in data_generator:
+                yield data_point
 
-    g = event_generator()
-    return EventSourceResponse(g)
+        g = event_generator()
+        return EventSourceResponse(g)
 
 
 file_type = [

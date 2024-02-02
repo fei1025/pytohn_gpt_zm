@@ -86,14 +86,18 @@ class _MyPopupMenuButtonState extends State<MyPopupMenuButton> {
   String selectedValue ="0";
   @override
   void initState() {
-    print("执行初始化数据了");
-    ApiService.getAllModel().then((value) {
-      MyAppState().setChatModel(value);
-      List<ChatModel> chatModelList = MyAppState().chatModelList;
-      selectedValue = chatModelList[0].value; // 初始选中的值
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      // 在这里执行初始化操作，此时可以访问到 context。
+      print("执行初始化数据了");
+      ApiService.getAllModel().then((value) {
+        MyAppState().setChatModel(value);
+        List<ChatModel> chatModelList = MyAppState().chatModelList;
+        selectedValue = chatModelList[0].value; // 初始选中的值
+      });
+
     });
-    // 查询所有的聊天记录
-    ApiService.getAllHist("1").then((value) =>  MyAppState().setKnowledgeHistList(value));
+
 
 
 

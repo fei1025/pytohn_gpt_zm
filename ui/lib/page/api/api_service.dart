@@ -48,9 +48,9 @@ class ApiService {
     }
   }
 
-  static Future<List<ChatHist>> saveChatHist(String msg,String type) async {
+  static Future<List<ChatHist>> saveChatHist(String msg,String type,String knowledgeId) async {
     final response = await httpUtils.post(
-        '$_baseUrl/save_chat_hist', json.encode({'content': msg,'type':type}), null);
+        '$_baseUrl/save_chat_hist', json.encode({'content': msg,'type':type,'knowledge_id':knowledgeId}), null);
     if (response.statusCode == 200) {
       String responseBody = utf8.decode(response.bodyBytes);
 

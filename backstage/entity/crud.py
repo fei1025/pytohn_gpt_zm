@@ -107,6 +107,10 @@ def get_all_Hist(db: Session, type: str):
     return db.query(models.chat_hist).filter(models.chat_hist.type == type).all()
 
 
+def get_Hist_by_id(db: Session, chat_id: int) -> models.chat_hist:
+    return db.query(models.chat_hist).filter(models.chat_hist.chat_id == chat_id).first()
+
+
 def get_chat_hist_details(db: Session, chatId: int) -> List[models.chat_hist_details]:
     return db.query(models.chat_hist_details).filter(models.chat_hist_details.chat_id == chatId).all()
 

@@ -50,23 +50,18 @@ class _ChatPageMain extends State<ChatRightMain> {
                   int? chatId = MyAppState().cuChatId;
                   //String text = _controller.text;
                   if(chatId == null){
-                    ApiService.saveChatHist(text,"0").then((chatHistList){
+                    ApiService.saveChatHist(text,"0","").then((chatHistList){
                       ChatHist chatHist = chatHistList[0];
+                      MyAppState().setCuChatId(chatHist.chatId);
+                      ApiService.senMsg(text,(){
+                        print("回调成功的数据");
+                      });
                      ApiService.getAllHist("0").then((chatHistList2){
                        MyAppState().setChatHistList(chatHistList2);
                      });
-
                     });
-                    //
-                    // List<ChatHist> chatHistList  =  ApiService.saveChatHist(text,"0");
-                    // appState.setCuChatId(chatHist.chatId);
-                    // List<ChatHist> chatHistList2 =  await ApiService.getAllHist("0");
 
                   }
-                  ApiService.senMsg(text,(){
-                    print("回调成功的数据");
-                  });
-
                 })
               )
             ],

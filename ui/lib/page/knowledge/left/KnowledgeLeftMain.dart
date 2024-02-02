@@ -15,6 +15,24 @@ class KnowledgeLeftMain extends StatefulWidget {
 }
 
 class _KnowledgeLeftMainState extends State<KnowledgeLeftMain> {
+  void _showUploadDialog(String s) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return  AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(s),
+            ],
+          ),
+        );
+      },
+    );
+  }
   int selectInt = -1;
   @override
   Widget build(BuildContext context) {
@@ -30,10 +48,16 @@ class _KnowledgeLeftMainState extends State<KnowledgeLeftMain> {
                   appState.setKnowledgeTitle(title.title);
                   // 点击了标题
                   appState.setCuChatId(title.chatId);
-                  setState(() {
-                    ApiService.getChatDetails(appState.cuChatId).then((value) =>appState.setChatDetails(value));
-                    appState.setKnowledgeIndex(index);
+                  //加载索引
+                  _showUploadDialog("加载索引中");
+                  ApiService.loadVectorstore(title.knowledgeId).then((value){
+                    Navigator.of(context).pop();
+                    setState(() {
+                      ApiService.getChatDetails(appState.cuChatId).then((value) =>appState.setChatDetails(value));
+                      appState.setKnowledgeIndex(index);
+                    });
                   });
+
 
                 });
               },
@@ -41,3 +65,5 @@ class _KnowledgeLeftMainState extends State<KnowledgeLeftMain> {
           );
   }
 }
+
+

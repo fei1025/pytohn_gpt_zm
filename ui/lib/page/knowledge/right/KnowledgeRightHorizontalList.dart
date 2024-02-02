@@ -278,7 +278,7 @@ class _HorizontalListState extends State<HorizontalList> {
                       _showUploadDialog("加载索引中");
                       ApiService.loadVectorstore(know.id).then((value){
                         Navigator.of(context).pop();
-                        ApiService.saveChatHist(know.knowledge_name,"1").then((value){
+                        ApiService.saveChatHist(know.knowledge_name,"1",know.id.toString()).then((value){
                           ApiService.getAllHist("1").then((value) =>  appState.setKnowledgeHistList(value));
 
                         });

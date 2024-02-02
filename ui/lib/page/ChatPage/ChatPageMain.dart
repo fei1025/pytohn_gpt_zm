@@ -22,11 +22,14 @@ class _ChatPageMain extends State<ChatPageMain> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    MyAppState().setTitle(-1);
-    MyAppState().setCuTitle("");
-    MyAppState().setCuChatId(null);
-    MyAppState().setChatDetails([]);
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      // 在这里执行初始化操作，此时可以访问到 context。
+      // TODO: implement initState
+      MyAppState().setTitle(-1);
+      MyAppState().setCuTitle("");
+      MyAppState().setCuChatId(null);
+      MyAppState().setChatDetails([]);
+    });
     super.initState();
   }
 
