@@ -50,7 +50,7 @@ class _ChatPageMain extends State<ChatRightMain> {
                   int? chatId = MyAppState().cuChatId;
                   //String text = _controller.text;
                   if(chatId == null){
-                    ApiService.saveChatHist(text,"0","").then((chatHistList){
+                    ApiService.saveChatHist(text,"0","-1").then((chatHistList){
                       ChatHist chatHist = chatHistList[0];
                       MyAppState().setCuChatId(chatHist.chatId);
                       ApiService.senMsg(text,(){

@@ -108,7 +108,15 @@ class ApiService {
         .transform(utf8.decoder)
         .transform(const LineSplitter())
         .listen((event) {
-      String result = event.replaceAll('data:', '');
+      String result1 = event.replaceAll('data:', '');
+      print(result1);
+      String result;
+      if(result1 == ""){
+         result=result1;
+      }else{
+        Map<String, dynamic> jsonMap = json.decode(result1);
+         result = jsonMap['data'];
+      }
       if (isFirstEvent) {
         MyAppState().isSend = true;
         isFirstEvent = false;
@@ -127,8 +135,7 @@ class ApiService {
       }
     }, onDone: () {
       // 在流结束时执行特定的操作
-      getChatDetails(MyAppState().cuChatId)
-          .then((value) => MyAppState().setChatDetails(value));
+      getChatDetails(MyAppState().cuChatId).then((value) => MyAppState().setChatDetails(value));
       MyAppState().isSend = false;
       print('流结束了');
       // 在异步操作完成时调用回调函数

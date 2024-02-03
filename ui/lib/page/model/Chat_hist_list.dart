@@ -40,7 +40,7 @@ class ChatHist {
       chatId: json['chat_id'] ?? 0,
       title: json['title'] ?? '',
       creationTime: json['creation_time'] ?? '',
-      knowledgeId: json['knowledge_id'] ?? '',
+      knowledgeId: json['knowledge_id'] ?? 0,
     );
   }
 }

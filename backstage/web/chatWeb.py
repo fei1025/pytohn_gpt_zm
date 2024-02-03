@@ -1,3 +1,4 @@
+import json
 import os
 
 from fastapi import APIRouter, Query, UploadFile, File, Form
@@ -132,7 +133,8 @@ def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
                     break
                 if "stop" != i.choices[0].finish_reason:
                     content = content + i.choices[0].delta.content
-                    yield i.choices[0].delta.content
+                    #yield i.choices[0].delta.content
+                    yield json.dumps({'type': "msg", "data": i.choices[0].delta.content})
             chatHistDetails = models.chat_hist_details()
             chatHistDetails.chat_id = res.chat_id
             chatHistDetails.content = content
@@ -147,7 +149,7 @@ def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
             if await request.is_disconnected():
                 print("连接已中断")
             for data_point in data_generator:
-                yield data_point
+                yield json.dumps({'type': "msg", "data": data_point})
 
         g = event_generator()
         return EventSourceResponse(g)

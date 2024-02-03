@@ -3,7 +3,7 @@ from abc import ABC
 from typing import Any, Dict, List, Optional, Union
 from uuid import UUID
 
-from langchain import WolframAlphaAPIWrapper
+from langchain_community.utilities import WolframAlphaAPIWrapper
 from langchain.agents import initialize_agent, AgentType
 from langchain.callbacks import StdOutCallbackHandler
 from langchain.callbacks.base import BaseCallbackHandler
@@ -13,14 +13,16 @@ from langchain_community.chat_models.openai import ChatOpenAI
 from langchain.schema import LLMResult, AgentAction, AgentFinish
 from langchain_community.tools import WolframAlphaQueryRun, format_tool_to_openai_function
 from langchain.utils import print_text
+from langchain_experimental.tools import PythonREPLTool
+
 
 os.environ['OPENAI_API_KEY'] = 'sb-48ce6279f88e82c385dfc0a1d0feb964f4ea485874f9aeb9'
 os.environ['openai_api_base'] = 'https://api.openai-sb.com/v1'
 
-os.environ["WOLFRAM_ALPHA_APPID"] = "5V6ELP-UUPQLEAUXU"
+#os.environ["WOLFRAM_ALPHA_APPID"] = "5V6ELP-UUPQLEAUXU"
 openai_api_key = 'sb-48ce6279f88e82c385dfc0a1d0feb964f4ea485874f9aeb9'
 
-wolfram = WolframAlphaAPIWrapper()
+wolfram = WolframAlphaAPIWrapper(wolfram_alpha_appid="5V6ELP-UUPQLEAUXU")
 
 
 # print(wolfram.run("What is 2x+5 = -3x + 7?"))
@@ -120,10 +122,10 @@ class MyCustomHandlerTwo11(BaseCallbackHandler):
         print("on_tool_end")
         """If not the final action, print out observation."""
         if observation_prefix is not None:
-            print_text(f"\n{observation_prefix}")
+            print_text(f"\n这是啥:? {observation_prefix}")
         print_text(output, color=color)
         if llm_prefix is not None:
-            print_text(f"\n{llm_prefix}")
+            print_text(f"\n这是啥111 {llm_prefix}")
 
     def on_tool_error(
             self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any
@@ -150,20 +152,21 @@ class MyCustomHandlerTwo11(BaseCallbackHandler):
         print_text(finish.log, color=color , end="\n")
 
 
-handler = StdOutCallbackHandler()
+# handler = StdOutCallbackHandler()
+# ,callbacks=[MyCustomHandlerTwo()]
+query_run = WolframAlphaQueryRun(api_wrapper=wolfram,tags=['a-tag'])
 
-query_run = WolframAlphaQueryRun(api_wrapper=wolfram,callbacks=[MyCustomHandlerTwo()],tags=['a-tag'])
+tools = [query_run,PythonREPLTool()]
 
-tools = [query_run]
 
 llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0, streaming=True, )
 
-agent = initialize_agent(tools, llm, agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,verbose=True
-                         )
+agent = initialize_agent(tools, llm, agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION)
 
 #logfile = "output.log"
 # callbacks=[MyCustomHandlerTwo()] What is 2x+5 = -3x + 7?
 reply = agent.run(input="2 * 2 * 0.13 - 1.001? 如何计算,用中文回复" ,callbacks=[MyCustomHandlerTwo11()])
+#reply = agent.run(input="你可以干什么?" ,callbacks=[MyCustomHandlerTwo11()])
 print("--------------------------------------------------------------")
 print(reply)
 #logger.info(reply)
