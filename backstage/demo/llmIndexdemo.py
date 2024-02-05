@@ -15,11 +15,10 @@ from langchain_community.tools import WolframAlphaQueryRun, format_tool_to_opena
 from langchain.utils import print_text
 from langchain_experimental.tools import PythonREPLTool
 
-
 os.environ['OPENAI_API_KEY'] = 'sb-48ce6279f88e82c385dfc0a1d0feb964f4ea485874f9aeb9'
 os.environ['openai_api_base'] = 'https://api.openai-sb.com/v1'
 
-#os.environ["WOLFRAM_ALPHA_APPID"] = "5V6ELP-UUPQLEAUXU"
+# os.environ["WOLFRAM_ALPHA_APPID"] = "5V6ELP-UUPQLEAUXU"
 openai_api_key = 'sb-48ce6279f88e82c385dfc0a1d0feb964f4ea485874f9aeb9'
 
 wolfram = WolframAlphaAPIWrapper(wolfram_alpha_appid="5V6ELP-UUPQLEAUXU")
@@ -48,7 +47,6 @@ class MyCustomHandlerTwo(BaseCallbackHandler):
         pass
 
 
-
 class MyCustomHandlerTwo11(BaseCallbackHandler):
     def on_llm_new_token(self, token: str, **kwargs: Any) -> Any:
         print(f"on_new_token {token}")
@@ -60,12 +58,10 @@ class MyCustomHandlerTwo11(BaseCallbackHandler):
         print(f"on_llm_start (I'm the second handler!!) {serialized}")
         print("on_llm_start")
 
-
     def on_llm_end(self, response: LLMResult, **kwargs: Any) -> None:
         """Do nothing."""
         print("on_llm_end")
         pass
-
 
     def on_llm_error(
             self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any
@@ -79,7 +75,7 @@ class MyCustomHandlerTwo11(BaseCallbackHandler):
     ) -> None:
         """Print out that we are entering a chain."""
         class_name = serialized.get("name", serialized.get("id", ["<unknown>"])[-1])
-        #print(f"\n\n\033[1m> Entering new {class_name} chain...\033[0m")
+        # print(f"\n\n\033[1m> Entering new {class_name} chain...\033[0m")
         print(f"on_chain_start{class_name};;;{serialized}")
 
     def on_chain_end(self, outputs: Dict[str, Any], **kwargs: Any) -> None:
@@ -109,7 +105,7 @@ class MyCustomHandlerTwo11(BaseCallbackHandler):
     ) -> Any:
         """Run on agent action."""
         print(f"这里会显示调用的工具:{action.tool}")
-        #print_text(action.log, color='red')
+        # print_text(action.log, color='red')
 
     def on_tool_end(
             self,
@@ -123,7 +119,7 @@ class MyCustomHandlerTwo11(BaseCallbackHandler):
         """If not the final action, print out observation."""
         # if observation_prefix is not None:
         #     print_text(f"\n这是啥:? {observation_prefix}")
-        #print_text(output, color=color)
+        # print_text(output, color=color)
         print(f"\n 这是啥3 :{output}")
         # if llm_prefix is not None:
         #     print_text(f"\n这是啥111 {llm_prefix}")
@@ -142,33 +138,32 @@ class MyCustomHandlerTwo11(BaseCallbackHandler):
             end: str = "",
             **kwargs: Any,
     ) -> None:
-       #print(f"text:{text}")
-       print_text(text, color=color , end="\n") 
+        # print(f"text:{text}")
+        print_text(text, color=color, end="\n")
 
     def on_agent_finish(
             self, finish: AgentFinish, color: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Run on agent end."""
         print(f"finish.log:{finish.log}")
-        #print_text(finish.log, color=color , end="\n")
+        # print_text(finish.log, color=color , end="\n")
 
 
 # handler = StdOutCallbackHandler()
 # ,callbacks=[MyCustomHandlerTwo()]
-query_run = WolframAlphaQueryRun(api_wrapper=wolfram,tags=['a-tag'])
+query_run = WolframAlphaQueryRun(api_wrapper=wolfram, tags=['a-tag'])
 
-tools = [query_run,PythonREPLTool()]
-
+tools = [query_run, PythonREPLTool()]
 
 llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0, streaming=True, callbacks=[MyCustomHandlerTwo11()])
 
 agent = initialize_agent(tools, llm, agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION)
 
-#logfile = "output.log"
+# logfile = "output.log"
 # callbacks=[MyCustomHandlerTwo()] What is 2x+5 = -3x + 7?
-#reply = agent.run(input="2 * 2 * 0.13 - 1.001? 如何计算,用中文回复" ,callbacks=[MyCustomHandlerTwo11()])
-reply = agent.run(input="体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消,用中文回复" ,)
-#reply = agent.run(input="你可以干什么?" ,callbacks=[MyCustomHandlerTwo11()])
+# reply = agent.run(input="2 * 2 * 0.13 - 1.001? 如何计算,用中文回复" ,callbacks=[MyCustomHandlerTwo11()])
+# reply = agent.run(input="体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消,用中文回复" ,)
+reply = agent.run(input="用python实现水仙花代码,并给出运行后的结果", callbacks=[MyCustomHandlerTwo11()])
 print("--------------------------------------------------------------")
 print(reply)
-#logger.info(reply)
+# logger.info(reply)
