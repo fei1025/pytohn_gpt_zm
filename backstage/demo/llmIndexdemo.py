@@ -101,7 +101,7 @@ class MyCustomHandlerTwo11(BaseCallbackHandler):
             **kwargs: Any,
     ) -> None:
         """Do nothing."""
-        print(f"on_tool_start{serialized}")
+        print(f"on_tool_start:{serialized}")
         pass
 
     def on_agent_action(
@@ -121,11 +121,12 @@ class MyCustomHandlerTwo11(BaseCallbackHandler):
     ) -> None:
         print("on_tool_end")
         """If not the final action, print out observation."""
-        if observation_prefix is not None:
-            print_text(f"\n这是啥:? {observation_prefix}")
-        print_text(output, color=color)
-        if llm_prefix is not None:
-            print_text(f"\n这是啥111 {llm_prefix}")
+        # if observation_prefix is not None:
+        #     print_text(f"\n这是啥:? {observation_prefix}")
+        #print_text(output, color=color)
+        print(f"\n 这是啥3 :{output}")
+        # if llm_prefix is not None:
+        #     print_text(f"\n这是啥111 {llm_prefix}")
 
     def on_tool_error(
             self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any
@@ -149,7 +150,7 @@ class MyCustomHandlerTwo11(BaseCallbackHandler):
     ) -> None:
         """Run on agent end."""
         print(f"finish.log:{finish.log}")
-        print_text(finish.log, color=color , end="\n")
+        #print_text(finish.log, color=color , end="\n")
 
 
 # handler = StdOutCallbackHandler()
@@ -159,13 +160,14 @@ query_run = WolframAlphaQueryRun(api_wrapper=wolfram,tags=['a-tag'])
 tools = [query_run,PythonREPLTool()]
 
 
-llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0, streaming=True, )
+llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0, streaming=True, callbacks=[MyCustomHandlerTwo11()])
 
 agent = initialize_agent(tools, llm, agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION)
 
 #logfile = "output.log"
 # callbacks=[MyCustomHandlerTwo()] What is 2x+5 = -3x + 7?
-reply = agent.run(input="2 * 2 * 0.13 - 1.001? 如何计算,用中文回复" ,callbacks=[MyCustomHandlerTwo11()])
+#reply = agent.run(input="2 * 2 * 0.13 - 1.001? 如何计算,用中文回复" ,callbacks=[MyCustomHandlerTwo11()])
+reply = agent.run(input="体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消,用中文回复" ,)
 #reply = agent.run(input="你可以干什么?" ,callbacks=[MyCustomHandlerTwo11()])
 print("--------------------------------------------------------------")
 print(reply)
