@@ -160,14 +160,15 @@ query_run = WolframAlphaQueryRun(api_wrapper=wolfram,tags=['a-tag'])
 tools = [query_run,PythonREPLTool()]
 
 
-llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0, streaming=True, callbacks=[MyCustomHandlerTwo11()])
+llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0, streaming=True, )
 
 agent = initialize_agent(tools, llm, agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION)
 
 #logfile = "output.log"
 # callbacks=[MyCustomHandlerTwo()] What is 2x+5 = -3x + 7?
 #reply = agent.run(input="2 * 2 * 0.13 - 1.001? 如何计算,用中文回复" ,callbacks=[MyCustomHandlerTwo11()])
-reply = agent.run(input="体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消,用中文回复" ,)
+#reply = agent.run(input="体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消,用中文回复" ,)
+reply = agent.run(input="population%20france。,用中文回复" ,callbacks=[MyCustomHandlerTwo11()])
 #reply = agent.run(input="你可以干什么?" ,callbacks=[MyCustomHandlerTwo11()])
 print("--------------------------------------------------------------")
 print(reply)
