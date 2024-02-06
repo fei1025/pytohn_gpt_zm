@@ -9,6 +9,8 @@ openAI_model = {"0": "gpt-3.5-turbo",
                 "2": "gpt-4-0613",
                 "3": "gpt-4-32k-0613",
                 }
+
+toolList = {}
 # 返回的最小数据
 re_chat = 1000
 
@@ -43,7 +45,7 @@ def get_all_model():
                "key": "2"
                },
               {"value": "gpt-4-32k-0613",
-               "key": "3" }]
+               "key": "3"}]
     return models
 
 

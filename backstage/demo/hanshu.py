@@ -48,9 +48,33 @@ def run_conversation():
         messages=messages,
         tools=tools,
         tool_choice="auto",  # auto is default, but we'll be explicit
+        stream=True
     )
+    s=""
+    for i in response:
+        print("-------------------------")
+        # 确保 i.choices 是非空列表
+        print( i.choices)
+        if i.choices:
+            # 确保 choices[0] 存在
+            if i.choices[0]:
+                # 获取 tool_calls 对象
+                tool_calls = i.choices[0].delta.tool_calls
 
-
+                if tool_calls:
+                    print(tool_calls)
+                    print(tool_calls[0].function.arguments)
+                    print(tool_calls[0].function.name)
+                    s=s+tool_calls[0].function.arguments
+                else:
+                    print("找不到tool_calls对象")
+            else:
+                print("choices[0] 不存在")
+        else:
+            print("choices 列表为空")
+    print("########################")
+    print(s)
+    return
     response_message = response.choices[0].message
     tool_calls = response_message.tool_calls
     # Step 2: check if the model wanted to call a function

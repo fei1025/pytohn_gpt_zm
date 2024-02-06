@@ -1,4 +1,4 @@
-from typing import Union, Optional
+from typing import Union, Optional, List
 
 from marshmallow.fields import Bool, Field
 from pydantic import BaseModel
@@ -60,3 +60,4 @@ class reqChat(BaseModel):
     title: Optional[str] = None
     temperature: Optional[float] = 0.7
     stream: Optional[bool] = True
+    tools: Optional[list] = []

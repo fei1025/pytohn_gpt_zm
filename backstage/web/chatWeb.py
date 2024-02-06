@@ -132,6 +132,7 @@ def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
                     print("连接已中断")
                     break
                 if "stop" != i.choices[0].finish_reason:
+                    print(i.choices[0])
                     content = content + i.choices[0].delta.content
                     #yield i.choices[0].delta.content
                     yield json.dumps({'type': "msg", "data": i.choices[0].delta.content})

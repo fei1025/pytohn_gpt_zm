@@ -11,6 +11,7 @@ import openAi.KnowledgeChat as knowledgeChat
 from Util.result import Result
 from db.database import engine, get_db
 from entity import models, schemas, crud
+from openAi import openAiUtil
 
 from sse_starlette.sse import EventSourceResponse
 

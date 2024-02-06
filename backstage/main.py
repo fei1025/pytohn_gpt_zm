@@ -4,16 +4,22 @@ from typing import List
 
 import uvicorn
 from fastapi import FastAPI, Depends, Request
+from langchain.agents import load_tools
+from langchain_community.tools.pubmed.tool import PubmedQueryRun
+
+from langchain_community.utilities.wolfram_alpha import WolframAlphaAPIWrapper
+from langchain_experimental.tools import PythonREPLTool
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 import openAi.langChat
-from db.database import engine, get_db
+from db.database import engine, get_db, SessionLocal
 from entity import models, schemas, crud
-
+from openAi.openAiUtil import toolList
 from sse_starlette.sse import EventSourceResponse
+from langchain.pydantic_v1 import Field
 
-from web import chatWeb,knowledgeWeb
-
+from web import chatWeb, knowledgeWeb
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -100,6 +106,28 @@ async def chat(request: Request, user_id: int):
 
     g = event_generator(request)
     return EventSourceResponse(g)
+
+
+class GoogleSearchInput(BaseModel):
+    keywords: str = Field(description="keywords to search")
+
+
+class WebBrowsingInput(BaseModel):
+    url: str = Field(description="URL of a webpage")
+
+
+class WebAskingInput(BaseModel):
+    url: str = Field(description="URL of a webpage")
+    question: str = Field(description="Question that you want to know the answer to, based on the webpage's content.")
+
+
+# 在应用启动时执行初始化操作
+#@app.on_event("startup")
+def on_startup():
+    global toolList
+    # 查询数据库并初始化全局变量
+    with SessionLocal() as db:
+        setting = crud.get_user_setting(db)
 
 
 if __name__ == '__main__':
