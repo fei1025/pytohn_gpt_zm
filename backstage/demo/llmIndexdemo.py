@@ -3,9 +3,13 @@ from abc import ABC
 from typing import Any, Dict, List, Optional, Union
 from uuid import UUID
 
+from langchain import hub
 from langchain.memory import ConversationBufferMemory
-from langchain_community.utilities import WolframAlphaAPIWrapper
-from langchain.agents import initialize_agent, AgentType, AgentExecutor, create_openai_functions_agent
+#from langchain_community.utilities import WolframAlphaAPIWrapper
+from langchain_community.utilities.wolfram_alpha import WolframAlphaAPIWrapper
+
+from langchain.agents import initialize_agent, AgentType, AgentExecutor, create_openai_functions_agent, \
+    create_openai_tools_agent
 from langchain.callbacks import StdOutCallbackHandler
 from langchain.callbacks.base import BaseCallbackHandler
 
@@ -156,40 +160,38 @@ class MyCustomHandlerTwo11(BaseCallbackHandler):
 # ,callbacks=[MyCustomHandlerTwo()]
 query_run = WolframAlphaQueryRun(api_wrapper=wolfram, tags=['a-tag'])
 
-tools = [ PythonREPLTool()]
+tools = [query_run,PythonREPLTool()]
 
 llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0, streaming=True, )
 
-prompt = ChatPromptTemplate.from_messages(
-    [
-        (
-            "system",
-            "You are a helpful assistant. You may not need to use tools for every query - the user may just want to chat!",
-        ),
-        MessagesPlaceholder(variable_name="messages"),
-        MessagesPlaceholder(variable_name="agent_scratchpad"),
-    ]
-)
-agent = create_openai_functions_agent(llm, tools, prompt)
+prompt = hub.pull("hwchase17/openai-tools-agent")
 
-agent_executor = AgentExecutor(agent=agent, tools=tools,)
-agent_executor.callbacks=[MyCustomHandlerTwo11()]
-s=agent_executor.invoke(
-    {
-        "messages": [
-            HumanMessage(content="I'm Nemo!"),
-            AIMessage(content="Hello Nemo! How can I assist you today?"),
-            HumanMessage(content="用python写一个水仙花代码,执行出来,把结果给我"),
-        ],
 
-    }
-)
+# agent = create_openai_tools_agent(llm, tools, prompt)
+# agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+#
+#
+# res = agent_executor.invoke(
+#     {
+#         "input": "体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消,用中文回复",
+#         "chat_history": [
+#             HumanMessage(content="hi! my name is bob"),
+#             AIMessage(content="Hello Bob! How can I assist you today?"),
+#         ],
+#     }
+# )
+# print(res)
+# print(res["output"])
 
-print(s)
-
-# agent = initialize_agent(tools, llm, agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION)
-content: str = ""
-print("----------------------------------------------------------")
+# #print(s)
+# memory = ConversationBufferMemory(memory_key="chat_history")
+#
+# #agent = initialize_agent(tools, llm, agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,memory=memory)
+# agent = initialize_agent(tools, llm, agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,memory=memory,verbose=True,callbacks=[MyCustomHandlerTwo11()])
+# print(agent.run(input="你好"))
+# print(agent.run(input="我第一句话问的什么"))
+# print(agent.run(input="体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消,用中文回复"))
+# print("----------------------------------------------------------")
 # for chunk in agent.stream({"input": "你好", "chat_history": [],"callbacks":[MyCustomHandlerTwo11()]}):
 #     print(chunk)
 #     # if chunk.content is not None:
@@ -200,12 +202,13 @@ print("----------------------------------------------------------")
 # reply = agent.run(input="2 * 2 * 0.13 - 1.001? 如何计算,用中文回复" ,callbacks=[MyCustomHandlerTwo11()])
 # reply = agent.run(input="体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消,用中文回复" ,)
 # reply = agent.run(input="population%20france。,用中文回复" ,callbacks=[MyCustomHandlerTwo11()])
-# memory = ConversationBufferMemory(memory_key="chat_history")
+#memory = ConversationBufferMemory(memory_key="chat_history")
 # memory.chat_memory.add_user_message("hi!")
 # memory.chat_memory.add_ai_message("what's up?")
 # chatHistory = []
 # chatHistory.append(HumanMessage(content="你好"))
 # chatHistory.append(HumanMessage(content="有什么可以帮助你的吗"))
+
 
 #reply = agent.run(input="我第一句问的什么?", callbacks=[MyCustomHandlerTwo11()], memory=memory)
 print("--------------------------------------------------------------")

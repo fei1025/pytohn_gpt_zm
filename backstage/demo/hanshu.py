@@ -6,6 +6,8 @@ openai_api_key = 'sb-48ce6279f88e82c385dfc0a1d0feb964f4ea485874f9aeb9'
 openai_api_base="https://api.openai-sb.com/v1"
 
 client = OpenAI(base_url=openai_api_base,api_key=openai_api_key)
+#Choice(delta=ChoiceDelta(content='', function_call=None, role='assistant', tool_calls=None), finish_reason=None, index=0, logprobs=None)
+#Choice(delta=ChoiceDelta(content=None, function_call=None, role=None, tool_calls=[ChoiceDeltaToolCall(index=0, id=None, function=ChoiceDeltaToolCallFunction(arguments='sco"}', name=None), type=None)]), finish_reason=None, index=0, logprobs=None)
 
 # Example dummy function hard coded to return the same weather
 # In production, this could be your backend API or an external API

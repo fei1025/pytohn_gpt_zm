@@ -5,7 +5,6 @@ from uuid import UUID
 
 from langchain.memory import ConversationBufferMemory
 from langchain_community.tools.pubmed.tool import PubmedQueryRun
-from langchain_community.utilities import WolframAlphaAPIWrapper
 from langchain.agents import initialize_agent, AgentType, load_tools
 from langchain.callbacks import StdOutCallbackHandler
 from langchain.callbacks.base import BaseCallbackHandler
@@ -14,6 +13,9 @@ from langchain.callbacks.base import BaseCallbackHandler
 from langchain_community.chat_models.openai import ChatOpenAI
 from langchain.schema import LLMResult, AgentAction, AgentFinish
 from langchain_community.tools import WolframAlphaQueryRun, format_tool_to_openai_function
+from langchain_community.utilities.wolfram_alpha import WolframAlphaAPIWrapper
+
+
 from langchain.utils import print_text
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder

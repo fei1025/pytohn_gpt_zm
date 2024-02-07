@@ -128,6 +128,28 @@ def on_startup():
     # 查询数据库并初始化全局变量
     with SessionLocal() as db:
         setting = crud.get_user_setting(db)
+        if setting.wolfram_appid:
+            toolList["WolframA"] = WolframAlphaAPIWrapper(wolfram_alpha_appid=setting.wolfram_appid)
+        # 当你需要回答有关时事的问题时很有用
+        toolList["ddg"] = load_tools(["ddg-search"])
+        # 当你需要回答数学问题的时候很有用
+        toolList["llm-math"] = load_tools(["llm-math"])
+        "A wrapper around Arxiv.org "
+        "Useful for when you need to answer questions about Physics, Mathematics, "
+        "Computer Science, Quantitative Biology, Quantitative Finance, Statistics, "
+        "Electrical Engineering, and Economics "
+        "from scientific articles on arxiv.org. "
+        "Input should be a search query."
+        # 当你需要回答有关物理、数学的问题时很有用，”
+        # 计算机科学、数量生物学、数量金融、统计学
+        # 电气工程与经济学摘自arxiv.org上的科学文章
+        toolList["arxiv"] = load_tools(["arxiv"])
+        # 维基百科
+        toolList["wikipedia"] = load_tools(["wikipedia"])
+        # pyhon执行器
+        toolList["PythonREPLTool"] = PythonREPLTool()
+        # PubmedQueryRun() 考研 从生物医学文献，MEDLINE，生命科学期刊和在线书籍
+        PubmedQueryRun()
 
 
 if __name__ == '__main__':
