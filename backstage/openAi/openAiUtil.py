@@ -26,6 +26,38 @@ model_max_token = {
     "gpt-4-0613": token_4,
     "gpt-4-32k-0613": token_32
 }
+tools = [{"type": "function", "function": {"name": "wolfram_alpha",
+                                           "description": "A wrapper around Wolfram Alpha. Useful for when you need to answer questions about Math, Science, Technology, Culture, Society and Everyday Life. Input should be a search query.",
+                                           "parameters": {
+                                               "properties": {"__arg1": {"title": "__arg1", "type": "string"}},
+                                               "required": ["__arg1"], "type": "object"}}}, {"type": "function",
+                                                                                             "function": {
+                                                                                                 "name": "duckduckgo_search",
+                                                                                                 "description": "A wrapper around DuckDuckGo Search. Useful for when you need to answer questions about current events. Input should be a search query.",
+                                                                                                 "parameters": {
+                                                                                                     "type": "object",
+                                                                                                     "properties": {
+                                                                                                         "query": {
+                                                                                                             "description": "search query to look up",
+                                                                                                             "type": "string"}},
+                                                                                                     "required": [
+                                                                                                         "query"]}}},
+         {"type": "function", "function": {"name": "Python_REPL",
+                                           "description": "A Python shell. Use this to execute python commands. Input should be a valid python command. If you want to see the output of a value, you should print it out with `print(...)`.",
+                                           "parameters": {
+                                               "properties": {"__arg1": {"title": "__arg1", "type": "string"}},
+                                               "required": ["__arg1"], "type": "object"}}}, {"type": "function",
+                                                                                             "function": {
+                                                                                                 "name": "arxiv",
+                                                                                                 "description": "A wrapper around Arxiv.org Useful for when you need to answer questions about Physics, Mathematics, Computer Science, Quantitative Biology, Quantitative Finance, Statistics, Electrical Engineering, and Economics from scientific articles on arxiv.org. Input should be a search query.",
+                                                                                                 "parameters": {
+                                                                                                     "type": "object",
+                                                                                                     "properties": {
+                                                                                                         "query": {
+                                                                                                             "description": "search query to look up",
+                                                                                                             "type": "string"}},
+                                                                                                     "required": [
+                                                                                                         "query"]}}}]
 
 
 def get_model_max_token(model: str) -> int:
@@ -92,7 +124,7 @@ def num_tokens_from_messages(messages: list, model="gpt-3.5-turbo-0613"):
     return num_tokens
 
 
-def get_token_count( messages:list, functions:list,model="gpt-3.5-turbo-0613"):
+def get_token_count(messages: list, functions: list, model="gpt-3.5-turbo-0613"):
     # Initialize message settings to 0
     msg_init = 0
     msg_name = 0
@@ -184,6 +216,7 @@ def trim_messages(data: TrimMessagesInput):
 def get_max_tokens(model: str):
     return get_model_max_token(model) - re_chat
 
+
 def get_tools(setting: models.User_settings):
     WolframAlphaAPIWrapper(wolfram_alpha_appid=setting.wolfram_appid)
 
@@ -209,5 +242,3 @@ def demo():
             },
         }
     ]
-    print(get_token_count(messages=[],functions=tools))
-demo()

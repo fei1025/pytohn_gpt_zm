@@ -66,6 +66,7 @@ def get_documents(filepath) -> []:
 
             loader = PyPDFLoader(filepath)
             texts = loader.load()
+            pass
         elif file_type == ".docx":
             logging.debug("Loading Word...")
             from langchain_community.document_loaders import UnstructuredWordDocumentLoader

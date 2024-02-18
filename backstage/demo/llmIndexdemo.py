@@ -8,8 +8,7 @@ from langchain.memory import ConversationBufferMemory
 #from langchain_community.utilities import WolframAlphaAPIWrapper
 from langchain_community.utilities.wolfram_alpha import WolframAlphaAPIWrapper
 
-from langchain.agents import initialize_agent, AgentType, AgentExecutor, create_openai_functions_agent, \
-    create_openai_tools_agent
+from langchain.agents import initialize_agent, AgentType, AgentExecutor, create_openai_functions_agent,create_openai_tools_agent
 from langchain.callbacks import StdOutCallbackHandler
 from langchain.callbacks.base import BaseCallbackHandler
 
@@ -83,12 +82,12 @@ class MyCustomHandlerTwo11(BaseCallbackHandler):
         """Print out that we are entering a chain."""
         class_name = serialized.get("name", serialized.get("id", ["<unknown>"])[-1])
         # print(f"\n\n\033[1m> Entering new {class_name} chain...\033[0m")
-        print(f"on_chain_start{class_name};;;{serialized}")
+        print(f"on_chain_start:{class_name};;;{serialized}")
 
     def on_chain_end(self, outputs: Dict[str, Any], **kwargs: Any) -> None:
         """Print out that we finished a chain."""
         # print("\n\033[1m> Finished chain.\033[0m")
-        print("on_chain_end")
+        print(f"on_chain_end outputs:{outputs}")
 
     def on_chain_error(
             self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any
@@ -111,7 +110,12 @@ class MyCustomHandlerTwo11(BaseCallbackHandler):
             self, action: AgentAction, color: Optional[str] = None, **kwargs: Any
     ) -> Any:
         """Run on agent action."""
+        print("调用工具开始-----------------------------------------------")
         print(f"这里会显示调用的工具:{action.tool}")
+        print(f"这里会显示调用的log:{action.log}")
+        print(f"这里会显示调用的tool_input:{action.tool_input}")
+        print(f"这里会显示调用的to_json:{action.to_json()}")
+        print("调用工具结束-----------------------------------------------")
         # print_text(action.log, color='red')
 
     def on_tool_end(
@@ -153,6 +157,7 @@ class MyCustomHandlerTwo11(BaseCallbackHandler):
     ) -> None:
         """Run on agent end."""
         print(f"finish.log:{finish.log}")
+        print(f"finish.return_values:{finish.return_values}")
         # print_text(finish.log, color=color , end="\n")
 
 
@@ -184,10 +189,10 @@ prompt = hub.pull("hwchase17/openai-tools-agent")
 # print(res["output"])
 
 # #print(s)
-# memory = ConversationBufferMemory(memory_key="chat_history")
+memory = ConversationBufferMemory(memory_key="chat_history")
 #
-# #agent = initialize_agent(tools, llm, agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,memory=memory)
-# agent = initialize_agent(tools, llm, agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,memory=memory,verbose=True,callbacks=[MyCustomHandlerTwo11()])
+agent = initialize_agent(tools, llm, agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,memory=memory)
+#agent = initialize_agent(tools, llm, agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,memory=memory,verbose=True,callbacks=[MyCustomHandlerTwo11()])
 # print(agent.run(input="你好"))
 # print(agent.run(input="我第一句话问的什么"))
 # print(agent.run(input="体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消,用中文回复"))
@@ -199,8 +204,8 @@ prompt = hub.pull("hwchase17/openai-tools-agent")
 
 # logfile = "output.log"
 # callbacks=[MyCustomHandlerTwo()] What is 2x+5 = -3x + 7?
-# reply = agent.run(input="2 * 2 * 0.13 - 1.001? 如何计算,用中文回复" ,callbacks=[MyCustomHandlerTwo11()])
-# reply = agent.run(input="体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消,用中文回复" ,)
+#reply = agent.run(input="2 * 2 * 0.13 - 1.001? 如何计算,用中文回复" ,callbacks=[MyCustomHandlerTwo11()])
+#reply = agent.run(input="体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消耗,用中文回复" ,)
 # reply = agent.run(input="population%20france。,用中文回复" ,callbacks=[MyCustomHandlerTwo11()])
 #memory = ConversationBufferMemory(memory_key="chat_history")
 # memory.chat_memory.add_user_message("hi!")
@@ -211,6 +216,6 @@ prompt = hub.pull("hwchase17/openai-tools-agent")
 
 
 #reply = agent.run(input="我第一句问的什么?", callbacks=[MyCustomHandlerTwo11()], memory=memory)
-print("--------------------------------------------------------------")
-# print(reply)
+#print("--------------------------------------------------------------")
+#print(reply)
 # logger.info(reply)

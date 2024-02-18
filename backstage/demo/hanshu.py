@@ -24,6 +24,7 @@ def get_current_weather(location, unit="fahrenheit"):
 
 def run_conversation():
     # Step 1: send the conversation and available functions to the model
+    #messages = [{"role": "user", "content": "What's the weather like in San Francisco, Tokyo, and Paris?"}]
     messages = [{"role": "user", "content": "What's the weather like in San Francisco, Tokyo, and Paris?"}]
     tools = [
         {
