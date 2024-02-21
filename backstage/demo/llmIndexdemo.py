@@ -143,23 +143,13 @@ class MyCustomHandlerTwo11(BaseCallbackHandler):
         print("on_tool_error")
         pass
 
-    def on_text(
-            self,
-            text: str,
-            color: Optional[str] = None,
-            end: str = "",
-            **kwargs: Any,
-    ) -> None:
-        # print(f"text:{text}")
-        print_text(text, color=color, end="\n")
-
     def on_agent_finish(
             self, finish: AgentFinish, color: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Run on agent end."""
         print(f"finish.log:{finish.log}")
         print(f"finish.return_values:{finish.return_values}")
-        # print_text(finish.log, color=color , end="\n")
+
 
 
 # handler = StdOutCallbackHandler()
