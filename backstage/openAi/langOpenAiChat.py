@@ -64,12 +64,13 @@ def send_open_ai(db: Session, res: reqChat):
 
 def get_tools(tools: [], setting: models.User_settings, llm) -> []:
     toolList = []
+
     # if setting.wolfram_appid:
     #     toolList["Wolfram"] = WolframAlphaAPIWrapper(wolfram_alpha_appid=setting.wolfram_appid)
     #     # 当你需要回答有关时事的问题时很有用
     # toolList["ddg"] = load_tools(["ddg-search"])
     # # 当你需要回答数学问题的时候很有用
-    # toolList["llm-math"] = load_tools(["llm-math"])
+    toolList["llm-math"] = load_tools(["llm-math"],llm=llm)
     # "A wrapper around Arxiv.org "
     # "Useful for when you need to answer questions about Physics, Mathematics, "
     # "Computer Science, Quantitative Biology, Quantitative Finance, Statistics, "
@@ -85,6 +86,7 @@ def get_tools(tools: [], setting: models.User_settings, llm) -> []:
     # # pyhon执行器
     # toolList["PythonREPLTool"] = PythonREPLTool()
     # # PubmedQueryRun() 考研 从生物医学文献，MEDLINE，生命科学期刊和在线书籍
+    #
     # PubmedQueryRun()
     if len(toolList) != 0:
         toolList = load_tools(tools, llm=llm)

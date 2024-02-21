@@ -1,7 +1,16 @@
 from typing import List
 
 import tiktoken
+from langchain.agents import load_tools
+from langchain_community.tools.arxiv.tool import ArxivQueryRun
+from langchain_community.tools.ddg_search import DuckDuckGoSearchRun
+from langchain_community.tools.wikipedia.tool import WikipediaQueryRun
+from langchain_community.tools.wolfram_alpha import WolframAlphaQueryRun
+from langchain_community.utilities.arxiv import ArxivAPIWrapper
+from langchain_community.utilities.duckduckgo_search import DuckDuckGoSearchAPIWrapper
+from langchain_community.utilities.wikipedia import WikipediaAPIWrapper
 from langchain_community.utilities.wolfram_alpha import WolframAlphaAPIWrapper
+from langchain_experimental.tools import PythonREPLTool
 
 from entity import models
 from entity.openAi_entity import TrimMessagesInput
@@ -26,39 +35,23 @@ model_max_token = {
     "gpt-4-0613": token_4,
     "gpt-4-32k-0613": token_32
 }
-tools = [{"type": "function", "function": {"name": "wolfram_alpha",
-                                           "description": "A wrapper around Wolfram Alpha. Useful for when you need to answer questions about Math, Science, Technology, Culture, Society and Everyday Life. Input should be a search query.",
-                                           "parameters": {
-                                               "properties": {"__arg1": {"title": "__arg1", "type": "string"}},
-                                               "required": ["__arg1"], "type": "object"}}}, {"type": "function",
-                                                                                             "function": {
-                                                                                                 "name": "duckduckgo_search",
-                                                                                                 "description": "A wrapper around DuckDuckGo Search. Useful for when you need to answer questions about current events. Input should be a search query.",
-                                                                                                 "parameters": {
-                                                                                                     "type": "object",
-                                                                                                     "properties": {
-                                                                                                         "query": {
-                                                                                                             "description": "search query to look up",
-                                                                                                             "type": "string"}},
-                                                                                                     "required": [
-                                                                                                         "query"]}}},
-         {"type": "function", "function": {"name": "Python_REPL",
-                                           "description": "A Python shell. Use this to execute python commands. Input should be a valid python command. If you want to see the output of a value, you should print it out with `print(...)`.",
-                                           "parameters": {
-                                               "properties": {"__arg1": {"title": "__arg1", "type": "string"}},
-                                               "required": ["__arg1"], "type": "object"}}}, {"type": "function",
-                                                                                             "function": {
-                                                                                                 "name": "arxiv",
-                                                                                                 "description": "A wrapper around Arxiv.org Useful for when you need to answer questions about Physics, Mathematics, Computer Science, Quantitative Biology, Quantitative Finance, Statistics, Electrical Engineering, and Economics from scientific articles on arxiv.org. Input should be a search query.",
-                                                                                                 "parameters": {
-                                                                                                     "type": "object",
-                                                                                                     "properties": {
-                                                                                                         "query": {
-                                                                                                             "description": "search query to look up",
-                                                                                                             "type": "string"}},
-                                                                                                     "required": [
-                                                                                                         "query"]}}}]
 
+def getAllTool(setting:models.User_settings):
+    tools={}
+    if setting.wolfram_appid is not None and setting.wolfram_appid is not "":
+        wolfram = WolframAlphaAPIWrapper(wolfram_alpha_appid=setting.wolfram_appid)
+        query_run = WolframAlphaQueryRun(api_wrapper=wolfram, tags=['a-tag'])
+        tools["wolfram_alpha"]=query_run
+    # callbacks=[MyCustomHandlerTwo11()]
+    tools["PythonREPLTool"] = PythonREPLTool()
+    #     # # 当你需要回答有关物理、数学的问题时很有用，”
+    #     # # 计算机科学、数量生物学、数量金融、统计学
+    #     # # 电气工程与经济学摘自arxiv.org上的科学文章
+    tools["arxiv"] = ArxivQueryRun(api_wrapper=ArxivAPIWrapper())
+    # 维基百科
+    tools["wikipedia"] = WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper())
+    # 当你需要回答有关时事的问题时很有用
+    tools["ddg"] = DuckDuckGoSearchRun(api_wrapper=DuckDuckGoSearchAPIWrapper())
 
 def get_model_max_token(model: str) -> int:
     return model_max_token[model]

@@ -131,6 +131,7 @@ class MyCustomHandlerTwo11(BaseCallbackHandler):
         # if observation_prefix is not None:
         #     print_text(f"\n这是啥:? {observation_prefix}")
         # print_text(output, color=color)
+        # 这里会显示公里返回的数据
         print(f"\n 这是啥3 :{output}")
         # if llm_prefix is not None:
         #     print_text(f"\n这是啥111 {llm_prefix}")

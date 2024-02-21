@@ -54,7 +54,7 @@ class chat_hist(Base):
     model = Column(String)
     type = Column(String)
     knowledge_id = Column(String)
-
+    tools = Column(String)
 
 class chat_hist_details(Base):
     __tablename__ = "chat_hist_details"
