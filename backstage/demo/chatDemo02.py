@@ -28,13 +28,14 @@ query_run = WolframAlphaQueryRun(api_wrapper=wolfram, tags=['a-tag'])
 model = ChatOpenAI(model="gpt-3.5-turbo",callbacks=[MyCustomHandlerTwo11()],streaming=True)
 tools = [query_run,DuckDuckGoSearchRun(api_wrapper=DuckDuckGoSearchAPIWrapper()),PythonREPLTool(),ArxivQueryRun(api_wrapper=ArxivAPIWrapper())]
 functions = [convert_to_openai_function(t) for t in tools]
+print(functions)
 model_with_tools = model.bind_functions(tools)
 
 #message =model_with_tools.invoke([HumanMessage(content="2 * 2 * 0.13 - 1.001? 如何计算,用中文回复")])
 
-with get_openai_callback() as cb:
-    result = model.invoke("体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消,用中文回复")
-    print(cb)
+# with get_openai_callback() as cb:
+#     result = model.invoke("体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消,用中文回复")
+#     print(cb)
 
 
 # message = model.invoke(

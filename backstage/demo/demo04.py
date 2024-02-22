@@ -1,9 +1,10 @@
-from langchain_core.utils.function_calling import convert_to_openai_function, convert_to_openai_tool
+from langchain_core.utils.function_calling import convert_to_openai_function
 from openai import OpenAI
 
 import json
 
-from Util.MyWolfram import MyWolframAlphaAPIWrapper, MyWolframAlphaQueryRun
+from Util.MyWolfram import MyWolframAlphaAPIWrapper
+from demo.llmdemo02 import MyWolframAlphaQueryRun
 
 openai_api_key = 'sb-48ce6279f88e82c385dfc0a1d0feb964f4ea485874f9aeb9'
 openai_api_base="https://api.openai-sb.com/v1"
@@ -53,8 +54,7 @@ def run_conversation():
             },
         }
     ]
-    print(convert_to_openai_tool(query_run))
-    tools.append(convert_to_openai_tool(query_run))
+    tools.append(convert_to_openai_function(query_run))
     response = client.chat.completions.create(
         model="gpt-3.5-turbo-1106",
         messages=messages,
@@ -88,8 +88,6 @@ def run_conversation():
     # print(s)
     # return
     response_message = response.choices[0].message
-    print("---------------------------------------------------------")
-    print(response_message)
     tool_calls = response_message.tool_calls
     # Step 2: check if the model wanted to call a function
     if tool_calls:
@@ -97,7 +95,7 @@ def run_conversation():
         # Note: the JSON response may not always be valid; be sure to handle errors
         available_functions = {
             "get_current_weather": get_current_weather,
-            "wolfram_alpha":query_run.run
+            "wolfram_alpha":query_run
         }  # only one function in this example, but you can have multiple
         messages.append(response_message)  # extend conversation with assistant's reply
         # Step 4: send the info for each function call and function response to the model
@@ -105,12 +103,9 @@ def run_conversation():
             function_name = tool_call.function.name
             function_to_call = available_functions[function_name]
             function_args = json.loads(tool_call.function.arguments)
-            # function_response = function_to_call(
-            #     location=function_args.get("location"),
-            #     unit=function_args.get("unit"),
-            # )
             function_response = function_to_call(
-                function_args.get("__arg1")
+                location=function_args.get("location"),
+                unit=function_args.get("unit"),
             )
             messages.append(
                 {
@@ -124,6 +119,6 @@ def run_conversation():
             model="gpt-3.5-turbo-1106",
             messages=messages,
         )  # get a new response from the model where it can see the function response
-        return  second_response.choices[0].message.content
+        return second_response
 print("---------------------------------------------------")
-print(run_conversation())
+#print(run_conversation())

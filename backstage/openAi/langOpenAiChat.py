@@ -26,6 +26,7 @@ from entity import crud, models
 from entity.openAi_entity import TrimMessagesInput
 from entity.schemas import reqChat
 from openAi import openAiUtil
+from Util import  myTools,MyWolfram
 
 
 # https://blog.csdn.net/hy592070616/article/details/132306885 聊天带记忆
@@ -51,12 +52,12 @@ def send_open_ai(db: Session, res: reqChat):
     llm = ChatOpenAI(model_name=openAiUtil.get_open_model(res.model),
                      temperature=0,
                      streaming=True)
-    tools = get_tools(setting, llm, res)
+    tools = get_tools(setting, llm, res,myHandler)
 
     question = message.pop()
 
 
-def get_tools(setting: models.User_settings, llm, res: reqChat) -> []:
+def get_tools(setting: models.User_settings, llm, res: reqChat,myHandler) -> []:
     toolList = []
     chatHist = crud.get_Hist_by_id(res.chat_id)
     tools = chatHist.tools
@@ -64,11 +65,13 @@ def get_tools(setting: models.User_settings, llm, res: reqChat) -> []:
         toolss = openAiUtil.getAllTool()
         for tool in tools.split(","):
             if tool=="llm-math":
-                toolList.append(load_tools(["llm-math"],llm=llm))
+                toolList.append(load_tools(["llm-math"],llm=llm,callbacks=myHandler))
             elif tool == "open-meteo-api":
-                toolList.append(load_tools(["llm-math"], llm=llm))
-            elif tool=="wolfram_alpha":
-                toolList.append(WolframAlphaAPIWrapper(wolfram_alpha_appid=setting.wolfram_appid))
+                toolList.append(load_tools(["open-meteo-api"], llm=llm,callbacks=myHandler))
+            # elif tool=="wolfram_alpha":
+            #     wolfram= MyWolfram.MyWolframAlphaAPIWrapper(wolfram_alpha_appid=setting.wolfram_appid)
+            #     query_run = WolframAlphaQueryRun(api_wrapper=wolfram, tags=['a-tag'],description=myTools.wolfrmpo,callbacks=myHandler)
+            #     toolList.append(query_run)
             else:
                 toolList.append(toolss[tool])
     return toolList

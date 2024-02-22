@@ -1,4 +1,8 @@
 wolfrmpo="""
+API documentation:
+Endpoint: https://www.wolframalpha.com/api
+GET /v1/llm-api
+
 - WolframAlpha understands natural language queries about entities in chemistry, physics, geography, history, art, astronomy, and more.
 - WolframAlpha performs mathematical calculations, date and unit conversions, formula solving, etc.
 - Convert inputs to simplified keyword queries whenever possible (e.g. convert "how many people live in France" to "France population").

@@ -1,12 +1,19 @@
 import os
+from dataclasses import Field
+from typing import Optional
 
-
+from langchain.chains import APIChain
 from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_community.tools.wolfram_alpha import WolframAlphaQueryRun
 from langchain_community.utilities.wolfram_alpha import WolframAlphaAPIWrapper
+from langchain_core.callbacks import CallbackManagerForToolRun
 from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.tools import Tool, BaseTool
 from langchain_experimental.tools import PythonREPLTool
+from pydantic import BaseModel
 
+from Util import MyWolfram, myTools
+from Util.MyWolfram import MyWolframAlphaAPIWrapper, MyWolframAlphaQueryRun
 from demo.llmIndexdemo import MyCustomHandlerTwo11
 
 os.environ['OPENAI_API_KEY'] = 'sb-48ce6279f88e82c385dfc0a1d0feb964f4ea485874f9aeb9'
@@ -25,7 +32,36 @@ from langchain_community.chat_models.openai import ChatOpenAI
 from langchain import hub
 from langchain.agents import create_openai_functions_agent, create_openai_tools_agent
 from langchain.agents import AgentExecutor
-query_run = WolframAlphaQueryRun(api_wrapper=wolfram, tags=['a-tag'],callbacks=[MyCustomHandlerTwo11()])
+
+
+
+#query_run = WolframAlphaQueryRun(api_wrapper=wolfram, tags=['a-tag'],callbacks=[MyCustomHandlerTwo11()])
+llm1 = ChatOpenAI(model="gpt-3.5-turbo-1106", temperature=0,callbacks=[MyCustomHandlerTwo11()])
+from pydantic.v1 import BaseModel, Field
+
+wolfram = MyWolframAlphaAPIWrapper(wolfram_alpha_appid="5V6ELP-UUPQLEAUXU",llm=llm1)
+query_run = MyWolframAlphaQueryRun(api_wrapper=wolfram, tags=['a-tag'],callbacks=[MyCustomHandlerTwo11()])
+
+
+# chain = APIChain.from_llm_and_api_docs(
+#     llm1,
+#     myTools.wolfrmpo,
+#     headers={"Authorization":"Bearer 5V6ELP-UUPQLEAUXU"},
+#     limit_to_domains=None,
+# )
+# query_run=Tool(
+#         name="wrapper",
+#         description=(
+#         "A wrapper around Wolfram Alpha. "
+#         "Useful for when you need to answer questions about Math, "
+#         "Science, Technology, Culture, Society and Everyday Life. "
+#         "Input should be a search query."
+#     ),
+#         func=chain.run,
+#         callbacks=[MyCustomHandlerTwo11()]
+#     )
+
+
 
 # retriever_tool = create_retriever_tool(
 #     retriever,
@@ -35,14 +71,9 @@ query_run = WolframAlphaQueryRun(api_wrapper=wolfram, tags=['a-tag'],callbacks=[
 search = TavilySearchResults(max_results=1,callbacks=[MyCustomHandlerTwo11()])
 pythonSheel=PythonREPLTool(callbacks=[MyCustomHandlerTwo11()])
 
-pythonSheel.description=str (
-        "A Python shell. Use this to execute python commands. "
-        "Input should be a valid python command. "
-        "If you want to see the output of a value, you should print it out "
-        "with `print(...)`."
-        "If you want to view an image or file, you save it, and the path to the save is returned in markdown format"
-    )
-tools = [search,query_run,pythonSheel]
+
+#tools = [search,query_run,pythonSheel]
+tools = [query_run]
 
 
 # # Get the prompt to use - you can modify this!
@@ -67,12 +98,13 @@ llm = ChatOpenAI(model="gpt-3.5-turbo-1106", temperature=0,streaming=True,callba
 
 # Construct the OpenAI Tools agent
 agent = create_openai_tools_agent(llm, tools, prompt)
-agent_executor = AgentExecutor(agent=agent, tools=tools,)
+agent_executor = AgentExecutor(agent=agent, tools=tools,    callbacks=[MyCustomHandlerTwo11()])
 #chat_history = [HumanMessage(content="文件路径 C:\\Users\\86158\\Desktop\\用户信息 (2).xls")]
 #print(agent_executor.invoke({"chat_history": chat_history,"input": "用python代码解析下上面文件,统计下每个 负责部门 有多少数据,同时给我生成一张饼状图片出来,生成图片的时候,你要考虑到中文乱码的问题,你还要考虑到如果数据太密集生成的图片里面负责部门名字会重叠的问题,同时你要把图片路径打印出来,并且用把 图片用markdown格式返回"}))
 # print(agent_executor.invoke({"chat_history": chat_history,"input": "用python代码解析下上面文件,统计下每个 负责部门 有多少数据,同时给我生成一张饼状图片出来"}))
 
 #agent = agent_executor.invoke({"chat_history": chat_history,"input": "Tell me how"})
-agent = agent_executor.invoke({"input": "体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消,用中文回复"})
+#agent = agent_executor.invoke({"input": "体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消耗,我,用中文回复"})
+agent = agent_executor.invoke({"input": "10+densest+elemental+metals,用中文回复"})
 print(agent["output"])
 
