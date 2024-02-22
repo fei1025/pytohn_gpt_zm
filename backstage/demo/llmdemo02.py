@@ -19,7 +19,7 @@ os.environ['LANGCHAIN_PROJECT'] = 'pt-formal-mountain-58'
 
 # os.environ["WOLFRAM_ALPHA_APPID"] = "5V6ELP-UUPQLEAUXU"
 openai_api_key = 'sb-48ce6279f88e82c385dfc0a1d0feb964f4ea485874f9aeb9'
-
+# https://products.wolframalpha.com/llm-api/documentation
 wolfram = WolframAlphaAPIWrapper(wolfram_alpha_appid="5V6ELP-UUPQLEAUXU")
 from langchain_community.chat_models.openai import ChatOpenAI
 from langchain import hub
