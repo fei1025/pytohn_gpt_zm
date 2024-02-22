@@ -1,7 +1,4 @@
-from typing import List
-
 import tiktoken
-from langchain.agents import load_tools
 from langchain_community.tools.arxiv.tool import ArxivQueryRun
 from langchain_community.tools.ddg_search import DuckDuckGoSearchRun
 from langchain_community.tools.wikipedia.tool import WikipediaQueryRun
@@ -9,10 +6,16 @@ from langchain_community.tools.wolfram_alpha import WolframAlphaQueryRun
 from langchain_community.utilities.arxiv import ArxivAPIWrapper
 from langchain_community.utilities.duckduckgo_search import DuckDuckGoSearchAPIWrapper
 from langchain_community.utilities.wikipedia import WikipediaAPIWrapper
+from typing import Any, Dict, List, Optional, Union
+
 from langchain_community.utilities.wolfram_alpha import WolframAlphaAPIWrapper
+
+from langchain.callbacks.base import BaseCallbackHandler
+
+from langchain.schema import LLMResult, AgentAction, AgentFinish
+from langchain_community.tools import WolframAlphaQueryRun, format_tool_to_openai_function
 from langchain_experimental.tools import PythonREPLTool
 
-from entity import models
 from entity.openAi_entity import TrimMessagesInput
 
 openAI_model = {"0": "gpt-3.5-turbo",
@@ -36,12 +39,12 @@ model_max_token = {
     "gpt-4-32k-0613": token_32
 }
 
-def getAllTool(setting:models.User_settings):
-    tools={}
-    if setting.wolfram_appid is not None and setting.wolfram_appid is not "":
-        wolfram = WolframAlphaAPIWrapper(wolfram_alpha_appid=setting.wolfram_appid)
-        query_run = WolframAlphaQueryRun(api_wrapper=wolfram, tags=['a-tag'])
-        tools["wolfram_alpha"]=query_run
+
+def getAllTool() -> {}:
+    tools = {}
+    wolfram = WolframAlphaAPIWrapper(wolfram_alpha_appid="")
+    query_run = WolframAlphaQueryRun(api_wrapper=wolfram, tags=['a-tag'])
+    tools["wolfram_alpha"] = query_run
     # callbacks=[MyCustomHandlerTwo11()]
     tools["PythonREPLTool"] = PythonREPLTool()
     #     # # 当你需要回答有关物理、数学的问题时很有用，”
@@ -52,6 +55,12 @@ def getAllTool(setting:models.User_settings):
     tools["wikipedia"] = WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper())
     # 当你需要回答有关时事的问题时很有用
     tools["ddg"] = DuckDuckGoSearchRun(api_wrapper=DuckDuckGoSearchAPIWrapper())
+    # llm回答数据问题
+    tools["llm-math"] = "llm"
+    # 询问天气是很有帮助的
+    tools["open-meteo-api"] = "open-meteo-api"
+    return tools
+
 
 def get_model_max_token(model: str) -> int:
     return model_max_token[model]
@@ -61,7 +70,7 @@ def get_open_model(key: str):
     return openAI_model[key]
 
 
-def get_all_model():
+def get_all_model() -> {}:
     models = [{"value": "gpt-3.5-turbo-0613",
                "key": "0"
                },
@@ -210,28 +219,85 @@ def get_max_tokens(model: str):
     return get_model_max_token(model) - re_chat
 
 
-def get_tools(setting: models.User_settings):
-    WolframAlphaAPIWrapper(wolfram_alpha_appid=setting.wolfram_appid)
+from threading import Condition
+from collections import deque
 
 
-def demo():
-    tools = [
-        {
-            "type": "function",
-            "function": {
-                "name": "get_current_weather",
-                "description": "Get the current weather in a given location",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "location": {
-                            "type": "string",
-                            "description": "The city and state, e.g. San Francisco, CA",
-                        },
-                        "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]},
-                    },
-                    "required": ["location"],
-                },
-            },
-        }
-    ]
+class CallbackToIterator:
+    def __init__(self):
+        self.queue = deque()
+        self.cond = Condition()
+        self.finished = False
+
+    def callback(self, result):
+        with self.cond:
+            self.queue.append(result)
+            self.cond.notify()  # Wake up the generator.
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        with self.cond:
+            # Wait for a value to be added to the queue.
+            while not self.queue and not self.finished:
+                self.cond.wait()
+            if not self.queue:
+                raise StopIteration()
+            return self.queue.popleft()
+
+    def finish(self):
+        with self.cond:
+            self.finished = True
+            self.cond.notify()  # Wake up the generator if it's waiting.
+
+
+class MyCustomHandlerTwoNew(BaseCallbackHandler):
+    def __init__(self, callback) -> None:
+        """Initialize callback handler."""
+        self.callback = callback
+    def on_llm_new_token(self, token: str, **kwargs: Any) -> Any:
+        print(f"on_new_token {token}")
+        if token!="":
+            self.callback({'type': "msg", "data":token})
+
+    def on_tool_start(
+            self,
+            serialized: Dict[str, Any],
+            input_str: str,
+            **kwargs: Any,
+    ) -> None:
+        """Do nothing."""
+        print(f"on_tool_start:{serialized}")
+
+        pass
+
+    def on_agent_action(
+            self, action: AgentAction, color: Optional[str] = None, **kwargs: Any
+    ) -> Any:
+        """Run on agent action."""
+        print("调用工具开始-----------------------------------------------")
+        print(f"这里会显示调用的工具:{action.tool}")
+        print(f"这里会显示调用的log:{action.log}")
+        print(f"这里会显示调用的tool_input:{action.tool_input}")
+        print(f"这里会显示调用的to_json:{action.to_json()}")
+        print("调用工具结束-----------------------------------------------")
+        self.callback({'type': "toolStart", "data": action.tool})
+        self.callback({'type': "toolInput", "data": action.tool_input})
+    def on_tool_end(
+            self,
+            output: str,
+            color: Optional[str] = None,
+            observation_prefix: Optional[str] = None,
+            llm_prefix: Optional[str] = None,
+            **kwargs: Any,
+    ) -> None:
+        print("on_tool_end")
+        """If not the final action, print out observation."""
+        # if observation_prefix is not None:
+        #     print_text(f"\n这是啥:? {observation_prefix}")
+        # print_text(output, color=color)
+        # 这里会显示公里返回的数据
+        print(f"\n 这是啥3 :{output}")
+        self.callback({'type': "toolEnd", "data": output})
+
