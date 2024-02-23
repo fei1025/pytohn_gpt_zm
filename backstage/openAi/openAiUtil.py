@@ -276,12 +276,7 @@ class MyCustomHandlerTwoNew(BaseCallbackHandler):
             self, action: AgentAction, color: Optional[str] = None, **kwargs: Any
     ) -> Any:
         """Run on agent action."""
-        print("调用工具开始-----------------------------------------------")
-        print(f"这里会显示调用的工具:{action.tool}")
-        print(f"这里会显示调用的log:{action.log}")
-        print(f"这里会显示调用的tool_input:{action.tool_input}")
-        print(f"这里会显示调用的to_json:{action.to_json()}")
-        print("调用工具结束-----------------------------------------------")
+        # 工具的名字
         self.callback({'type': "toolStart", "data": action.tool})
         self.callback({'type': "toolInput", "data": action.tool_input})
     def on_tool_end(
@@ -298,6 +293,5 @@ class MyCustomHandlerTwoNew(BaseCallbackHandler):
         #     print_text(f"\n这是啥:? {observation_prefix}")
         # print_text(output, color=color)
         # 这里会显示公里返回的数据
-        print(f"\n 这是啥3 :{output}")
         self.callback({'type': "toolEnd", "data": output})
 

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from entity import crud, models
 from entity.schemas import reqChat
-from langchain_core.messages import AIMessage, HumanMessage
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from fun import Knowledge
 from langchain import hub
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -128,6 +128,8 @@ def get_history(db: Session, res: reqChat) -> list:
             message.append(HumanMessage(content=chat.content))
         elif "assistant" == chat.role:
             message.append(AIMessage(content=chat.content))
+        elif "system" ==  chat.role:
+            message.append(SystemMessage(content=chat.content))
         elif "err" == chat.role:
             continue
         else:

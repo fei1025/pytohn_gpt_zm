@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 import openAi.openAIChat as openAichat
 import openAi.openAiUtil as openAiUtil
 import openAi.KnowledgeChat as knowledgeChat
+import openAi.langOpenAiChat as langOpenAiChat
 from Util.result import Result
 from db.database import engine, get_db
 from entity import models, schemas, crud
@@ -16,7 +17,6 @@ from entity import models, schemas, crud
 from sse_starlette.sse import EventSourceResponse
 
 from entity.schemas import reqChat, userSetting
-import fun.Knowledge as kn
 
 router = APIRouter()
 
@@ -103,17 +103,6 @@ async def send_open_ai1(request: Request):
 
 @router.post("/send_open_ai")
 def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
-    # if res.chat_id:
-    #     print("没有保存")
-    #     pass
-    # else:
-    #     print("保存历史记录")
-    #     chatHist = models.chat_hist()
-    #     chatHist.title = res.content
-    #     chatHist.type = '0'
-    #     crud.save_chat_hist(db, chatHist)
-    #     res.chat_id = chatHist.chat_id
-
     # 保存历史记录
     print(res.chat_id)
     chatHistDetails = models.chat_hist_details()
@@ -141,7 +130,6 @@ def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
             chatHistDetails.content = content
             chatHistDetails.role = "assistant"
             crud.save_chat_hist_details(db, chatHistDetails)
-
         g = event_generator()
         return EventSourceResponse(g)
     elif chatHist.type == "1":
@@ -154,7 +142,16 @@ def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
 
         g = event_generator()
         return EventSourceResponse(g)
+    elif  chatHist.type == "2":
+        async def event_generator():
+            data_generator = langOpenAiChat.send_open_ai(db, res)
+            if await request.is_disconnected():
+                print("连接已中断")
+            for data_point in data_generator:
+                yield json.dumps(data_point)
 
+        g = event_generator()
+        return EventSourceResponse(g)
 
 file_type = [
     ".pdf", ".docx", ".pptx", ".epub", ".xlsx"
