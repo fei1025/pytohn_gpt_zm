@@ -64,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       // 在这里执行初始化操作，此时可以访问到 context。
-      init(context);
+
     });
   }
   void _demo() {
@@ -87,6 +87,8 @@ class _MyHomePageState extends State<MyHomePage> {
         case 1:
           return KnowledgePage();
         case 2:
+          return ChatPageMain();
+        case 99:
           return SettingPage();
         default:
           throw UnimplementedError('no widget for $selectedIndex');
@@ -115,6 +117,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     icon: Icon(Icons.favorite),
                     label: Text('知识库'),
                   ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.home),
+                    label: Text('聊天(tool)'),
+                  ),
 
                 ],
                 trailing: Expanded(
@@ -135,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           IconButton(onPressed: (){
                             setState(() {
-                              curSelectedIndex = 2;
+                              curSelectedIndex = 99;
                               selectedIndex=null;
                             });
                           }, icon: const Icon(Icons.settings)),
@@ -153,6 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   setState(() {
                     selectedIndex = value;
                     curSelectedIndex = value;
+                    appState.setCurSelectedIndex(curSelectedIndex);
                   });
                 },
               ),
@@ -169,7 +176,3 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-
-void init(BuildContext context){
-  ApiService.getAllHist("0").then((value) =>context.read<MyAppState>().setChatHistList(value));
-}

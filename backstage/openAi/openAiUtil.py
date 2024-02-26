@@ -257,7 +257,6 @@ class MyCustomHandlerTwoNew(BaseCallbackHandler):
         """Initialize callback handler."""
         self.callback = callback
     def on_llm_new_token(self, token: str, **kwargs: Any) -> Any:
-        print(f"on_new_token {token}")
         if token!="":
             self.callback({'type': "msg", "data":token})
 

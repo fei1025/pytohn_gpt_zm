@@ -120,6 +120,13 @@ def delete_chat(db: Session, chatId: str):
     db.query(models.chat_hist).filter(models.chat_hist.chat_id == chatId).delete()
     db.commit()
 
+def get_chat_hist_details_tool(db: Session, chat_hist_details_id: int) -> List[models.chat_hist_details_tools]:
+    return db.query(models.chat_hist_details_tools).filter(models.chat_hist_details_tools.chat_details_id == chat_hist_details_id).all()
+
+def save_chat_hist_details_tool(db: Session, chatHistDetailsTool: models.chat_hist_details_tools):
+    db.add(chatHistDetailsTool)
+    db.commit()
+    db.refresh(chatHistDetailsTool)
 
 def delete_all_chat(db: Session):
     db.query(models.chat_hist_details).delete()

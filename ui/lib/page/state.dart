@@ -12,8 +12,27 @@ class MyAppState extends ChangeNotifier {
   factory MyAppState() {
     return _instance;
   }
+  Map<int,String> indexType = {};
+  // 根据选择的数据,判断要加载哪批数据
+  MyAppState._internal(){
+    indexType.addAll({
+      0: '0',
+      1: '1',
+      2:"2"
+    });
+  }
 
-  MyAppState._internal();
+  String? getValueByKey(int key) {
+    return indexType[key];
+  }
+
+
+  int curSelectedIndex=0;
+
+  void setCurSelectedIndex(int select){
+    curSelectedIndex=select;
+    notifyListeners();
+  }
 
   bool isDarkMode = false;
 

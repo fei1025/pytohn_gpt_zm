@@ -119,7 +119,8 @@ class _ChatLeftTop extends State<ChatLeftTop> {
                         TextButton(
                             onPressed: () {
                               ApiService.delete_all_chat();
-                              ApiService.getAllHist("0").then((value) =>context.read<MyAppState>().setChatHistList(value));
+                              String queryType =context.watch<MyAppState>().getValueByKey(context.watch<MyAppState>().curSelectedIndex)!;
+                              ApiService.getAllHist(queryType).then((value) =>context.read<MyAppState>().setChatHistList(value));
                               appState.setTitle(-1);
                               appState.setCuTitle("");
                               appState.setCuChatId(null);

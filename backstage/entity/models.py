@@ -65,6 +65,19 @@ class chat_hist_details(Base):
     content = Column(String, default=None)
     token_num = Column(String, default=None)
     creation_time = Column(Date, default=datetime.now())
+    toolList = []
+
+
+class chat_hist_details_tools(Base):
+    __tablename__ = "chat_hist_details_tools"
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    chat_details_id = Column(Integer, default=None)
+    type = Column(String,comment="类型数据")
+    tools = Column(String)
+    problem=Column(String,comment="向工具提问的问题")
+    tool_data= Column(String,comment="工具返回的数据,根据类型走")
+    creation_time = Column(Date, default=datetime.now())
+
 
 
 class knowledge(Base):

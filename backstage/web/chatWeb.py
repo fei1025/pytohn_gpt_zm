@@ -68,8 +68,11 @@ async def get_all_Hist(type: str, db: Session = Depends(get_db)):
 
 
 @router.get("/getChatHistDetails")
-async def get_chat_hist_details(db: Session = Depends(get_db), chatId: str = Query(...)):
-    return Result.success(crud.get_chat_hist_details(db, chatId))
+async def get_chat_hist_details(db: Session = Depends(get_db), chatId: int = Query(...)):
+    chat_hist_details = crud.get_chat_hist_details(db, chatId)
+    for item in chat_hist_details:
+        item.toolList=crud.get_chat_hist_details_tool(db,item.id)
+    return Result.success(chat_hist_details)
 
 
 @router.post("/save_chat_hist")
@@ -114,6 +117,7 @@ def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
     res.knowledge_id=chatHist.knowledge_id
     if chatHist.type == "0":
         async def event_generator():
+            #正常聊天
             result = openAichat.send_open_ai(db, res)
             content = ""
             for i in result:
@@ -133,6 +137,7 @@ def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
         g = event_generator()
         return EventSourceResponse(g)
     elif chatHist.type == "1":
+        # 知识库聊天
         async def event_generator():
             data_generator = knowledgeChat.send_open_ai(db, res)
             if await request.is_disconnected():
@@ -143,6 +148,7 @@ def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
         g = event_generator()
         return EventSourceResponse(g)
     elif  chatHist.type == "2":
+        # 有插件的聊天
         async def event_generator():
             data_generator = langOpenAiChat.send_open_ai(db, res)
             if await request.is_disconnected():

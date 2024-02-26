@@ -29,6 +29,12 @@ class _ChatPageMain extends State<ChatPageMain> {
       MyAppState().setCuTitle("");
       MyAppState().setCuChatId(null);
       MyAppState().setChatDetails([]);
+      int curIndex = context.read<MyAppState>().curSelectedIndex;
+      print("curIndex:${curIndex}");
+      String queryType =context.read<MyAppState>().getValueByKey(curIndex)!;
+      ApiService.getAllHist(queryType).then((value) =>  Provider.of<MyAppState>(context, listen: false).setChatHistList(value));
+
+
     });
     super.initState();
   }

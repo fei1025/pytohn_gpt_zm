@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:open_ui/page/api/api_service.dart';
 import 'package:open_ui/page/model/Chat_hist_list.dart';
 import 'package:open_ui/page/state.dart';
+import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'ChatRightInfo.dart';
@@ -50,13 +51,14 @@ class _ChatPageMain extends State<ChatRightMain> {
                   int? chatId = MyAppState().cuChatId;
                   //String text = _controller.text;
                   if(chatId == null){
-                    ApiService.saveChatHist(text,"0","-1").then((chatHistList){
+                    String queryType =context.read<MyAppState>().getValueByKey(context.read<MyAppState>().curSelectedIndex)!;
+                    ApiService.saveChatHist(text,queryType,"-1").then((chatHistList){
                       ChatHist chatHist = chatHistList[0];
                       MyAppState().setCuChatId(chatHist.chatId);
                       ApiService.senMsg(text,(){
                         print("回调成功的数据");
                       });
-                     ApiService.getAllHist("0").then((chatHistList2){
+                      ApiService.getAllHist(queryType).then((chatHistList2){
                        MyAppState().setChatHistList(chatHistList2);
                      });
                     });

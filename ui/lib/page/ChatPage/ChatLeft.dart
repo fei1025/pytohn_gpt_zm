@@ -47,7 +47,8 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
                 if (title != controller.text) {
                   ApiService.update_chat(chatId, null, controller.text)
                       .then((value) {
-                    ApiService.getAllHist("0").then((value) =>
+                    String queryType =context.watch<MyAppState>().getValueByKey(context.watch<MyAppState>().curSelectedIndex)!;
+                    ApiService.getAllHist(queryType).then((value) =>
                         context.read<MyAppState>().setChatHistList(value));
                   });
                 }
@@ -138,10 +139,9 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
                                               appState.setCuChatId(null);
                                               appState.setChatDetails([]);
                                             }
-                                            ApiService.getAllHist("0").then(
-                                                    (value) => context
-                                                    .read<MyAppState>()
-                                                    .setChatHistList(value));
+                                            int curIndex = context.read<MyAppState>().curSelectedIndex;
+                                            String queryType =context.read<MyAppState>().getValueByKey(curIndex)!;
+                                            ApiService.getAllHist(queryType).then((value) =>  Provider.of<MyAppState>(context, listen: false).setChatHistList(value));
                                             // 关闭弹窗
                                             Navigator.of(context).pop();
                                           },
