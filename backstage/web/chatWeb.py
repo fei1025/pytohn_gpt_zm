@@ -155,10 +155,5 @@ def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
                 print("连接已中断")
             for data_point in data_generator:
                 yield json.dumps(data_point)
-
         g = event_generator()
         return EventSourceResponse(g)
-
-file_type = [
-    ".pdf", ".docx", ".pptx", ".epub", ".xlsx"
-]

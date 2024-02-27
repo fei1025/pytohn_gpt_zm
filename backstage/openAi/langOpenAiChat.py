@@ -1,3 +1,4 @@
+import json
 import traceback
 from threading import Thread
 from typing import List
@@ -27,35 +28,39 @@ def send_open_ai(db: Session, res: reqChat):
     it = openAiUtil.CallbackToIterator()
     myHandler = openAiUtil.MyCustomHandlerTwoNew(it.callback)
     llm1 = ChatOpenAI(model_name=openAiUtil.get_open_model(res.model), temperature=0,
-                     openai_api_key=setting.openai_api_key,
-                     openai_api_base=setting.openai_api_base)
+                      openai_api_key=setting.openai_api_key,
+                      openai_api_base=setting.openai_api_base)
 
-    tools = get_tools(db,setting, llm1, res, myHandler)
+    tools = get_tools(db, setting, llm1, res, myHandler)
     prompt = hub.pull("hwchase17/openai-tools-agent")
 
     llm = ChatOpenAI(model_name=openAiUtil.get_open_model(res.model), temperature=0,
                      openai_api_key=setting.openai_api_key,
                      openai_api_base=setting.openai_api_base,
-                     streaming=True
+                     streaming=True, callbacks=[myHandler]
                      )
 
-    question = message.pop()
 
     def thread_func():
         try:
-            agent = create_openai_tools_agent(llm, tools, prompt)
-            agent_executor = AgentExecutor(agent=agent, tools=tools, callbacks=[myHandler])
-            agent_executor.invoke({"chat_history": message, "input": question})
+            if len(tools) == 0:
+                llm.invoke(message)
+            else:
+                question = message.pop()
+                agent = create_openai_tools_agent(llm, tools, prompt)
+                agent_executor = AgentExecutor(agent=agent, tools=tools)
+                agent_executor.invoke({"chat_history": message, "input": question})
         except Exception as e:
             print("An error occurred in thread_func:", e)
             traceback.print_exc()
-
+        it.finish()
     t = Thread(target=thread_func)
     t.start()
     saveTolls = []
     partial_text = ""
     modelTools = models.chat_hist_details_tools
     for value in it:
+        yield  value
         if "toolStart" == value["type"]:
             modelTools.tools = value["data"]
             modelTools.type = "0"
@@ -65,17 +70,15 @@ def send_open_ai(db: Session, res: reqChat):
             modelTools.tool_data = value["data"]
             saveTolls.append(modelTools)
         elif "msg" == value["type"]:
-            partial_text += value
-        yield value
+            partial_text += value["data"]
     chatHistDetails = models.chat_hist_details()
     chatHistDetails.chat_id = res.chat_id
     chatHistDetails.content = partial_text
     chatHistDetails.role = "assistant"
     crud.save_chat_hist_details(db, chatHistDetails)
     for tool in saveTolls:
-        tool.chat_details_id=chatHistDetails.id
-        crud.save_chat_hist_details_tool(db,tool)
-
+        tool.chat_details_id = chatHistDetails.id
+        crud.save_chat_hist_details_tool(db, tool)
 
 
 def get_tools(db: Session, setting: models.User_settings, llm, res: reqChat, myHandler) -> []:

@@ -11,7 +11,9 @@ import 'ChatLeft.dart';
 import 'ChatLeftTop.dart';
 
 class ChatPageMain extends StatefulWidget {
-  const ChatPageMain({super.key});
+  //const ChatPageMain({super.key});
+  ChatPageMain({Key? key}) : super(key: key);
+
 
   @override
   _ChatPageMain createState() => _ChatPageMain();
@@ -19,9 +21,12 @@ class ChatPageMain extends StatefulWidget {
 
 class _ChatPageMain extends State<ChatPageMain> {
   clearKeywords() {}
+  late Future histLoader;
 
   @override
   void initState() {
+    if (!mounted) return;
+
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       // 在这里执行初始化操作，此时可以访问到 context。
       // TODO: implement initState
@@ -33,10 +38,12 @@ class _ChatPageMain extends State<ChatPageMain> {
       print("curIndex:${curIndex}");
       String queryType =context.read<MyAppState>().getValueByKey(curIndex)!;
       ApiService.getAllHist(queryType).then((value) =>  Provider.of<MyAppState>(context, listen: false).setChatHistList(value));
-
-
     });
     super.initState();
+  }
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override

@@ -79,15 +79,14 @@ class _MyHomePageState extends State<MyHomePage> {
       color: theme.colorScheme.onPrimary,
     );
     var appState = context.watch<MyAppState>();
-
     Widget buildPage() {
       switch (curSelectedIndex) {
         case 0:
-          return ChatPageMain();
+          return ChatPageMain(key: ValueKey("0"));
         case 1:
           return KnowledgePage();
         case 2:
-          return ChatPageMain();
+          return ChatPageMain(key: ValueKey("1"));
         case 99:
           return SettingPage();
         default:

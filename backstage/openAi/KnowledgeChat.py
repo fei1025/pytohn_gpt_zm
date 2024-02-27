@@ -118,7 +118,7 @@ def send_open_ai(db: Session, res: reqChat):
     crud.save_chat_hist_details(db, chatHistDetails)
 
 
-def get_history(db: Session, res: reqChat) -> list:
+def get_history(db: Session, res: reqChat) -> []:
     chat_id = res.chat_id
     chatHistList = crud.get_chat_hist_details(db, res.chat_id)
     print(f"chatId:{chat_id}获取的历史记录:{chatHistList}")

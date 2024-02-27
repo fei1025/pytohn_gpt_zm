@@ -38,10 +38,11 @@ class ApiService {
         await httpUtils.get('$_baseUrl/getChatHistDetails?chatId=$chatId');
     if (response.statusCode == 200) {
       String responseBody = utf8.decode(response.bodyBytes);
+      print(responseBody);
       Map<String, dynamic> jsonMap = json.decode(responseBody);
       ChatDetailsList apiData = ChatDetailsList.fromJson(jsonMap);
       // 访问映射后的数据
-      print('Code: ${apiData.code}, Msg: ${apiData.msg},data${apiData.data}');
+      print('Code: ${apiData.code}, Msg: ${apiData.msg},data${apiData.data.toString()}');
       return apiData.data;
     } else {
       throw Exception('Failed to load data');
@@ -88,7 +89,7 @@ class ApiService {
     print("这是返回的数据${response.statusCode}");
     if (response.statusCode != 200) {
       ChatDetails chatDetails =
-          ChatDetails(id: 0, chatId: 0, role: "error", content: "数据异常");
+          ChatDetails(id: 0, chatId: 0, role: "error", content: "数据异常",other_data:[]);
       chatList.add(chatDetails);
       MyAppState().setChatDetails(chatList);
       MyAppState().isSend = false;
