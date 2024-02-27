@@ -118,7 +118,7 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                                                   itemCount: chatDetails
                                                       .other_data?.length,
                                                   itemBuilder: (context, index) {
-                                                    return Text(chatDetails.other_data![index]);
+                                                    return Text(chatDetails.other_data![index].toString());
                                                   }),
                                             ),
                                           ),

@@ -66,6 +66,7 @@ class chat_hist_details(Base):
     token_num = Column(String, default=None)
     creation_time = Column(Date, default=datetime.now())
     toolList = []
+    other_data_list=[]
 
 
 class chat_hist_details_tools(Base):

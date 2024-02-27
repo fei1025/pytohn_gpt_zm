@@ -32,7 +32,7 @@ class ChatDetails{
    final int chatId;
    final String role;
    final String content;
-   final List<String>? other_data;
+   final List<dynamic>? other_data;
 
    ChatDetails({required this.id,required this.chatId, required this.role, required this.content, this.other_data});
 
@@ -42,7 +42,7 @@ class ChatDetails{
        chatId: json['chatId'] ?? 0,
        role: json['role'] ?? '',
        content: json['content'] ?? '',
-       other_data: json['other_data'] != null ? List<String>.from([json['other_data']]) : null,
+       other_data: json['other_data_list'] != null ? List<dynamic>.from([json['other_data_list']]) : null,
      );
    }
 }

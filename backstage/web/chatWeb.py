@@ -72,6 +72,9 @@ async def get_chat_hist_details(db: Session = Depends(get_db), chatId: int = Que
     chat_hist_details = crud.get_chat_hist_details(db, chatId)
     for item in chat_hist_details:
         item.toolList=crud.get_chat_hist_details_tool(db,item.id)
+        if item.other_data:
+            item.other_data_list=json.loads(item.other_data)
+            item.other_data=None
     return Result.success(chat_hist_details)
 
 
