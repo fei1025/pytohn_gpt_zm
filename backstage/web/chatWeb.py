@@ -35,6 +35,10 @@ async def get_user_setting(db: Session = Depends(get_db)):
 async def get_all_model():
     return Result.success(data=openAiUtil.get_all_model())
 
+@router.get("/get_all_tools")
+async def get_all_tools():
+    return Result.success(data=openAiUtil.getAllTool())
+
 
 @router.post("/saveUserSetting")
 async def save_user_setting(setting: userSetting, db: Session = Depends(get_db)):
@@ -88,13 +92,14 @@ async def save_chat_hist(res: reqChat, db: Session = Depends(get_db)):
     return Result.success([chatHist])
 
 
+
 @router.post("/update_chat")
 async def update_chat(res: reqChat, db: Session = Depends(get_db)):
-    print(res)
     chatHist = models.chat_hist()
     chatHist.chat_id = res.chat_id
     chatHist.model = res.model
     chatHist.title = res.title
+    chatHist.tools=res.tools
     crud.update_chat(db, chatHist)
     return Result.success()
 

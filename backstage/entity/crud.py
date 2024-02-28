@@ -94,6 +94,8 @@ def update_chat(db: Session, chatHist: models.chat_hist):
         chat_hist.model = chatHist.model
     if chatHist.title:
         chat_hist.title = chatHist.title
+    if chatHist.tools:
+        chat_hist.tools=chatHist.tools
     db.commit()
 
 

@@ -103,26 +103,53 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                                               children: getmd(context,
                                                   chatDetails.content)),
                                         ),
-                                        Visibility(
-                                          visible: chatDetails.other_data != null,
-                                          /// 隐藏时是否保持占位
-                                          maintainState: false,
-                                          /// 隐藏时是否保存动态状态
-                                          maintainAnimation: false,
-                                          /// 隐藏时是否保存子组件所占空间的大小，不会消耗过多的性能
-                                          maintainSize: false,
-                                          child: SizedBox(
-                                            height: 50,
-                                            child: Scaffold(
-                                              body: ListView.builder(
-                                                  itemCount: chatDetails
-                                                      .other_data?.length,
-                                                  itemBuilder: (context, index) {
-                                                    return Text(chatDetails.other_data![index].toString());
-                                                  }),
-                                            ),
-                                          ),
-                                        ),
+                                        // Visibility(
+                                        //   visible: chatDetails.other_data != null,
+                                        //   /// 隐藏时是否保持占位
+                                        //   maintainState: false,
+                                        //   /// 隐藏时是否保存动态状态
+                                        //   maintainAnimation: false,
+                                        //   /// 隐藏时是否保存子组件所占空间的大小，不会消耗过多的性能
+                                        //   maintainSize: false,
+                                        //   child: SizedBox(
+                                        //     height: 300,
+                                        //     child: Scaffold(
+                                        //       body: ListView.builder(
+                                        //           itemCount: chatDetails
+                                        //               .other_data?.length,
+                                        //           itemBuilder: (context, index) {
+                                        //            // return Text("$index------------------:${chatDetails.other_data![index]}");
+                                        //             return ExpansionPanelList(
+                                        //               expansionCallback: (int index, bool isExpanded) {
+                                        //                 setState(() {
+                                        //                   print("isExpanded:${  chatDetails.other_data![index].isExpanded }");
+                                        //                   chatDetails.other_data![index].isExpanded = isExpanded;
+                                        //                   print("isExpanded11:${isExpanded}");
+                                        //                 });
+                                        //               },
+                                        //               children: chatDetails.other_data!.map<ExpansionPanel>((item) {
+                                        //                 return ExpansionPanel(
+                                        //                   headerBuilder: (BuildContext context, bool isExpanded) {
+                                        //                     return ListTile(
+                                        //                       title: Text(item.expandedValue, style: TextStyle(
+                                        //                         fontSize: 10,
+                                        //                         decoration: TextDecoration.underline,  // 添加下划线
+                                        //                         color: Colors.blue,  // 设置为蓝色
+                                        //                       ),),  // Takes the first 10 characters as the title
+                                        //                     );
+                                        //                   },
+                                        //                   body: ListTile(
+                                        //                     title: Text(item.headerValue), // Takes the full string as detail text
+                                        //                   ),
+                                        //                   isExpanded: item.isExpanded,
+                                        //                 );
+                                        //               }).toList(),
+                                        //             );
+                                        //           }),
+                                        //     ),
+                                        //   ),
+                                        // ),
+
                                       ],
                                     ),
                             ),
@@ -176,3 +203,4 @@ List<Widget> getmd(BuildContext context, String data) {
     config: config1,
   );
 }
+
