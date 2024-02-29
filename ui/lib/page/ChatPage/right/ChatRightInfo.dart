@@ -42,6 +42,7 @@ class _ChatRightInfo extends State<ChatRightInfo> {
     var appState = context.watch<MyAppState>();
     List<ChatDetails> list = appState.chatDetailsList;
     bool isDarkMode = appState.isDarkMode;
+
     return list.length == 0
         ? const Center(child: Text("今天我能帮助你吗?"))
         : Scaffold(
@@ -50,6 +51,14 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                 itemCount: list.length,
                 itemBuilder: (context, index) {
                   ChatDetails chatDetails = list[index];
+                  double calculateTotalHeight() {
+                    // 计算所有项的总高度
+                    double totalHeight = chatDetails.other_data!.fold(0, (previousValue, element) {
+                      // 如果项被扩展了，就加上300，否则加上45
+                      return previousValue + (element.isExpanded ? 300 : 45);
+                    });
+                    return totalHeight;
+                  }
                   return ListTile(
                       leading: chatDetails.role != "user"
                           ? const CircleAvatar(
@@ -88,21 +97,12 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                                     )
                                   : Column(
                                       children: [
+
                                         Container(
-                                          decoration: BoxDecoration(
-                                            color: isDarkMode
-                                                ? null
-                                                : Colors.grey[200],
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                          ),
-                                          padding: const EdgeInsets.only(
-                                              right: 10, left: 10),
-                                          child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: getmd(context,
-                                                  chatDetails.content)),
-                                        ),
+                                          decoration: BoxDecoration(color: isDarkMode ? null: Colors.grey[200], borderRadius:BorderRadius.circular(5), ),
+                                          padding: const EdgeInsets.only( right: 10, left: 10),
+                                          child: Column(mainAxisSize: MainAxisSize.min,children: getmd(context,chatDetails.content)),),
+
                                         // Visibility(
                                         //   visible: chatDetails.other_data != null,
                                         //   /// 隐藏时是否保持占位
@@ -112,30 +112,28 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                                         //   /// 隐藏时是否保存子组件所占空间的大小，不会消耗过多的性能
                                         //   maintainSize: false,
                                         //   child: SizedBox(
-                                        //     height: 300,
+                                        //     height:  calculateTotalHeight(),
                                         //     child: Scaffold(
                                         //       body: ListView.builder(
-                                        //           itemCount: chatDetails
-                                        //               .other_data?.length,
+                                        //           itemCount: chatDetails.other_data!.length+1,
                                         //           itemBuilder: (context, index) {
+                                        //             if(index==0){
+                                        //               return Text("参考资料",style: TextStyle(fontSize: 10,color: Colors.black12),);
+                                        //             }else{
+                                        //               index=index-1;
+                                        //             }
                                         //            // return Text("$index------------------:${chatDetails.other_data![index]}");
                                         //             return ExpansionPanelList(
                                         //               expansionCallback: (int index, bool isExpanded) {
                                         //                 setState(() {
-                                        //                   print("isExpanded:${  chatDetails.other_data![index].isExpanded }");
                                         //                   chatDetails.other_data![index].isExpanded = isExpanded;
-                                        //                   print("isExpanded11:${isExpanded}");
                                         //                 });
                                         //               },
                                         //               children: chatDetails.other_data!.map<ExpansionPanel>((item) {
                                         //                 return ExpansionPanel(
                                         //                   headerBuilder: (BuildContext context, bool isExpanded) {
                                         //                     return ListTile(
-                                        //                       title: Text(item.expandedValue, style: TextStyle(
-                                        //                         fontSize: 10,
-                                        //                         decoration: TextDecoration.underline,  // 添加下划线
-                                        //                         color: Colors.blue,  // 设置为蓝色
-                                        //                       ),),  // Takes the first 10 characters as the title
+                                        //                       title: Text(item.expandedValue,),  // Takes the first 10 characters as the title
                                         //                     );
                                         //                   },
                                         //                   body: ListTile(
