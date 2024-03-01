@@ -31,7 +31,7 @@ class MyItem {
   bool isExpanded;
 }
 
-class toolList {
+class ToolList {
   int id;
   int chat_details_id;
   String type;
@@ -40,17 +40,18 @@ class toolList {
   String tool_data;
   bool isExpanded = false;
 
-  toolList({
+  ToolList({
     required this.id,
     required this.chat_details_id,
     required this.type,
     required this.tools,
     required this.problem,
     required this.tool_data,
+    bool isExpanded = false
   });
 
-  factory toolList.fromJson(Map<String, dynamic> json) {
-    return toolList(
+  factory ToolList.fromJson(Map<String, dynamic> json) {
+    return ToolList(
       id: json['id'] ?? '',
       chat_details_id: json['chat_details_id'] ?? '',
       type: json['type'] ?? '',
@@ -67,18 +68,23 @@ class ChatDetails {
   final String role;
   final String content;
   final List<MyItem>? other_data;
+  final List<ToolList>? toolList;
 
   ChatDetails(
       {required this.id,
       required this.chatId,
       required this.role,
       required this.content,
-      this.other_data});
+      this.other_data,
+      this.toolList
+      });
 
   factory ChatDetails.fromJson(Map<String, dynamic> json) {
     List<MyItem>? myItem = null;
+    List<ToolList>? toolList=null;
     if (json['other_data_list'] != null) {
-      List<dynamic> list = List<dynamic>.from([json['other_data_list']]);
+      List<dynamic> list = json['other_data_list'];
+      print("list${list}");
       myItem = list
           .map((e) => MyItem(
               expandedValue: e.toString().substring(0, 10),
@@ -86,11 +92,19 @@ class ChatDetails {
               isExpanded: false))
           .toList();
     }
+    if(json['toolList']!=null){
+      List<dynamic> list =json['toolList'];
+      if(list.length!=0){
+        toolList=list.map((e) => ToolList.fromJson(e)).toList();
+      }
+    }
     return ChatDetails(
         id: json['id'] ?? '',
         chatId: json['chatId'] ?? 0,
         role: json['role'] ?? '',
         content: json['content'] ?? '',
-        other_data: myItem);
+        other_data: myItem,
+        toolList:toolList
+    );
   }
 }
