@@ -39,6 +39,7 @@ class ToolList {
   String problem;
   String tool_data;
   bool isExpanded = false;
+  bool isLoad = false;
 
   ToolList({
     required this.id,

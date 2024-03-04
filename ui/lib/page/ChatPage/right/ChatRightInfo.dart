@@ -9,6 +9,12 @@ import 'package:open_ui/page/model/ChatDetails.dart';
 import 'package:provider/provider.dart';
 import '../../md/code_wrapper.dart';
 import '../../state.dart';
+import 'dart:ui' as ui;
+
+@override
+bool shouldRepaint(CustomPainter oldDelegate) {
+  return false;
+}
 
 class ChatRightInfo extends StatefulWidget {
   const ChatRightInfo({super.key});
@@ -22,6 +28,20 @@ class _ChatRightInfo extends State<ChatRightInfo> {
 
   _showToast(String msg, {int? duration, int? position}) {
     FlutterToastr.show(msg, context, duration: duration, position: position);
+  }
+
+  Map<String, Widget> iconMap = {};
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    iconMap["wolfram_alpha"] = Image.asset('assets/images/wolframa.png',height: 20,width: 20,);
+    iconMap["PythonREPLTool"] = Image.asset('assets/images/python.png',height: 20,width: 20,);
+    iconMap["arxiv"] = Image.asset('assets/images/arxiv.png',height: 20,width: 20,);
+    iconMap["wikipedia"] = Image.asset('assets/images/wikipedia.png',height: 20,width: 20,);
+    iconMap["ddg"] = Image.asset('assets/images/DDG.png',height: 20,width: 20,);
+    iconMap["llm-math"] = Image.asset('assets/images/llmmath.png',height: 20,width: 20,);
+    super.initState();
   }
 
   @override
@@ -51,16 +71,6 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                 itemCount: list.length,
                 itemBuilder: (context, index) {
                   ChatDetails chatDetails = list[index];
-                  double calculateTotalHeight() {
-                    // 计算所有项的总高度
-                    double totalHeight = chatDetails.other_data!.fold(0,
-                        (previousValue, element) {
-                      // 如果项被扩展了，就加上300，否则加上45
-                      return previousValue + (element.isExpanded ? 300 : 45);
-                    });
-                    return totalHeight;
-                  }
-
                   List<Widget> listInfo = [];
                   final toolList = chatDetails.toolList;
                   if (toolList != null) {
@@ -68,31 +78,32 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                       return Container(
                           alignment: Alignment.centerLeft, // 将容器左对齐
                           padding: const EdgeInsets.only(bottom: 1),
-                          child: const Row(
+                          child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              CircularProgressIndicator(
-                                  color: Colors.black54, strokeWidth: 2),
-                              SizedBox(width: 8), // 用于分隔图标和文本
-                              Text("Loading..."),
+                              e.isLoad!
+                                  ? CircularProgressIndicator(
+                                      color: Colors.black54, strokeWidth: 2)
+                                  : e.isExpanded
+                                      ? getToolDetail(context, e, () {
+                                          setState(() {
+                                            e.isExpanded = false;
+                                          });
+                                        })
+                                      : InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              e.isExpanded = true;
+                                            });
+                                          },
+                                          child: iconMap[e.tools] ??
+                                              CircleAvatar(
+                                                  child: Text("空"))),
                             ],
                           ));
                     }).toList();
                     listInfo.addAll(aa);
                   }
-                  listInfo.add(Container(
-                    alignment: Alignment.centerLeft, // 将容器左对齐
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: isDarkMode ? null : Colors.grey[200],
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      padding: const EdgeInsets.only(right: 10, left: 10),
-                      child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: getmd(context, chatDetails.content)),
-                    ),
-                  ));
 
                   return ListTile(
                       leading: chatDetails.role != "user"
@@ -106,6 +117,7 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                           ? const CircleAvatar(child: Text("you"))
                           : null,
                       title: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           SelectionArea(
                             child: Container(
@@ -133,20 +145,14 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                                   : Column(
                                       children: [
                                         Container(
-                                            alignment:
-                                                Alignment.centerLeft, // 将容器左对齐
-                                            padding: const EdgeInsets.only(
-                                                bottom: 1),
-                                            child: const Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                CircularProgressIndicator(
-                                                    color: Colors.black54,
-                                                    strokeWidth: 2),
-                                                SizedBox(width: 8), // 用于分隔图标和文本
-                                                Text("Loading..."),
-                                              ],
-                                            )),
+                                          alignment:
+                                              Alignment.centerLeft, // 将容器左对齐
+                                          padding:
+                                              const EdgeInsets.only(bottom: 1),
+                                          child: Column(
+                                            children: listInfo,
+                                          ),
+                                        ),
                                         Container(
                                           alignment:
                                               Alignment.centerLeft, // 将容器左对齐
@@ -196,6 +202,41 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                 }),
           );
   }
+}
+
+Widget getToolDetail(
+    BuildContext context, ToolList data, Function() onComplete) {
+  var appState =
+      context.watch<MyAppState>(); // 使用 context.watch 监听 MyAppsState 的变化
+  bool isDarkMode = appState.isDarkMode;
+  return Column(
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          TextButton(
+              onPressed: () {
+                onComplete();
+              },
+              child: Text("收起"))
+        ],
+      ),
+      Container(
+        alignment: Alignment.centerLeft, // 将容器左对齐
+        child: Container(
+          decoration: BoxDecoration(
+            color: isDarkMode ? null : Colors.grey[200],
+            borderRadius: BorderRadius.circular(5),
+          ),
+          padding: const EdgeInsets.only(right: 10, left: 10),
+          child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: getmd(
+                  context, "问题: ${data.problem} \r\n 回答: ${data.tool_data}")),
+        ),
+      )
+    ],
+  );
 }
 
 List<Widget> getmd(BuildContext context, String data) {

@@ -5,8 +5,10 @@ import json
 
 from Util.MyWolfram import MyWolframAlphaAPIWrapper, MyWolframAlphaQueryRun
 
-openai_api_key = 'sb-48ce6279f88e82c385dfc0a1d0feb964f4ea485874f9aeb9'
-openai_api_base="https://api.openai-sb.com/v1"
+#openai_api_key = 'sb-48ce6279f88e82c385dfc0a1d0feb964f4ea485874f9aeb9'
+#openai_api_base="https://api.openai-sb.com/v1"
+openai_api_base="https://us.qaqgpt.com/v1"
+openai_api_key = 'sk-rdPkgBdWgdSnxSLN5f72Da3bF212450c9394629d8f280005'
 
 client = OpenAI(base_url=openai_api_base,api_key=openai_api_key)
 #Choice(delta=ChoiceDelta(content='', function_call=None, role='assistant', tool_calls=None), finish_reason=None, index=0, logprobs=None)

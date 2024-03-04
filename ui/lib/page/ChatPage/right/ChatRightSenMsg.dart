@@ -9,7 +9,7 @@ import '../../state.dart';
 class ChatRightSenMsg extends StatefulWidget {
   final Function onPressedWithParam;
 
-  const ChatRightSenMsg({super.key,required this.onPressedWithParam});
+  ChatRightSenMsg({super.key, required this.onPressedWithParam});
 
   @override
   State<ChatRightSenMsg> createState() => _ChatRightSenMsg();
@@ -17,25 +17,11 @@ class ChatRightSenMsg extends StatefulWidget {
 
 class _ChatRightSenMsg extends State<ChatRightSenMsg> {
   final TextEditingController _controller = TextEditingController();
-
+  List<bool> _isCheckedList = [false, true, false];
 
   void _sendMessage(MyAppState appState) async {
-
     if (_controller.text.isNotEmpty) {
       widget.onPressedWithParam(_controller.text);
-      // int? chatId = appState.cuChatId;
-      // String text = _controller.text;
-      // if(chatId == null){
-      //   List<ChatHist> chatHistList  = await ApiService.saveChatHist(text,"0");
-      //   ChatHist chatHist = chatHistList[0];
-      //   appState.setCuChatId(chatHist.chatId);
-      //   List<ChatHist> chatHistList2 =  await ApiService.getAllHist("0");
-      //   appState.setChatHistList(chatHistList2);
-      // }
-      //
-      // ApiService.senMsg(text,(){
-      //   print("回调成功的数据");
-      // });
     }
   }
 
@@ -43,6 +29,8 @@ class _ChatRightSenMsg extends State<ChatRightSenMsg> {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     bool isDarkMode = appState.isDarkMode;
+    print("数据刷新了");
+
     return Container(
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,7 +39,54 @@ class _ChatRightSenMsg extends State<ChatRightSenMsg> {
           Expanded(
             flex: 1,
             child: Row(
-              children: [IconButton(onPressed: () {}, icon: Icon(Icons.add))],
+              children: [
+                IconButton(
+                    onPressed: () {
+                      // List to hold checkbox states
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return StatefulBuilder(
+                                builder: (context, setState) {
+                              return AlertDialog(
+                                title: Text('Select Options'),
+                                content: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: List.generate(
+                                      _isCheckedList.length,
+                                      (index) {
+                                        return CheckboxListTile(
+                                          title: Text('Checkbox ${index + 1}'),
+                                          value: _isCheckedList[index],
+                                          onChanged: (bool? value) {
+                                            setState(() {
+                                              print(_isCheckedList[index]);
+                                              _isCheckedList[index] = value!;
+                                              print(_isCheckedList[index]);
+                                              print(_isCheckedList);
+                                            });
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pop(); // Close the dialog
+                                    },
+                                    child: Text('Close'),
+                                  ),
+                                ],
+                              );
+                            });
+                          });
+                    },
+                    icon: Icon(Icons.add))
+              ],
             ),
           ),
           Expanded(
