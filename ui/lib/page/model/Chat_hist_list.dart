@@ -24,6 +24,7 @@ class ChatHist {
   final int chatId;
   final String title;
   final String creationTime;
+  final String tools;
   final int knowledgeId;
 
   ChatHist({
@@ -32,6 +33,7 @@ class ChatHist {
     required this.title,
     required this.creationTime,
     required this.knowledgeId,
+    required this.tools,
   });
 
   factory ChatHist.fromJson(Map<String, dynamic> json) {
@@ -41,6 +43,7 @@ class ChatHist {
       title: json['title'] ?? '',
       creationTime: json['creation_time'] ?? '',
       knowledgeId: json['knowledge_id'] ?? 0,
+      tools: json['tools'] ?? 0,
     );
   }
 }

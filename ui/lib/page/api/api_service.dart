@@ -231,4 +231,14 @@ class ApiService {
     await httpUtils.get('$_baseUrl/knowledge/load_vectorstore?knowledgeId=$id');
   }
 
+  static Future<List<Map<String, dynamic>>> getAllToolList() async{
+    final response = await httpUtils.get('$_baseUrl/get_all_tools');
+    String responseBody = utf8.decode(response.bodyBytes);
+    Map<String, dynamic> jsonMap = json.decode(responseBody);
+    List<Map<String, dynamic>>  dataList=[];
+    List<dynamic> list = jsonMap['data'];
+    dataList=list.map((e) => Map<String, dynamic>.from(e)).toList();
+    //List<Map<String, dynamic>>  dataList = jsonMap['data'] ?? [];
+    return dataList;
+  }
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_toastr/flutter_toastr.dart';
+import 'package:open_ui/page/model/ChatDetails.dart';
 import 'package:open_ui/page/model/Chat_hist_list.dart';
+import 'package:open_ui/page/uiModule/uiModel.dart';
 import 'package:provider/provider.dart';
 
 import '../../api/api_service.dart';
@@ -17,7 +20,8 @@ class ChatRightSenMsg extends StatefulWidget {
 
 class _ChatRightSenMsg extends State<ChatRightSenMsg> {
   final TextEditingController _controller = TextEditingController();
-  List<bool> _isCheckedList = [false, true, false];
+  //List<bool> _isCheckedList = [false, true, false];
+  List<ToolsSelect> _isCheckedList = [];
 
   void _sendMessage(MyAppState appState) async {
     if (_controller.text.isNotEmpty) {
@@ -25,12 +29,11 @@ class _ChatRightSenMsg extends State<ChatRightSenMsg> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     bool isDarkMode = appState.isDarkMode;
-    print("数据刷新了");
-
     return Container(
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,48 +45,76 @@ class _ChatRightSenMsg extends State<ChatRightSenMsg> {
               children: [
                 IconButton(
                     onPressed: () {
-                      // List to hold checkbox states
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return StatefulBuilder(
-                                builder: (context, setState) {
-                              return AlertDialog(
-                                title: Text('Select Options'),
-                                content: SingleChildScrollView(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: List.generate(
-                                      _isCheckedList.length,
-                                      (index) {
-                                        return CheckboxListTile(
-                                          title: Text('Checkbox ${index + 1}'),
-                                          value: _isCheckedList[index],
-                                          onChanged: (bool? value) {
-                                            setState(() {
-                                              print(_isCheckedList[index]);
-                                              _isCheckedList[index] = value!;
-                                              print(_isCheckedList[index]);
-                                              print(_isCheckedList);
-                                            });
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context)
-                                          .pop(); // Close the dialog
-                                    },
-                                    child: Text('Close'),
-                                  ),
-                                ],
-                              );
-                            });
+                      ApiService.getAllToolList().then((value){
+                        int? chatId = appState.cuChatId;
+                        if(chatId == null){
+                          showToastr("请选择一个对话",context);
+                          return;
+                        }
+                        String tools="";
+                          List<ChatHist>  chatHistList= appState.chatHistList;
+                          chatHistList.map((e) {
+                            if(e.chatId==chatId){
+                              tools=e.tools;
+                            }
                           });
+                        _isCheckedList=value.map((e) =>  ToolsSelect(toolsName: e["name"],isSelect: tools.contains(e["key"]),key:e["key"],details: e["details"])).toList();
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return StatefulBuilder(
+                                  builder: (context, setState) {
+                                    return AlertDialog(
+                                      title: Text('Select Options'),
+                                      content: SingleChildScrollView(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: List.generate(
+                                            _isCheckedList.length,
+                                                (index) {
+                                              return CheckboxListTile(
+                                                title: Text(_isCheckedList[index].toolsName),
+                                                value: _isCheckedList[index].isSelect,
+                                                onChanged: (bool? value) {
+                                                  setState(() {
+                                                    _isCheckedList[index].isSelect = value!;
+                                                  });
+                                                },
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            String s="";
+                                            _isCheckedList.map((e){
+                                              if(e.isSelect){
+                                                s=s+","+e.key;
+                                              }
+                                            }).toString();
+                                            if(s.length >1){
+                                              s=s.substring(1);
+                                            }
+                                            print("选择的数据:${s}");
+                                            Navigator.of(context).pop(); // Close the dialog
+                                          },
+                                          child: Text('确认'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context)
+                                                .pop(); // Close the dialog
+                                          },
+                                          child: Text('Close'),
+                                        )
+                                      ],
+                                    );
+                                  });
+                            });
+                      });
+
                     },
                     icon: Icon(Icons.add))
               ],
@@ -133,3 +164,11 @@ class _ChatRightSenMsg extends State<ChatRightSenMsg> {
         ]));
   }
 }
+class ToolsSelect{
+  String toolsName;
+  bool isSelect;
+  String key;
+  String details;
+  ToolsSelect({required this.toolsName,required this.isSelect,required this.key,required this.details});
+}
+

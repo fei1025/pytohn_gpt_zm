@@ -70,7 +70,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void _demo() {
     final appState = context.read<MyAppState>();
     appState.toggleTheme();
-
   }
   @override
   Widget build(BuildContext context) {

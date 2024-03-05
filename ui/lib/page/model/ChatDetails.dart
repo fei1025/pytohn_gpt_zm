@@ -40,6 +40,7 @@ class ToolList {
   String tool_data;
   bool isExpanded = false;
   bool isLoad = false;
+  bool isSelect = false;
 
   ToolList({
     required this.id,

@@ -37,7 +37,7 @@ async def get_all_model():
 
 @router.get("/get_all_tools")
 async def get_all_tools():
-    return Result.success(data=openAiUtil.getAllTool())
+    return Result.success(data=openAiUtil.getAllToolNew())
 
 
 @router.post("/saveUserSetting")

@@ -41,6 +41,7 @@ class _ChatRightInfo extends State<ChatRightInfo> {
     iconMap["wikipedia"] = Image.asset('assets/images/wikipedia.png',height: 20,width: 20,);
     iconMap["ddg"] = Image.asset('assets/images/DDG.png',height: 20,width: 20,);
     iconMap["llm-math"] = Image.asset('assets/images/llmmath.png',height: 20,width: 20,);
+    iconMap["open-meteo-api"] = Image.asset('assets/images/meteo.png',height: 20,width: 20,);
     super.initState();
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_toastr/flutter_toastr.dart';
 
 void editTitleDialog(BuildContext context, String title, int chatId, Function(String) onConfirm) async {
   TextEditingController controller = TextEditingController();
@@ -31,4 +32,8 @@ void editTitleDialog(BuildContext context, String title, int chatId, Function(St
       );
     },
   );
+}
+
+void showToastr(String msg,BuildContext context, {int? duration, int? position}){
+    FlutterToastr.show(msg, context, duration: duration, position: position);
 }
