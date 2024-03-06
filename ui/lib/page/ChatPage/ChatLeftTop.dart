@@ -94,6 +94,7 @@ class _ChatLeftTop extends State<ChatLeftTop> {
           child: TextButton(onPressed: () {
             appState.setTitle(-1);
             appState.setCuChatId(null);
+            appState.setCuChatHist(null);
             appState.setChatDetails([]);
           }, child:const Row(children:[ SizedBox(width: 10),Icon(Icons.add),Text("新的聊天",style: TextStyle(
             //fontWeight: FontWeight.bold, // 设置字体粗细
@@ -124,6 +125,7 @@ class _ChatLeftTop extends State<ChatLeftTop> {
                               appState.setTitle(-1);
                               appState.setCuTitle("");
                               appState.setCuChatId(null);
+                              appState.setCuChatHist(null);
                               appState.setChatDetails([]);
                               // 关闭弹窗
                               Navigator.of(context).pop();

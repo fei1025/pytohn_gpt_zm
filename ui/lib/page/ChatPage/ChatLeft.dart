@@ -45,7 +45,7 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
             TextButton(
               onPressed: () {
                 if (title != controller.text) {
-                  ApiService.update_chat(chatId, null, controller.text)
+                  ApiService.update_chat(chatId, null, controller.text,null)
                       .then((value) {
                     String queryType =context.watch<MyAppState>().getValueByKey(context.watch<MyAppState>().curSelectedIndex)!;
                     ApiService.getAllHist(queryType).then((value) =>
@@ -137,6 +137,7 @@ class _ChatTitleCardState extends State<ChatTitleCard> {
                                               appState.setTitle(-1);
                                               appState.setCuTitle("");
                                               appState.setCuChatId(null);
+                                              appState.setCuChatHist(null);
                                               appState.setChatDetails([]);
                                             }
                                             int curIndex = context.read<MyAppState>().curSelectedIndex;

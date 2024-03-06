@@ -44,7 +44,7 @@ class _KnowledgeLeftCardState extends State<KnowledgeLeftCard> {
             TextButton(
               onPressed: () {
                 if (title != controller.text) {
-                  ApiService.update_chat(chatId, null, controller.text)
+                  ApiService.update_chat(chatId, null, controller.text,null)
                       .then((value) {
                     ApiService.getAllHist("1").then((value) =>
                         context.read<MyAppState>().setKnowledgeHistList(value));

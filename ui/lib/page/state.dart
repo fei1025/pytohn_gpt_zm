@@ -13,6 +13,7 @@ class MyAppState extends ChangeNotifier {
     return _instance;
   }
   Map<int,String> indexType = {};
+  Map<String, Widget> iconMap = {};
   // 根据选择的数据,判断要加载哪批数据
   MyAppState._internal(){
     indexType.addAll({
@@ -20,6 +21,13 @@ class MyAppState extends ChangeNotifier {
       1: '1',
       2:"2"
     });
+    iconMap["wolfram_alpha"] = Image.asset('assets/images/wolframa.png',height: 20,width: 20,);
+    iconMap["PythonREPLTool"] = Image.asset('assets/images/python.png',height: 20,width: 20,);
+    iconMap["arxiv"] = Image.asset('assets/images/arxiv.png',height: 20,width: 20,);
+    iconMap["wikipedia"] = Image.asset('assets/images/wikipedia.png',height: 20,width: 20,);
+    iconMap["ddg"] = Image.asset('assets/images/DDG.png',height: 20,width: 20,);
+    iconMap["llm-math"] = Image.asset('assets/images/llmmath.png',height: 20,width: 20,);
+    iconMap["open-meteo-api"] = Image.asset('assets/images/meteo.png',height: 20,width: 20,);
   }
 
   String? getValueByKey(int key) {
@@ -67,6 +75,16 @@ class MyAppState extends ChangeNotifier {
 
   void setCuChatId(int? id) {
     cuChatId = id;
+    notifyListeners();
+  }
+  ChatHist? cuChatHist;
+  void setCuChatHist(ChatHist? chatHist){
+    cuChatHist=chatHist;
+    notifyListeners();
+  }
+
+  void setCuChatHistTools(String tools){
+    cuChatHist?.tools=tools;
     notifyListeners();
   }
 

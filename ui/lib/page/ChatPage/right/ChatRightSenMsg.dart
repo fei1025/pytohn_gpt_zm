@@ -51,13 +51,7 @@ class _ChatRightSenMsg extends State<ChatRightSenMsg> {
                           showToastr("请选择一个对话",context);
                           return;
                         }
-                        String tools="";
-                          List<ChatHist>  chatHistList= appState.chatHistList;
-                          chatHistList.map((e) {
-                            if(e.chatId==chatId){
-                              tools=e.tools;
-                            }
-                          });
+                        String tools=appState.cuChatHist!.tools;
                         _isCheckedList=value.map((e) =>  ToolsSelect(toolsName: e["name"],isSelect: tools.contains(e["key"]),key:e["key"],details: e["details"])).toList();
                         showDialog(
                             context: context,
@@ -98,7 +92,11 @@ class _ChatRightSenMsg extends State<ChatRightSenMsg> {
                                               s=s.substring(1);
                                             }
                                             print("选择的数据:${s}");
-                                            Navigator.of(context).pop(); // Close the dialog
+                                            ApiService.update_chat(chatId, null,null,s)
+                                                .then((value) {
+                                              appState.setCuChatHistTools(s);
+                                              Navigator.of(context).pop(); // Close the dialog
+                                            });
                                           },
                                           child: Text('确认'),
                                         ),

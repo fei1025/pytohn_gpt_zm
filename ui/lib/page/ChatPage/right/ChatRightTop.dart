@@ -1,9 +1,9 @@
-
 // ignore_for_file: library_private_types_in_public_api, camel_case_types
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:open_ui/page/api/api_service.dart';
+import 'package:open_ui/page/model/Chat_hist_list.dart';
 import 'package:open_ui/page/model/Chat_model.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
@@ -40,32 +40,48 @@ class _ChatRightTop extends State<ChatRightTop> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-
+    ChatHist? chatHist = appState.cuChatHist;
+    print("chatHist${chatHist?.tools}");
+    List<Widget> toolList = [];
+    if (chatHist != null) {
+      String tools = chatHist.tools;
+      if (tools.isNotEmpty) {
+        List<String> toolc = tools.split(",");
+        List<Widget?> toolList1 =
+            toolc.map((e) => appState.iconMap[e]).toList();
+        for(Widget? widget in toolList1){
+          toolList.add(widget!);
+        }
+      }
+    }
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 220,
         leading: Container(
           height: 20,
-          margin: EdgeInsets.only(top: 20,right: 5),
-          padding: EdgeInsets.only(top: 5,left: 5,bottom: 5),
+          margin: EdgeInsets.only(top: 20, right: 5),
+          padding: EdgeInsets.only(top: 5, left: 5, bottom: 5),
           child: MyPopupMenuButton(),
         ),
-        title:  Center(
+        centerTitle: true,
+        title: Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-          Transform.translate(
-            offset: const Offset(-60, 0), // 控制水平偏移量
-            child:  Text(appState.cuTitle, style: const TextStyle(
-              fontWeight: FontWeight.bold, // 设置为黑体字
-            )),
-          ),
-              Text(
-                appState.subhead,
-                style: const TextStyle(
-                  fontSize: 14.0,
-                  color: Colors.grey,
-                ),
+              Column(
+                children: [
+                  Text(appState.cuTitle,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold, // 设置为黑体字
+                      )),
+                  SizedBox(height: 5), // 添加额外的垂直间距
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center, // 水平居中对齐
+                      children: toolList,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -84,13 +100,15 @@ class _ChatRightTop extends State<ChatRightTop> {
     );
   }
 }
+
 class MyPopupMenuButton extends StatefulWidget {
   @override
   _MyPopupMenuButtonState createState() => _MyPopupMenuButtonState();
 }
 
 class _MyPopupMenuButtonState extends State<MyPopupMenuButton> {
-  String selectedValue ="0";
+  String selectedValue = "0";
+
   @override
   void initState() {
     print("执行初始化数据了");
@@ -107,10 +125,10 @@ class _MyPopupMenuButtonState extends State<MyPopupMenuButton> {
   @override
   Widget build(BuildContext context) {
     //Color buttonColor = Theme.of(context).buttonTheme.colorScheme!.primary;
-   TextStyle? textStyle = Theme.of(context).textTheme.titleSmall;
-   var appState = context.watch<MyAppState>();
-   List<ChatModel> chatModelList = MyAppState().chatModelList;
-   return PopupMenuButton<String>(
+    TextStyle? textStyle = Theme.of(context).textTheme.titleSmall;
+    var appState = context.watch<MyAppState>();
+    List<ChatModel> chatModelList = MyAppState().chatModelList;
+    return PopupMenuButton<String>(
       onSelected: (String value) {
         setState(() {
           ChatModel chatModel = chatModelList[int.parse(value)];
@@ -120,7 +138,7 @@ class _MyPopupMenuButtonState extends State<MyPopupMenuButton> {
         });
       },
       itemBuilder: (BuildContext context) {
-        return   chatModelList.map((ChatModel chatModel) {
+        return chatModelList.map((ChatModel chatModel) {
           final index = chatModelList.indexOf(chatModel);
           return PopupMenuItem<String>(
             value: index.toString(),
@@ -132,9 +150,15 @@ class _MyPopupMenuButtonState extends State<MyPopupMenuButton> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(selectedValue,style: textStyle, overflow: TextOverflow.ellipsis,), // 显示选中的值
+          Text(
+            selectedValue,
+            style: textStyle,
+            overflow: TextOverflow.ellipsis,
+          ),
+          // 显示选中的值
           SizedBox(width: 8),
-          Icon(Icons.arrow_drop_down), // 向下箭头图标
+          Icon(Icons.arrow_drop_down),
+          // 向下箭头图标
         ],
       ), // 设置弹出菜单的位置
     );
@@ -151,7 +175,6 @@ class windRightButton extends StatefulWidget {
 class _windRightButton extends State<windRightButton> {
   bool isMax = false;
 
-
   @override
   void initState() {
     super.initState();
@@ -166,8 +189,8 @@ class _windRightButton extends State<windRightButton> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    bool isDarkMode=appState.isDarkMode;
-    bool isAlway=appState.isAlway;
+    bool isDarkMode = appState.isDarkMode;
+    bool isAlway = appState.isAlway;
     Color buttonColor = Theme.of(context).buttonTheme.colorScheme!.primary;
     //Color buttonColor =Colors.grey[800]!;
     return Row(
@@ -180,20 +203,23 @@ class _windRightButton extends State<windRightButton> {
                   isAlway = !isAlway;
                   appState.setIsAlway(isAlway);
                   windowManager.setAlwaysOnTop(isAlway);
-
                 });
               },
               child: Container(
-                padding:  EdgeInsets.only(top: 5),
-                color: !isAlway?null:Colors.black12,
-                child:  Transform.rotate(
+                padding: EdgeInsets.only(top: 5),
+                color: !isAlway ? null : Colors.black12,
+                child: Transform.rotate(
                   angle: 315 * (3.141592653589793 / 180),
                   child: SvgPicture.asset(
                     "assets/images/nail.svg",
-                    colorFilter:ColorFilter.mode(
-                        isDarkMode?
-                        isAlway?buttonColor:Colors.white70:
-                        isAlway?buttonColor:Colors.grey[800]!,
+                    colorFilter: ColorFilter.mode(
+                        isDarkMode
+                            ? isAlway
+                                ? buttonColor
+                                : Colors.white70
+                            : isAlway
+                                ? buttonColor
+                                : Colors.grey[800]!,
                         BlendMode.srcIn),
                     width: 28,
                   ),
@@ -224,7 +250,9 @@ class _windRightButton extends State<windRightButton> {
                   isMax = !isMax;
                 });
               },
-              child: isMax ? const Icon(Icons.filter_none) : const Icon(Icons.crop_square),
+              child: isMax
+                  ? const Icon(Icons.filter_none)
+                  : const Icon(Icons.crop_square),
             )),
         Expanded(
             flex: 1,

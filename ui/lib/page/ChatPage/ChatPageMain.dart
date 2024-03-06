@@ -33,6 +33,7 @@ class _ChatPageMain extends State<ChatPageMain> {
       MyAppState().setTitle(-1);
       MyAppState().setCuTitle("");
       MyAppState().setCuChatId(null);
+      MyAppState().setCuChatHist(null);
       MyAppState().setChatDetails([]);
       int curIndex = context.read<MyAppState>().curSelectedIndex;
       print("curIndex:${curIndex}");
@@ -94,6 +95,7 @@ class _ChatPageMain extends State<ChatPageMain> {
                               appState.setCuTitle(title.title);
                               // 点击了标题
                               appState.setCuChatId(title.chatId);
+                              appState.setCuChatHist(title);
                               setState(() {
                                 ApiService.getChatDetails(appState.cuChatId).then((value) =>appState.setChatDetails(value));
                                 appState.setTitle(index);

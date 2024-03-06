@@ -55,6 +55,7 @@ class _ChatPageMain extends State<ChatRightMain> {
                     ApiService.saveChatHist(text,queryType,"-1").then((chatHistList){
                       ChatHist chatHist = chatHistList[0];
                       MyAppState().setCuChatId(chatHist.chatId);
+                      MyAppState().setCuChatHist(chatHist);
                       ApiService.senMsg(text,(){
                         print("回调成功的数据");
                       });

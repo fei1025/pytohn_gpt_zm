@@ -48,6 +48,7 @@ class _KnowledgeLeftMainState extends State<KnowledgeLeftMain> {
                   appState.setKnowledgeTitle(title.title);
                   // 点击了标题
                   appState.setCuChatId(title.chatId);
+                  appState.setCuChatHist(title);
                   //加载索引
                   _showUploadDialog("加载索引中");
                   ApiService.loadVectorstore(title.knowledgeId).then((value){

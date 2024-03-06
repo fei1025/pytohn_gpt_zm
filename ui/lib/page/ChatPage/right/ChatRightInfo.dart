@@ -30,18 +30,11 @@ class _ChatRightInfo extends State<ChatRightInfo> {
     FlutterToastr.show(msg, context, duration: duration, position: position);
   }
 
-  Map<String, Widget> iconMap = {};
 
   @override
   void initState() {
     // TODO: implement initState
-    iconMap["wolfram_alpha"] = Image.asset('assets/images/wolframa.png',height: 20,width: 20,);
-    iconMap["PythonREPLTool"] = Image.asset('assets/images/python.png',height: 20,width: 20,);
-    iconMap["arxiv"] = Image.asset('assets/images/arxiv.png',height: 20,width: 20,);
-    iconMap["wikipedia"] = Image.asset('assets/images/wikipedia.png',height: 20,width: 20,);
-    iconMap["ddg"] = Image.asset('assets/images/DDG.png',height: 20,width: 20,);
-    iconMap["llm-math"] = Image.asset('assets/images/llmmath.png',height: 20,width: 20,);
-    iconMap["open-meteo-api"] = Image.asset('assets/images/meteo.png',height: 20,width: 20,);
+
     super.initState();
   }
 
@@ -63,6 +56,7 @@ class _ChatRightInfo extends State<ChatRightInfo> {
     var appState = context.watch<MyAppState>();
     List<ChatDetails> list = appState.chatDetailsList;
     bool isDarkMode = appState.isDarkMode;
+    Map<String, Widget> iconMap = appState.iconMap;
 
     return list.length == 0
         ? const Center(child: Text("今天我能帮助你吗?"))

@@ -24,7 +24,7 @@ class ChatHist {
   final int chatId;
   final String title;
   final String creationTime;
-  final String tools;
+  String tools;
   final int knowledgeId;
 
   ChatHist({
@@ -43,7 +43,7 @@ class ChatHist {
       title: json['title'] ?? '',
       creationTime: json['creation_time'] ?? '',
       knowledgeId: json['knowledge_id'] ?? 0,
-      tools: json['tools'] ?? 0,
+      tools: json['tools'] ?? '',
     );
   }
 }
