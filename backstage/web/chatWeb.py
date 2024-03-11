@@ -52,6 +52,9 @@ async def save_user_setting(setting: userSetting, db: Session = Depends(get_db))
     crud.save_user_setting(db, userSetting)
     return Result.success()
 
+async def save_image_chat( db: Session = Depends(get_db)):
+    pass
+
 
 @router.get("/delete_chat")
 async def delete_chat(chatId: str, db: Session = Depends(get_db)):
