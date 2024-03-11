@@ -160,7 +160,7 @@ def num_tokens_from_messages(messages: list, model="gpt-3.5-turbo-0613"):
                             print(width, height)
                             print(num_tokens)
                             print(calculate_image_tokens(width, height)["totalTokens"])
-                            num_tokens += calculate_image_tokens(width, height)["totalTokens"]
+                            num_tokens += calculate_image_tokens(width, height,True)["totalTokens"]
                         else:
                             num_tokens += len(encoding.encode(value1))
 
@@ -170,12 +170,7 @@ def num_tokens_from_messages(messages: list, model="gpt-3.5-turbo-0613"):
                 num_tokens += tokens_per_name
     num_tokens += 3  # every reply is primed with <|start|>assistant<|message|>
     return num_tokens
-def count_token(input_str):
-    encoding = tiktoken.get_encoding("cl100k_base")
-    if type(input_str) == dict:
-        input_str = f"role: {input_str['role']}, content: {input_str['content']}"
-    length = len(encoding.encode(input_str))
-    return length
+
 
 
 
@@ -219,7 +214,7 @@ if __name__ == "__main__":
     # (7680, 4320)
     print(get_image_dimensions_from_base64(imgurl.split(";base64,")[1]))
     # print(imgurl)
-    gpt4v("根据这个图片,给我画一个html页面",imgurl)
+    #gpt4v("根据这个图片,给我画一个html页面",imgurl)
     # 完成=501, 提示=106, 总共=600)
     # 完成 593   提示1126  总共1719
     #completion_tokens=593, prompt_tokens=1126, total_tokens=1719)
