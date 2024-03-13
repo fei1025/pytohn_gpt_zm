@@ -53,7 +53,7 @@ class chat_hist(Base):
     creation_time = Column(Date, default=datetime.now())
     model = Column(String)
     type = Column(String)
-    knowledge_id = Column(String)
+    knowledge_id = Column(Integer)
     tools = Column(String)
 
 class chat_hist_details(Base):
