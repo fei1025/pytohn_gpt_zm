@@ -93,7 +93,7 @@ def calculate_image_tokens(w, y, low=False):
 # 示例用法
 # totalTokens 这是token
 if __name__ == "__main__":
-    result = calculate_image_tokens(7680, 4320)
+    result = calculate_image_tokens(7680, 4320,True)
     print(result)
     result = count_image_tokens(7680,4320)
     print(result)

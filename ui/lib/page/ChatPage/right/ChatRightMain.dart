@@ -50,8 +50,8 @@ class _ChatPageMain extends State<ChatRightMain> {
                 child:  ChatRightSenMsg(onPressedWithParam:(text){
                   int? chatId = MyAppState().cuChatId;
                   //String text = _controller.text;
+                  String queryType =context.read<MyAppState>().getValueByKey(context.read<MyAppState>().curSelectedIndex)!;
                   if(chatId == null){
-                    String queryType =context.read<MyAppState>().getValueByKey(context.read<MyAppState>().curSelectedIndex)!;
                     ApiService.saveChatHist(text,queryType,"-1").then((chatHistList){
                       ChatHist chatHist = chatHistList[0];
                       MyAppState().setCuChatId(chatHist.chatId);
@@ -63,7 +63,13 @@ class _ChatPageMain extends State<ChatRightMain> {
                        MyAppState().setChatHistList(chatHistList2);
                      });
                     });
-
+                  }else{
+                    ApiService.senMsg(text,(){
+                      print("回调成功的数据");
+                    });
+                    ApiService.getAllHist(queryType).then((chatHistList2){
+                      MyAppState().setChatHistList(chatHistList2);
+                    });
                   }
                 })
               )

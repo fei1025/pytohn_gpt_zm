@@ -1,4 +1,8 @@
+import base64
+import math
+
 import tiktoken
+from PIL import Image
 from langchain_community.tools.arxiv.tool import ArxivQueryRun
 from langchain_community.tools.ddg_search import DuckDuckGoSearchRun
 from langchain_community.tools.wikipedia.tool import WikipediaQueryRun
@@ -42,7 +46,7 @@ model_max_token = {
 
 def getAllTool() -> {}:
     tools = {}
-    wolfram = WolframAlphaAPIWrapper(wolfram_alpha_appid="")
+    wolfram = WolframAlphaAPIWrapper(wolfram_alpha_appid="12312")
     query_run = WolframAlphaQueryRun(api_wrapper=wolfram, tags=['a-tag'])
     tools["wolfram_alpha"] = query_run
     # callbacks=[MyCustomHandlerTwo11()]
@@ -65,7 +69,7 @@ def getAllToolNew()->[]:
     tools=[]
     tools.append({"name":"wolfram","key":"wolfram_alpha","details":"回答 数学 科学、技术、文化、社会与日常生活"})
     tools.append({"name":"python代码解释器","key":"PythonREPLTool","details":"python代码解释器"})
-    tools.append({"name":"arxiv","key":"PythonREPLTool","details":"当你需要回答有关物理、数学的问题时很有用,计算机科学、数量生物学、数量金融、统计学,电气工程与经济学,摘自arxiv.org上的科学文章"})
+    tools.append({"name":"arxiv","key":"arxiv","details":"当你需要回答有关物理、数学的问题时很有用,计算机科学、数量生物学、数量金融、统计学,电气工程与经济学,摘自arxiv.org上的科学文章"})
     tools.append({"name":"维基百科","key":"wikipedia","details":"维基百科上的数据"})
     tools.append({"name":"ddg搜索引擎","key":"ddg","details":"ddg搜索引擎,当你需要联网搜索的时候应该有用"})
     tools.append({"name":"llm数学工具","key":"llm-math","details":"基于大模型来尝试解决数学问题"})
@@ -96,7 +100,7 @@ def get_all_model() -> {}:
     return models
 
 
-def num_tokens_from_messages(messages: list, model="gpt-3.5-turbo-0613"):
+def num_tokens_from_messages(messages: list,functions=[], model="gpt-3.5-turbo-0613"):
     """Return the number of tokens used by a list of messages."""
     try:
         encoding = tiktoken.encoding_for_model(model)
@@ -127,14 +131,138 @@ def num_tokens_from_messages(messages: list, model="gpt-3.5-turbo-0613"):
             f"""num_tokens_from_messages() is not implemented for model {model}. See https://github.com/openai/openai-python/blob/main/chatml.md for information on how messages are converted to tokens."""
         )
     num_tokens = 0
+    # Set function settings for the above models
+    func_init = 7
+    prop_init = 3
+    prop_key = 3
+    enum_init = -3
+    enum_item = 3
+    func_end = 12
     for message in messages:
         num_tokens += tokens_per_message
         for key, value in message.items():
+            if isinstance(value, list):
+                for message1 in value:
+                    for key1,value1 in message1.items():
+                        if key1=="image_url":
+                            width, height = get_image_dimensions_from_base64(value1.split(";base64,")[1])
+                            num_tokens += calculate_image_tokens(width, height)["totalTokens"]
+                        else:
+                            num_tokens += len(encoding.encode(value1))
+
+                continue
             num_tokens += len(encoding.encode(value))
             if key == "name":
                 num_tokens += tokens_per_name
     num_tokens += 3  # every reply is primed with <|start|>assistant<|message|>
-    return num_tokens
+    func_token_count = 0
+    if len(functions) > 0:
+        for function in functions:
+            func_token_count += func_init  # Add tokens for start of each function
+            f_name = function["name"]
+            f_desc = function["description"]
+            if f_desc.endswith("."):
+                f_desc = f_desc[:-1]
+            line = f_name + ":" + f_desc
+            func_token_count += len(encoding.encode(line))  # Add tokens for set name and description
+            if len(function["parameters"]["properties"]) > 0:
+                func_token_count += prop_init  # Add tokens for start of each property
+                for key in list(function["parameters"]["properties"].keys()):
+                    func_token_count += prop_key  # Add tokens for each set property
+                    p_name = key
+                    p_type = function["parameters"]["properties"][key]["type"]
+                    p_desc = function["parameters"]["properties"][key]["description"]
+                    if "enum" in function["parameters"]["properties"][key].keys():
+                        func_token_count += enum_init  # Add tokens if property has enum list
+                        for item in function["parameters"]["properties"][key]["enum"]:
+                            func_token_count += enum_item
+                            func_token_count += len(encoding.encode(item))
+                    if p_desc.endswith("."):
+                        p_desc = p_desc[:-1]
+                    line = f"{p_name}:{p_type}:{p_desc}"
+                    func_token_count += len(encoding.encode(line))
+        func_token_count += func_end
+    return num_tokens+func_token_count
+
+def get_image_dimensions_from_base64(base64_string):
+    # 解码base64字符串
+    image_data = base64.b64decode(base64_string)
+
+    # 将字节数据转换为内存中的图像对象
+    import io
+    image = Image.open(io.BytesIO(image_data))
+
+    # 获取图像宽度和高度
+    width, height = image.size
+
+    return width, height
+def calculate_image_tokens(w, y, low=False):
+    v = 85
+    x = 170
+    C = 1e-5
+
+    o = int(w)
+    s = int(y)
+    u = low
+
+    r = 9 * o > 2048 or s > 2048
+    if r:
+        if o > s:
+            r = 2048
+        else:
+            r = round(2048 * (o / s))
+    else:
+        r = o
+
+    d = o > 2048 or s > 2048
+    if d:
+        if o > s:
+            d = round(2048 / (o / s))
+        else:
+            d = 2048
+    else:
+        d = s
+
+    I = r > 768 or d > 768
+    if I:
+        if r < d:
+            I = min(768, r)
+        else:
+            I = round(min(768, d) * (r / d))
+    else:
+        I = r
+
+    R = r > 768 or d > 768
+    if R:
+        if r < d:
+            R = round(min(768, r) / (r / d))
+        else:
+            R = min(768, d)
+    else:
+        R = d
+
+    z = 1 + math.ceil((R - 512) / (512 * (1 - 0)))
+    k = 1 + math.ceil((I - 512) / (512 * (1 - 0)))
+    P = z * k
+
+    if u:
+        M = v
+    else:
+        M = v + P * x
+
+    H = M * C
+
+    return {
+        'initialResizeWidth': r,
+        'initialResizeHeight': d,
+        'furtherResizeWidth': I,
+        'furtherResizeHeight': R,
+        'verticalTiles': z,
+        'horizontalTiles': k,
+        'totalTiles': P,
+        'totalTokens': M,
+        'totalPrice': format(H, '.5f')
+    }
 
 
 def get_token_count(messages: list, functions: list, model="gpt-3.5-turbo-0613"):
@@ -218,12 +346,12 @@ def trim_messages(data: TrimMessagesInput):
     messages = data.messages
     max_tokens = get_max_tokens(data.model)
     model = data.model
-    while num_tokens_from_messages(messages, model) > max_tokens:
+    while num_tokens_from_messages(messages=messages,model= model) > max_tokens:
         if messages[0].role == "system":
             messages.pop(1)  # 删除第二条消息
         else:
             messages.pop(0)  # 删除第一条消息
-    return {"messages": messages, "num": num_tokens_from_messages(messages, model)}
+    return {"messages": messages, "num": num_tokens_from_messages(messages=messages, model= model)}
 
 
 def get_max_tokens(model: str):

@@ -12,10 +12,8 @@ from langchain_experimental.tools import PythonREPLTool
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-import openAi.langChat
 from db.database import engine, get_db, SessionLocal
 from entity import models, schemas, crud
-from openAi.openAiUtil import toolList
 from sse_starlette.sse import EventSourceResponse
 from langchain.pydantic_v1 import Field
 
@@ -92,20 +90,7 @@ async def root(request: Request):
     return EventSourceResponse(g)
 
 
-@app.post("/chat")
-async def chat(request: Request, user_id: int):
-    print(user_id)
 
-    async def event_generator(request: Request):
-        result = openAi.langChat.get_chat()
-        for i in result:
-            if await request.is_disconnected():
-                print("连接已中断")
-                break
-            yield i.message.content
-
-    g = event_generator(request)
-    return EventSourceResponse(g)
 
 
 class GoogleSearchInput(BaseModel):

@@ -93,9 +93,11 @@ def get_tools(db: Session, setting: models.User_settings, llm, res: reqChat, myH
             elif tool == "open-meteo-api":
                 toolList.append(load_tools(["open-meteo-api"], llm=llm, callbacks=myHandler))
             elif tool == "wolfram_alpha":
-                wolfram = MyWolframAlphaAPIWrapper(wolfram_alpha_appid=setting.wolfram_appid, llm=llm)
+                wolfram = MyWolframAlphaAPIWrapper(wolfram_alpha_appid=setting.wolfram_appid)
                 query_run = MyWolframAlphaQueryRun(api_wrapper=wolfram, callbacks=[myHandler])
                 toolList.append(query_run)
             else:
-                toolList.append(toolss[tool](callbacks=myHandler))
+                curtool = toolss[tool]
+                curtool.callbacks=[myHandler]
+                toolList.append(curtool)
     return toolList

@@ -157,10 +157,7 @@ def num_tokens_from_messages(messages: list, model="gpt-3.5-turbo-0613"):
                     for key1,value1 in message1.items():
                         if key1=="image_url":
                             width, height = get_image_dimensions_from_base64(value1.split(";base64,")[1])
-                            print(width, height)
-                            print(num_tokens)
-                            print(calculate_image_tokens(width, height)["totalTokens"])
-                            num_tokens += calculate_image_tokens(width, height)["totalTokens"]
+                            num_tokens += calculate_image_tokens(width, height,True)["totalTokens"]
                         else:
                             num_tokens += len(encoding.encode(value1))
 
@@ -219,10 +216,12 @@ if __name__ == "__main__":
     # (7680, 4320)
     print(get_image_dimensions_from_base64(imgurl.split(";base64,")[1]))
     # print(imgurl)
-    gpt4v("根据这个图片,给我画一个html页面",imgurl)
+   # gpt4v("根据这个图片,给我画一个html页面",imgurl)
     # 完成=501, 提示=106, 总共=600)
     # 完成 593   提示1126  总共1719
     #completion_tokens=593, prompt_tokens=1126, total_tokens=1719)
+    #我们目前支持 PNG (.png)、JPEG（.jpeg 和 .jpg）、WEBP (.webp) 和非动画 GIF (.gif)。
+    #我们将图像上传限制为每张图像 20MB。
     messages = [
         {
             "role": "user",
@@ -230,7 +229,10 @@ if __name__ == "__main__":
                 {"type": "text", "text": "根据这个图片,给我画一个html页面"},
                 {
                     "type": "image_url",
-                    "image_url": imgurl,
+                    "image_url": {
+                        "url":imgurl,
+                        "detail":""
+                    },
                 },
             ],
         }
