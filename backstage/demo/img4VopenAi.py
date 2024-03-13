@@ -221,7 +221,7 @@ if __name__ == "__main__":
     # 完成 593   提示1126  总共1719
     #completion_tokens=593, prompt_tokens=1126, total_tokens=1719)
     #我们目前支持 PNG (.png)、JPEG（.jpeg 和 .jpg）、WEBP (.webp) 和非动画 GIF (.gif)。
-    #我们将图像上传限制为每张图像 20MB。
+    # ，我们将图像上传限制为每张图像 20MB。
     messages = [
         {
             "role": "user",
