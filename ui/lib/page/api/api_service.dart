@@ -121,8 +121,7 @@ class ApiService {
       if (isFirstEvent) {
         MyAppState().isSend = true;
         isFirstEvent = false;
-        ChatDetails chatDetails =
-            ChatDetails(id: 0, chatId: 0, role: "assistant", content: result);
+        ChatDetails chatDetails =ChatDetails(id: 0, chatId: 0, role: "assistant", content: result);
         chatList.add(chatDetails);
         MyAppState().setChatDetails(chatList);
         _loadingMessageIndex = chatList.length - 1;

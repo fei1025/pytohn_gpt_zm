@@ -5,9 +5,8 @@ from langchain_community.tools.arxiv.tool import ArxivQueryRun
 from langchain_community.tools.ddg_search import DuckDuckGoSearchRun
 from langchain_community.utilities.arxiv import ArxivAPIWrapper
 from langchain_community.utilities.duckduckgo_search import DuckDuckGoSearchAPIWrapper
-from langchain_core.utils.function_calling import convert_to_openai_function
+from langchain_core.utils.function_calling import convert_to_openai_function, convert_to_openai_tool
 from langchain_experimental.tools import PythonREPLTool
-from litellm.utils import ChatCompletionMessageToolCall
 from openai import OpenAI
 from openai.types.chat.chat_completion_chunk import ChoiceDeltaToolCall, ChoiceDeltaToolCallFunction
 
@@ -65,14 +64,13 @@ def send_open_ai(db: Session, res: reqChat):
             tool_calls = i.choices[0].delta.tool_calls[0]
             if tool_calls.function.name and tool_calls.function.name != '':
                 tool_name = tool_calls.function.name
-                modelTools.tools = tool_name
-                modelTools.type = "0"
                 #function1 =ChoiceDeltaToolCallFunction()
                 #curFunction = ChatCompletionMessageToolCall(id=tool_calls.id,function=tool_calls.function)
                 #curFunction.function.name = tool_calls.function.name
                 #curFunction.function.arguments = tool_calls.function.arguments
                 toolList.append(tool_calls)
-                yield json.dumps({'type': "tool", "data": tool_name})
+                print(f"--------------------------------------------------------------------------------------数据两次?{tool_name}")
+                yield json.dumps({'type': "toolStart", "data": tool_name})
             else:
                 curFunction = toolList[tool_calls.index]
                 curFunction.function.arguments = curFunction.function.arguments + tool_calls.function.arguments
@@ -92,15 +90,22 @@ def send_open_ai(db: Session, res: reqChat):
         assistant_message = {"role": "assistant", "tool_calls": toolList, "content": None}
         available_functions = getTools(setting)
         messageNum['messages'].append(assistant_message)
+        saveTolls = []
         for tool_call in toolList:
-            print(tool_call)
             function_name = tool_call.function.name
             function_to_call = available_functions[function_name]
             function_args = json.loads(tool_call.function.arguments)
+            yield json.dumps({'type': "toolInput", "data": tool_call.function.arguments})
             function_response = function_to_call(
                 function_args.get("__arg1")
             )
-            print(f"{function_name}:返回的数据{function_response}")
+            yield json.dumps({'type': "toolEnd", "data": function_response})
+            modelTools = models.chat_hist_details_tools()
+            modelTools.tools =function_name
+            modelTools.type = "0"
+            modelTools.tool_data=function_response
+            modelTools.problem=tool_call.function.arguments
+            saveTolls.append(modelTools)
             messageNum['messages'].append(
                 {
                     "tool_call_id": tool_call.id,
@@ -127,6 +132,9 @@ def send_open_ai(db: Session, res: reqChat):
         chatHistDetails.content = content
         chatHistDetails.role = "assistant"
         crud.save_chat_hist_details(db, chatHistDetails)
+        for tool in saveTolls:
+            tool.chat_details_id = chatHistDetails.id
+            crud.save_chat_hist_details_tool(db, tool)
 
 
 def get_history(db: Session, res: reqChat) -> list:
@@ -157,7 +165,7 @@ def getSelectTools(db: Session, res: reqChat) -> []:
                 toolList.append(DuckDuckGoSearchRun(api_wrapper=DuckDuckGoSearchAPIWrapper()))
     if len(toolList) == 0:
         return None
-    return [{"type":"function","function":convert_to_openai_function(t)} for t in toolList]
+    return [convert_to_openai_tool(t)  for t in toolList]
 
 
 def getTools(setting: models.User_settings) -> {}:

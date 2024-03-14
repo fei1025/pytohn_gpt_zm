@@ -131,7 +131,6 @@ def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
             #正常聊天
             result = openAichat.send_open_ai(db, res)
             for i in result:
-                yield i
                 if await request.is_disconnected():
                     print("连接已中断")
                     break

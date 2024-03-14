@@ -1,11 +1,7 @@
 import os
-from langchain_community.tools.arxiv.tool import ArxivQueryRun
-from langchain_community.tools.ddg_search import DuckDuckGoSearchRun
 from langchain_community.tools.wolfram_alpha import WolframAlphaQueryRun
-from langchain_community.utilities.arxiv import ArxivAPIWrapper
-from langchain_community.utilities.duckduckgo_search import DuckDuckGoSearchAPIWrapper
 from langchain_community.utilities.wolfram_alpha import WolframAlphaAPIWrapper
-from langchain_core.utils.function_calling import convert_to_openai_function
+from langchain_core.utils.function_calling import convert_to_openai_function, convert_to_openai_tool
 from langchain_community.chat_models import ChatOpenAI
 from langchain_experimental.tools import PythonREPLTool
 
@@ -22,7 +18,7 @@ wolfram = WolframAlphaAPIWrapper(wolfram_alpha_appid="5V6ELP-UUPQLEAUXU")
 query_run = WolframAlphaQueryRun(api_wrapper=wolfram, tags=['a-tag'])
 model = ChatOpenAI(model="gpt-3.5-turbo",callbacks=[MyCustomHandlerTwo11()],streaming=True)
 tools = [query_run,PythonREPLTool()]
-functions = [convert_to_openai_function(t) for t in tools]
+functions = [convert_to_openai_tool(t) for t in tools]
 
 print(json.dumps(functions))
 #model_with_tools = model.bind_functions(tools)
