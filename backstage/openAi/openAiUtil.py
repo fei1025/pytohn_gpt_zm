@@ -59,8 +59,8 @@ def getAllTool() -> {}:
     tools["wikipedia"] = WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper())
     # 当你需要回答有关时事的问题时很有用
     tools["ddg"] = DuckDuckGoSearchRun(api_wrapper=DuckDuckGoSearchAPIWrapper())
-    # llm回答数据问题
-    tools["llm-math"] = "llm"
+    # # llm回答数据问题
+    # tools["llm-math"] = "llm"
     # 询问天气是很有帮助的
     tools["open-meteo-api"] = "open-meteo-api"
     return tools

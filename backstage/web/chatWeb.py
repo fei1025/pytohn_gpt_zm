@@ -130,21 +130,23 @@ def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
         async def event_generator():
             #正常聊天
             result = openAichat.send_open_ai(db, res)
-            content = ""
             for i in result:
+                yield i
                 if await request.is_disconnected():
                     print("连接已中断")
                     break
-                if "stop" != i.choices[0].finish_reason:
-                    print(i.choices[0])
-                    content = content + i.choices[0].delta.content
-                    #yield i.choices[0].delta.content
-                    yield json.dumps({'type': "msg", "data": i.choices[0].delta.content})
-            chatHistDetails = models.chat_hist_details()
-            chatHistDetails.chat_id = res.chat_id
-            chatHistDetails.content = content
-            chatHistDetails.role = "assistant"
-            crud.save_chat_hist_details(db, chatHistDetails)
+                yield i
+
+                # if "stop" != i.choices[0].finish_reason:
+                #     print(i.choices[0])
+                #     content = content + i.choices[0].delta.content
+                #     #yield i.choices[0].delta.content
+                #     yield json.dumps({'type': "msg", "data": i.choices[0].delta.content})
+            # chatHistDetails = models.chat_hist_details()
+            # chatHistDetails.chat_id = res.chat_id
+            # chatHistDetails.content = content
+            # chatHistDetails.role = "assistant"
+            # crud.save_chat_hist_details(db, chatHistDetails)
         g = event_generator()
         return EventSourceResponse(g)
     elif chatHist.type == "1":
