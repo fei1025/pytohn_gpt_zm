@@ -101,8 +101,7 @@ class ApiService {
     }
 
     bool isFirstEvent = true;
-    ChatDetails chatDetails =
-        ChatDetails(id: 0, chatId: 0, role: "user", content: msg);
+    ChatDetails chatDetails =ChatDetails(id: 0, chatId: 0, role: "user", content: msg);
     chatList.add(chatDetails);
     MyAppState().setChatDetails(chatList);
     response.stream
@@ -128,8 +127,7 @@ class ApiService {
       }
       if (cuId == MyAppState().cuChatId) {
         currentResponse = currentResponse + result;
-        ChatDetails chatDetails = ChatDetails(
-            id: 0, chatId: 0, role: "assistant", content: currentResponse);
+        ChatDetails chatDetails = ChatDetails(id: 0, chatId: 0, role: "assistant", content: currentResponse);
         chatList[_loadingMessageIndex!] = chatDetails;
         MyAppState().setChatDetails(chatList);
       }

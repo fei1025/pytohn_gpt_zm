@@ -22,7 +22,7 @@ class MyAppState extends ChangeNotifier {
       2:"2"
     });
     iconMap["wolfram_alpha"] = Image.asset('assets/images/wolframa.png',height: 20,width: 20,);
-    iconMap["PythonREPLTool"] = Image.asset('assets/images/python.png',height: 20,width: 20,);
+    iconMap["Python_REPL"] = Image.asset('assets/images/python.png',height: 20,width: 20,);
     iconMap["arxiv"] = Image.asset('assets/images/arxiv.png',height: 20,width: 20,);
     iconMap["wikipedia"] = Image.asset('assets/images/wikipedia.png',height: 20,width: 20,);
     iconMap["ddg"] = Image.asset('assets/images/DDG.png',height: 20,width: 20,);
