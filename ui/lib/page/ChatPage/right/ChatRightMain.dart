@@ -66,9 +66,9 @@ class _ChatPageMain extends State<ChatRightMain> {
                   }else{
                     ApiService.senMsg(text,(){
                       print("回调成功的数据");
-                    });
-                    ApiService.getAllHist(queryType).then((chatHistList2){
-                      MyAppState().setChatHistList(chatHistList2);
+                      ApiService.getAllHist(queryType).then((chatHistList2){
+                        MyAppState().setChatHistList(chatHistList2);
+                      });
                     });
                   }
                 })

@@ -73,8 +73,9 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                       return Container(
                           alignment: Alignment.centerLeft, // 将容器左对齐
                           padding: const EdgeInsets.only(bottom: 1),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
+                          child: Column(
+                            crossAxisAlignment:CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.max,
                             children: [
                               e.isLoad? const CircularProgressIndicator(color: Colors.black54, strokeWidth: 2): e.isExpanded? getToolDetail(context, e, () {
                                           setState(() {
@@ -195,18 +196,26 @@ Widget getToolDetail(BuildContext context, ToolList data, Function() onComplete)
   bool isDarkMode = appState.isDarkMode;
   return Column(
     children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          TextButton(
+      Container(
+          alignment: Alignment.centerLeft,
+          //margin: const EdgeInsets.only(left: 0,),
+          child:Row(
+            mainAxisSize: MainAxisSize.min, // 这将使 Row 只占用所需的最小空间
+
+            children:[ TextButton(
+
               onPressed: () {
                 onComplete();
               },
-              child: Text("收起"))
-        ],
+              child: Text("收起"),
+
+
+            )],
+          )
       ),
+      const SizedBox(height: 5),
       Container(
-        alignment: Alignment.centerLeft, // 将容器左对齐
+        //alignment: Alignment.centerLeft, // 将容器左对齐
         child: Container(
           decoration: BoxDecoration(
             color: isDarkMode ? null : Colors.grey[200],
