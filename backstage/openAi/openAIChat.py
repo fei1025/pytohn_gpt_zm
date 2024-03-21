@@ -9,6 +9,7 @@ from langchain_core.utils.function_calling import convert_to_openai_function, co
 from langchain_experimental.tools import PythonREPLTool
 from openai import OpenAI
 from openai.types.chat.chat_completion_chunk import ChoiceDeltaToolCall, ChoiceDeltaToolCallFunction
+from tool import sys_role
 
 from sqlalchemy.orm import Session
 
@@ -27,6 +28,25 @@ def send_open_ai(db: Session, res: reqChat):
     setting = crud.get_user_setting(db)
     print(f"设置参数:{setting.openai_api_base}")
     print(f"设置参数:{setting.openai_api_key}")
+    tools = res.tools
+    if "wolfram_alpha" in tools:
+        mess= message[0]
+        if "system" == mess['role']:
+            mess['content']= mess['content']+" "+sys_role.wolfram_prompt
+            message[0]=mess
+        else:
+            message.insert(0,{"role":"system","content":sys_role.wolfram_prompt})
+    elif "dall_e_3" in tools:
+        mess = message[0]
+        if "system" == mess['role']:
+            mess['content'] = mess['content'] + " " + sys_role.dall_e_3
+            message[0] = mess
+        else:
+            message.insert(0,{"role":"system","content":sys_role.dall_e_3})
+
+
+
+
     trim_mess = TrimMessagesInput()
     trim_mess.messages = message
     trim_mess.model = openAiUtil.get_open_model(res.model)
