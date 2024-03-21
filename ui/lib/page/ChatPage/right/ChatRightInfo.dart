@@ -58,7 +58,7 @@ class _ChatRightInfo extends State<ChatRightInfo> {
     bool isDarkMode = appState.isDarkMode;
     Map<String, Widget> iconMap = appState.iconMap;
 
-    return list.length == 0
+    return list.isEmpty
         ? const Center(child: Text("今天我能帮助你吗?"))
         : Scaffold(
             body: ListView.builder(
@@ -73,14 +73,11 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                       return Container(
                           alignment: Alignment.centerLeft, // 将容器左对齐
                           padding: const EdgeInsets.only(bottom: 1),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
+                          child: Column(
+                            crossAxisAlignment:CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.max,
                             children: [
-                              e.isLoad!
-                                  ? CircularProgressIndicator(
-                                      color: Colors.black54, strokeWidth: 2)
-                                  : e.isExpanded
-                                      ? getToolDetail(context, e, () {
+                              e.isLoad? const CircularProgressIndicator(color: Colors.black54, strokeWidth: 2): e.isExpanded? getToolDetail(context, e, () {
                                           setState(() {
                                             e.isExpanded = false;
                                           });
@@ -91,9 +88,7 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                                               e.isExpanded = true;
                                             });
                                           },
-                                          child: iconMap[e.tools] ??
-                                              CircleAvatar(
-                                                  child: Text("空"))),
+                                          child: iconMap[e.tools] ?? CircleAvatar( child: Text(e.tools))),
                             ],
                           ));
                     }).toList();
@@ -161,10 +156,7 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                                             ),
                                             padding: const EdgeInsets.only(
                                                 right: 10, left: 10),
-                                            child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: getmd(context,
-                                                    chatDetails.content)),
+                                            child: Column(mainAxisSize: MainAxisSize.min,children: getmd(context, chatDetails.content)),
                                           ),
                                         ),
                                       ],
@@ -199,31 +191,41 @@ class _ChatRightInfo extends State<ChatRightInfo> {
   }
 }
 
-Widget getToolDetail(
-    BuildContext context, ToolList data, Function() onComplete) {
-  var appState =
-      context.watch<MyAppState>(); // 使用 context.watch 监听 MyAppsState 的变化
+Widget getToolDetail(BuildContext context, ToolList data, Function() onComplete) {
+  var appState =context.watch<MyAppState>(); // 使用 context.watch 监听 MyAppsState 的变化
   bool isDarkMode = appState.isDarkMode;
   return Column(
     children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          TextButton(
+      Container(
+          alignment: Alignment.centerLeft,
+          //margin: const EdgeInsets.only(left: 0,),
+          child:Row(
+            mainAxisSize: MainAxisSize.min, // 这将使 Row 只占用所需的最小空间
+
+            children:[ TextButton(
+
               onPressed: () {
                 onComplete();
               },
-              child: Text("收起"))
-        ],
+              child: Text("收起"),
+
+
+            )],
+          )
       ),
+      const SizedBox(height: 5),
       Container(
-        alignment: Alignment.centerLeft, // 将容器左对齐
+        //alignment: Alignment.centerLeft, // 将容器左对齐
         child: Container(
           decoration: BoxDecoration(
             color: isDarkMode ? null : Colors.grey[200],
             borderRadius: BorderRadius.circular(5),
           ),
           padding: const EdgeInsets.only(right: 10, left: 10),
+            constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width *
+            0.59, // 限制宽度
+            ),
           child: Column(
               mainAxisSize: MainAxisSize.min,
               children: getmd(

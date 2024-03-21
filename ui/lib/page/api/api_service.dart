@@ -81,19 +81,12 @@ class ApiService {
       'role': 'user',
       'model': MyAppState().cuModel
     });
-    print("请请求体数据${request.body}");
-
-    int? _loadingMessageIndex;
-    String currentResponse = "";
     final response = await client.send(request);
-    print("这是返回的数据${response.statusCode}");
     if (response.statusCode != 200) {
-      ChatDetails chatDetails =
-          ChatDetails(id: 0, chatId: 0, role: "error", content: "数据异常",other_data:[]);
+      ChatDetails chatDetails = ChatDetails(id: 0, chatId: 0, role: "error", content: "数据异常",other_data:[]);
       chatList.add(chatDetails);
       MyAppState().setChatDetails(chatList);
       MyAppState().isSend = false;
-      print('流结束了');
       // 在异步操作完成时调用回调函数
       if (onComplete != null) {
         onComplete();
@@ -101,36 +94,48 @@ class ApiService {
     }
 
     bool isFirstEvent = true;
-    ChatDetails chatDetails =
-        ChatDetails(id: 0, chatId: 0, role: "user", content: msg);
+    ChatDetails chatDetails =ChatDetails(id: 0, chatId: 0, role: "user", content: msg);
     chatList.add(chatDetails);
     MyAppState().setChatDetails(chatList);
-    response.stream
-        .transform(utf8.decoder)
-        .transform(const LineSplitter())
-        .listen((event) {
+    response.stream.transform(utf8.decoder).transform(const LineSplitter()).listen((event) {
       String result1 = event.replaceAll('data:', '');
-      print(result1);
-      String result;
-      if(result1 == ""){
-         result=result1;
-      }else{
-        Map<String, dynamic> jsonMap = json.decode(result1);
-         result = jsonMap['data'];
+      if(result1.isEmpty){
+        return;
       }
+      Map<String, dynamic> jsonMap = json.decode(result1);
+      String type =jsonMap['type'];
+      String data =jsonMap['data'];
       if (isFirstEvent) {
         MyAppState().isSend = true;
         isFirstEvent = false;
-        ChatDetails chatDetails =ChatDetails(id: 0, chatId: 0, role: "assistant", content: result);
+        ChatDetails chatDetails;
+        if("msg"==type){
+          chatDetails =ChatDetails(id: 0, chatId: 0, role: "assistant", content: jsonMap['data']);
+        }else {
+          List<ToolList> toolList= [];
+          chatDetails =ChatDetails(id: 0, chatId: 0, role: "assistant", content: '');
+          ToolList tool = ToolList(id: 0,chat_details_id: 0,type: '',tools:jsonMap['data'],isLoad:true);
+          toolList.add(tool);
+          chatDetails.toolList=toolList;
+        }
         chatList.add(chatDetails);
         MyAppState().setChatDetails(chatList);
-        _loadingMessageIndex = chatList.length - 1;
       }
       if (cuId == MyAppState().cuChatId) {
-        currentResponse = currentResponse + result;
-        ChatDetails chatDetails = ChatDetails(
-            id: 0, chatId: 0, role: "assistant", content: currentResponse);
-        chatList[_loadingMessageIndex!] = chatDetails;
+        ChatDetails chatDetails  = chatList[chatList.length - 1];
+        if("msg" == type){
+          chatDetails.content= chatDetails.content+jsonMap['data'];
+        }else if("toolInput" == type){
+          ToolList toolList = chatDetails.toolList![chatDetails.toolList!.length-1];
+          toolList.problem=data;
+          chatDetails.toolList![chatDetails.toolList!.length-1]=toolList;
+        }else if("toolEnd" == type){
+          ToolList toolList = chatDetails.toolList![chatDetails.toolList!.length-1];
+          toolList.isLoad=false;
+          toolList.tool_data=data;
+          chatDetails.toolList![chatDetails.toolList!.length-1]=toolList;
+        }
+        chatList[chatList.length - 1] = chatDetails;
         MyAppState().setChatDetails(chatList);
       }
     }, onDone: () {

@@ -38,7 +38,9 @@ class ToolList {
   String tools;
   String problem;
   String tool_data;
+  // 是否展开
   bool isExpanded = false;
+  // 是否加载
   bool isLoad = false;
   bool isSelect = false;
 
@@ -46,10 +48,14 @@ class ToolList {
     required this.id,
     required this.chat_details_id,
     required this.type,
+    // 名字
     required this.tools,
-    required this.problem,
-    required this.tool_data,
-    bool isExpanded = false
+    // 问题
+    this.problem='',
+    // 回答数据
+    this.tool_data='',
+    bool isExpanded = false,
+    bool isLoad = false
   });
 
   factory ToolList.fromJson(Map<String, dynamic> json) {
@@ -68,9 +74,9 @@ class ChatDetails {
   final int id;
   final int chatId;
   final String role;
-  final String content;
+  String content;
   final List<MyItem>? other_data;
-  final List<ToolList>? toolList;
+  List<ToolList>? toolList;
 
   ChatDetails(
       {required this.id,

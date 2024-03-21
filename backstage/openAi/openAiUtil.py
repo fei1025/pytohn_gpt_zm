@@ -68,7 +68,7 @@ def getAllTool() -> {}:
 def getAllToolNew()->[]:
     tools=[]
     tools.append({"name":"wolfram","key":"wolfram_alpha","details":"回答 数学 科学、技术、文化、社会与日常生活"})
-    tools.append({"name":"python代码解释器","key":"PythonREPLTool","details":"python代码解释器"})
+    tools.append({"name":"python代码解释器","key":"Python_REPL","details":"python代码解释器"})
     tools.append({"name":"arxiv","key":"arxiv","details":"当你需要回答有关物理、数学的问题时很有用,计算机科学、数量生物学、数量金融、统计学,电气工程与经济学,摘自arxiv.org上的科学文章"})
     tools.append({"name":"维基百科","key":"wikipedia","details":"维基百科上的数据"})
     tools.append({"name":"ddg搜索引擎","key":"ddg","details":"ddg搜索引擎,当你需要联网搜索的时候应该有用"})

@@ -47,10 +47,11 @@ class _ChatRightTop extends State<ChatRightTop> {
       String tools = chatHist.tools;
       if (tools.isNotEmpty) {
         List<String> toolc = tools.split(",");
-        List<Widget?> toolList1 =
-            toolc.map((e) => appState.iconMap[e]).toList();
+        List<Widget?> toolList1 =toolc.map((e) => appState.iconMap[e]).toList();
         for(Widget? widget in toolList1){
-          toolList.add(widget!);
+          if(widget != null ){
+            toolList.add(widget);
+          }
         }
       }
     }
