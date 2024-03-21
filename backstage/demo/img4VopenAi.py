@@ -16,8 +16,11 @@ from demo.tokenDemo01 import calculate_image_tokens
 
 #openai_api_base="https://api.openai-sb.com/v1"
 #openai_api_key = 'sb-48ce6279f88e82c385dfc0a1d0feb964f4ea485874f9aeb9'
-openai_api_base="https://api.qaqgpt.com/v1"
-openai_api_key = 'sk-Jc7qzfs6qLsDADYkAfC9Ac0cDe5c426e9c2134580aFd67E1'
+#openai_api_base="https://api.qaqgpt.com/v1"
+#openai_api_key = 'sk-Jc7qzfs6qLsDADYkAfC9Ac0cDe5c426e9c2134580aFd67E1'
+openai_api_base="http://47.99.86.237:8099/v1"
+openai_api_key = 'sk-BY4OKJ0M2sQJYXEbEd103eFd8f334f8dAc05E7Bc0f322c39'
+
 import base64
 
 def image_to_base64(image_path):
@@ -39,7 +42,7 @@ def send_message(message_log):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo-1106",
         messages=message_log,
-        tool_choice="auto",  # auto is default, but we'll be explicit
+        #tool_choice="auto",  # auto is default, but we'll be explicit
         # stream=True
     )
     # Find the first response from the chatbot that has text in it (some responses may not have text)
@@ -226,18 +229,12 @@ if __name__ == "__main__":
         {
             "role": "user",
             "content": [
-                {"type": "text", "text": "根据这个图片,给我画一个html页面"},
-                {
-                    "type": "image_url",
-                    "image_url": {
-                        "url":imgurl,
-                        "detail":""
-                    },
-                },
+                {"type": "text", "text": "你好"},
+
             ],
         }
     ]
-    print(num_tokens_from_messages(messages=messages))
+    print(send_message(messages))
    # print(count_token(aa))
     # main()
 

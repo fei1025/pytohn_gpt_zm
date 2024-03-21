@@ -105,6 +105,6 @@ agent_executor = AgentExecutor(agent=agent, tools=tools,    callbacks=[MyCustomH
 
 #agent = agent_executor.invoke({"chat_history": chat_history,"input": "Tell me how"})
 #agent = agent_executor.invoke({"input": "体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消耗,我,用中文回复"})
-agent = agent_executor.invoke({"input": "10+densest+elemental+metals,用中文回复"})
-# print(agent["output"])
+agent = agent_executor.invoke({"input": "Both connected containers contain N ₂ (g). When they are simultaneously immersed in boiling water, the pressure of the gas is 0.5 × 101325 Pa. If one container is immersed in a mixture of ice and water while the other is still immersed in boiling water, what is the pressure of the gas? (The two containers shall be equal in volume.)"})
+print(agent["output"])
 
