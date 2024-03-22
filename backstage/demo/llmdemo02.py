@@ -37,7 +37,6 @@ from langchain.agents import AgentExecutor
 
 #query_run = WolframAlphaQueryRun(api_wrapper=wolfram, tags=['a-tag'],callbacks=[MyCustomHandlerTwo11()])
 llm1 = ChatOpenAI(model="gpt-3.5-turbo-1106", temperature=0,callbacks=[MyCustomHandlerTwo11()])
-from pydantic.v1 import BaseModel, Field
 
 wolfram = MyWolframAlphaAPIWrapper(wolfram_alpha_appid="5V6ELP-UUPQLEAUXU",llm=llm1)
 query_run = MyWolframAlphaQueryRun(api_wrapper=wolfram, tags=['a-tag'],callbacks=[MyCustomHandlerTwo11()])
@@ -68,43 +67,43 @@ query_run = MyWolframAlphaQueryRun(api_wrapper=wolfram, tags=['a-tag'],callbacks
 #     "langsmith_search",
 #     "Search for information about LangSmith. For any questions about LangSmith, you must use this tool!",
 # )
-search = TavilySearchResults(max_results=1,callbacks=[MyCustomHandlerTwo11()])
-pythonSheel=PythonREPLTool(callbacks=[MyCustomHandlerTwo11()])
-
-
-#tools = [search,query_run,pythonSheel]
-tools = [query_run]
-
-
-# # Get the prompt to use - you can modify this!
-# prompt = hub.pull("hwchase17/openai-functions-agent")
-# llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0,streaming=True)
-# agent = create_openai_functions_agent(llm, tools, prompt)
+# search = TavilySearchResults(max_results=1,callbacks=[MyCustomHandlerTwo11()])
+# pythonSheel=PythonREPLTool(callbacks=[MyCustomHandlerTwo11()])
 #
-# #agent_executor = AgentExecutor()
-# agent_executor=AgentExecutor.from_agent_and_tools(agent=agent, tools=tools,callbacks=[MyCustomHandlerTwo11()])
-chat_history = [HumanMessage(content="Can LangSmith help test my LLM applications?"), AIMessage(content="Yes!")]
-## agent = agent_executor.invoke({"chat_history": chat_history,"input": "Tell me how"})
-# agent = agent_executor.invoke({"input": "体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消,用中文回复"})
-# print(agent)
-# #print(agent_executor.invoke({"chat_history": chat_history,"input": "Tell me how"}))
-
-#-----------------------------------------------
-prompt = hub.pull("hwchase17/openai-tools-agent")
-
-# Choose the LLM that will drive the agent
-# Only certain models support this
-llm = ChatOpenAI(model="gpt-3.5-turbo-1106", temperature=0,streaming=True,callbacks=[MyCustomHandlerTwo11()])
-
-# Construct the OpenAI Tools agent
-agent = create_openai_tools_agent(llm, tools, prompt)
-agent_executor = AgentExecutor(agent=agent, tools=tools,    callbacks=[MyCustomHandlerTwo11()])
-#chat_history = [HumanMessage(content="文件路径 C:\\Users\\86158\\Desktop\\用户信息 (2).xls")]
-#print(agent_executor.invoke({"chat_history": chat_history,"input": "用python代码解析下上面文件,统计下每个 负责部门 有多少数据,同时给我生成一张饼状图片出来,生成图片的时候,你要考虑到中文乱码的问题,你还要考虑到如果数据太密集生成的图片里面负责部门名字会重叠的问题,同时你要把图片路径打印出来,并且用把 图片用markdown格式返回"}))
-# print(agent_executor.invoke({"chat_history": chat_history,"input": "用python代码解析下上面文件,统计下每个 负责部门 有多少数据,同时给我生成一张饼状图片出来"}))
-
-#agent = agent_executor.invoke({"chat_history": chat_history,"input": "Tell me how"})
-#agent = agent_executor.invoke({"input": "体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消耗,我,用中文回复"})
-agent = agent_executor.invoke({"input": "Both connected containers contain N ₂ (g). When they are simultaneously immersed in boiling water, the pressure of the gas is 0.5 × 101325 Pa. If one container is immersed in a mixture of ice and water while the other is still immersed in boiling water, what is the pressure of the gas? (The two containers shall be equal in volume.)"})
-print(agent["output"])
+#
+# #tools = [search,query_run,pythonSheel]
+# tools = [query_run]
+#
+#
+# # # Get the prompt to use - you can modify this!
+# # prompt = hub.pull("hwchase17/openai-functions-agent")
+# # llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0,streaming=True)
+# # agent = create_openai_functions_agent(llm, tools, prompt)
+# #
+# # #agent_executor = AgentExecutor()
+# # agent_executor=AgentExecutor.from_agent_and_tools(agent=agent, tools=tools,callbacks=[MyCustomHandlerTwo11()])
+# chat_history = [HumanMessage(content="Can LangSmith help test my LLM applications?"), AIMessage(content="Yes!")]
+# ## agent = agent_executor.invoke({"chat_history": chat_history,"input": "Tell me how"})
+# # agent = agent_executor.invoke({"input": "体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消,用中文回复"})
+# # print(agent)
+# # #print(agent_executor.invoke({"chat_history": chat_history,"input": "Tell me how"}))
+#
+# #-----------------------------------------------
+# prompt = hub.pull("hwchase17/openai-tools-agent")
+#
+# # Choose the LLM that will drive the agent
+# # Only certain models support this
+# llm = ChatOpenAI(model="gpt-3.5-turbo-1106", temperature=0,streaming=True,callbacks=[MyCustomHandlerTwo11()])
+#
+# # Construct the OpenAI Tools agent
+# agent = create_openai_tools_agent(llm, tools, prompt)
+# agent_executor = AgentExecutor(agent=agent, tools=tools,    callbacks=[MyCustomHandlerTwo11()])
+# #chat_history = [HumanMessage(content="文件路径 C:\\Users\\86158\\Desktop\\用户信息 (2).xls")]
+# #print(agent_executor.invoke({"chat_history": chat_history,"input": "用python代码解析下上面文件,统计下每个 负责部门 有多少数据,同时给我生成一张饼状图片出来,生成图片的时候,你要考虑到中文乱码的问题,你还要考虑到如果数据太密集生成的图片里面负责部门名字会重叠的问题,同时你要把图片路径打印出来,并且用把 图片用markdown格式返回"}))
+# # print(agent_executor.invoke({"chat_history": chat_history,"input": "用python代码解析下上面文件,统计下每个 负责部门 有多少数据,同时给我生成一张饼状图片出来"}))
+#
+# #agent = agent_executor.invoke({"chat_history": chat_history,"input": "Tell me how"})
+# #agent = agent_executor.invoke({"input": "体重为 72 公斤，以 4 英里每小时的速度，走路 45 分钟后的心率、卡路里消耗,我,用中文回复"})
+# agent = agent_executor.invoke({"input": "Both connected containers contain N ₂ (g). When they are simultaneously immersed in boiling water, the pressure of the gas is 0.5 × 101325 Pa. If one container is immersed in a mixture of ice and water while the other is still immersed in boiling water, what is the pressure of the gas? (The two containers shall be equal in volume.)"})
+# print(agent["output"])
 

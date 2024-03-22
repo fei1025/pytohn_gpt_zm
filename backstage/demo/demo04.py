@@ -32,8 +32,8 @@ def run_conversation():
     wolfram = MyWolframAlphaAPIWrapper(wolfram_alpha_appid="5V6ELP-UUPQLEAUXU")
     query_run = MyWolframAlphaQueryRun(api_wrapper=wolfram, tags=['a-tag'], )
     # Step 1: send the conversation and available functions to the model
-    #messages = [{"role": "user", "content": "What's the weather like in San Francisco, Tokyo, and Paris?"}]
-    messages = [{"role": "user", "content": "10+densest+elemental+metals"}]
+    messages = [{"role": "user", "content": "What's the weather like in San Francisco, Tokyo, and Paris?"}]
+    #messages = [{"role": "user", "content": "10+densest+elemental+metals"}]
     tools = [
         {
             "type": "function",
@@ -54,12 +54,12 @@ def run_conversation():
             },
         }
     ]
-    tools.append(convert_to_openai_function(query_run))
+    #tools.append(convert_to_openai_function(query_run))
     response = client.chat.completions.create(
         model="gpt-3.5-turbo-1106",
         messages=messages,
         tools=tools,
-        tool_choice="auto",  # auto is default, but we'll be explicit
+        tool_choice="auto"  # auto is default, but we'll be explicit
         #stream=True
     )
     # s=""
@@ -103,6 +103,7 @@ def run_conversation():
             function_name = tool_call.function.name
             function_to_call = available_functions[function_name]
             function_args = json.loads(tool_call.function.arguments)
+            print(f"function_args:{function_args}")
             function_response = function_to_call(
                 location=function_args.get("location"),
                 unit=function_args.get("unit"),
@@ -121,4 +122,4 @@ def run_conversation():
         )  # get a new response from the model where it can see the function response
         return second_response
 print("---------------------------------------------------")
-#print(run_conversation())
+print(run_conversation())
