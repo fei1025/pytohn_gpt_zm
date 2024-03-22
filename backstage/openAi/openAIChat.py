@@ -7,7 +7,7 @@ from langchain_community.utilities.arxiv import ArxivAPIWrapper
 from langchain_community.utilities.duckduckgo_search import DuckDuckGoSearchAPIWrapper
 from langchain_core.utils.function_calling import convert_to_openai_function, convert_to_openai_tool
 from langchain_experimental.tools import PythonREPLTool
-from openai import OpenAI
+from openai import OpenAI, AzureOpenAI
 from openai.types.chat.chat_completion_chunk import ChoiceDeltaToolCall, ChoiceDeltaToolCallFunction
 from tool import sys_role
 
@@ -18,6 +18,7 @@ from entity import crud, models
 from entity.openAi_entity import TrimMessagesInput
 from entity.schemas import reqChat
 from openAi import openAiUtil
+
 from openAi.config import retrieve_proxy
 
 
@@ -28,24 +29,23 @@ def send_open_ai(db: Session, res: reqChat):
     setting = crud.get_user_setting(db)
     print(f"设置参数:{setting.openai_api_base}")
     print(f"设置参数:{setting.openai_api_key}")
-    tools = res.tools
-    if "wolfram_alpha" in tools:
-        mess= message[0]
-        if "system" == mess['role']:
-            mess['content']= mess['content']+" "+sys_role.wolfram_prompt
-            message[0]=mess
-        else:
-            message.insert(0,{"role":"system","content":sys_role.wolfram_prompt})
-    elif "dall_e_3" in tools:
-        mess = message[0]
-        if "system" == mess['role']:
-            mess['content'] = mess['content'] + " " + sys_role.dall_e_3
-            message[0] = mess
-        else:
-            message.insert(0,{"role":"system","content":sys_role.dall_e_3})
-
-
-
+    chatHist = crud.get_Hist_by_id(db, res.chat_id)
+    tools = chatHist.tools
+    if tools is not None:
+        if "wolfram_alpha" in tools:
+            mess = message[0]
+            if "system" == mess['role']:
+                mess['content'] = mess['content'] + " " + sys_role.wolfram_prompt
+                message[0] = mess
+            else:
+                message.insert(0, {"role": "system", "content": sys_role.wolfram_prompt})
+        elif "dall_e_3" in tools:
+            mess = message[0]
+            if "system" == mess['role']:
+                mess['content'] = mess['content'] + " " + sys_role.dall_e_3
+                message[0] = mess
+            else:
+                message.insert(0, {"role": "system", "content": sys_role.dall_e_3})
 
     trim_mess = TrimMessagesInput()
     trim_mess.messages = message
@@ -55,46 +55,50 @@ def send_open_ai(db: Session, res: reqChat):
     max_token = openAiUtil.get_max_tokens(openAiUtil.get_open_model(res.model)) - messageNum['num']
     print(setting.openai_api_base)
     print(setting.openai_api_key)
+    print(openAiUtil.get_open_model(res.model))
     # with retrieve_proxy(db):
     selectTools = getSelectTools(db, res)
-    tool_choice=None
+    tool_choice = None
     if selectTools:
-        tool_choice="auto"
+        tool_choice = "auto"
+    print(f"选择的方法:{selectTools}")
+    print(f"tool_choice:{tool_choice}")
+
     client = OpenAI(base_url=setting.openai_api_base, api_key=setting.openai_api_key)
+
     response = client.chat.completions.create(
         model=openAiUtil.get_open_model(res.model),  # The name of the OpenAI chatbot model to use
+        # model='gpt3516',  # The name of the OpenAI chatbot model to use
         messages=messageNum['messages'],  # The conversation history up to this point, as a list of dictionaries
         max_tokens=max_token,  # The maximum number of tokens (words or subwords) in the generated response
         stop=None,  # The stopping sequence for the generated response, if any (not used here)
         temperature=res.temperature,  # The "creativity" of the generated response (higher temperature = more creative)
         stream=True,
-        tools= selectTools,
+        tools=selectTools,
         tool_choice=tool_choice
     )
     i1 = 0
     content = ""
-    modelTools = models.chat_hist_details_tools
     toolList = []
     for i in response:
         print(i)
-        if i1 == 0 and  i.choices[0].delta.content is None and  i.choices[0].delta.tool_calls is None:
+        if (i1 == 0 and len(i.choices) == 0 and i.choices[0].delta.content is None and i.choices[0].delta.tool_calls is None):
             i1 = i1 + 1
             continue
         if i.choices[0].delta.tool_calls:
             tool_calls = i.choices[0].delta.tool_calls[0]
             if tool_calls.function.name and tool_calls.function.name != '':
                 tool_name = tool_calls.function.name
-                #function1 =ChoiceDeltaToolCallFunction()
-                #curFunction = ChatCompletionMessageToolCall(id=tool_calls.id,function=tool_calls.function)
-                #curFunction.function.name = tool_calls.function.name
-                #curFunction.function.arguments = tool_calls.function.arguments
+                # function1 =ChoiceDeltaToolCallFunction()
+                # curFunction = ChatCompletionMessageToolCall(id=tool_calls.id,function=tool_calls.function)
+                # curFunction.function.name = tool_calls.function.name
+                # curFunction.function.arguments = tool_calls.function.arguments
                 toolList.append(tool_calls)
-                print(f"--------------------------------------------------------------------------------------数据两次?{tool_name}")
                 yield json.dumps({'type': "toolStart", "data": tool_name})
             else:
                 curFunction = toolList[tool_calls.index]
                 curFunction.function.arguments = curFunction.function.arguments + tool_calls.function.arguments
-                toolList[tool_calls.index]=curFunction
+                toolList[tool_calls.index] = curFunction
         else:
             if i.choices[0].delta.content:
                 yield json.dumps({'type': "msg", "data": i.choices[0].delta.content})
@@ -111,6 +115,7 @@ def send_open_ai(db: Session, res: reqChat):
         available_functions = getTools(setting)
         messageNum['messages'].append(assistant_message)
         saveTolls = []
+        print(f"1111111toolList:{toolList}")
         for tool_call in toolList:
             function_name = tool_call.function.name
             function_to_call = available_functions[function_name]
@@ -121,10 +126,10 @@ def send_open_ai(db: Session, res: reqChat):
             )
             yield json.dumps({'type': "toolEnd", "data": function_response})
             modelTools = models.chat_hist_details_tools()
-            modelTools.tools =function_name
+            modelTools.tools = function_name
             modelTools.type = "0"
-            modelTools.tool_data=function_response
-            modelTools.problem=tool_call.function.arguments
+            modelTools.tool_data = function_response
+            modelTools.problem = function_args.get("__arg1")
             saveTolls.append(modelTools)
             messageNum['messages'].append(
                 {
@@ -135,7 +140,7 @@ def send_open_ai(db: Session, res: reqChat):
                 }
             )  # extend conversation with function response
         second_response = client.chat.completions.create(
-            model="gpt-3.5-turbo-1106",
+            model=openAiUtil.get_open_model(res.model),
             messages=messageNum['messages'],
             max_tokens=max_token,  # The maximum number of tokens (words or subwords) in the generated response
             stop=None,  # The stopping sequence for the generated response, if any (not used here)
@@ -144,6 +149,8 @@ def send_open_ai(db: Session, res: reqChat):
             stream=True
         )
         for i in second_response:
+            if len(i.choices) == 0:
+                continue
             if i.choices[0].delta.content:
                 yield json.dumps({'type': "msg", "data": i.choices[0].delta.content})
                 content = content + i.choices[0].delta.content
@@ -177,7 +184,7 @@ def getSelectTools(db: Session, res: reqChat) -> []:
                 wolfram = MyWolframAlphaAPIWrapper(wolfram_alpha_appid="54")
                 query_run = MyWolframAlphaQueryRun(api_wrapper=wolfram)
                 toolList.append(query_run)
-            elif "PythonREPLTool" == tool:
+            elif "Python_REPL" == tool:
                 toolList.append(PythonREPLTool())
             elif "arxiv" == tool:
                 toolList.append(ArxivQueryRun(api_wrapper=ArxivAPIWrapper()))
@@ -185,7 +192,7 @@ def getSelectTools(db: Session, res: reqChat) -> []:
                 toolList.append(DuckDuckGoSearchRun(api_wrapper=DuckDuckGoSearchAPIWrapper()))
     if len(toolList) == 0:
         return None
-    return [convert_to_openai_tool(t)  for t in toolList]
+    return [convert_to_openai_tool(t) for t in toolList]
 
 
 def getTools(setting: models.User_settings) -> {}:

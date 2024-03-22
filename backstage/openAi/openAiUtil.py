@@ -23,7 +23,7 @@ from langchain_experimental.tools import PythonREPLTool
 from entity.openAi_entity import TrimMessagesInput
 
 openAI_model = {"0": "gpt-3.5-turbo",
-                "1": "gpt-3.5-turbo-16k-0613",
+                "1": "gpt-3.5-turbo-16k",
                 "2": "gpt-4-0613",
                 "3": "gpt-4-32k-0613",
                 }
@@ -86,7 +86,7 @@ def get_open_model(key: str):
 
 
 def get_all_model() -> {}:
-    models = [{"value": "gpt-3.5-turbo-0613",
+    models = [{"value": "gpt-3.5-turbo",
                "key": "0"
                },
               {"value": "gpt-3.5-turbo-16k-0613",

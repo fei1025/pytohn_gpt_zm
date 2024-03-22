@@ -1,5 +1,5 @@
-wolfram_prompt="""- WolframAlpha understands natural language queries about entities in chemistry, physics, geography, history, art, astronomy, and more.
-- WolframAlpha performs mathematical calculations, date and unit conversions, formula solving, etc.
+wolfram_prompt="""- wolfram_alpha understands natural language queries about entities in chemistry, physics, geography, history, art, astronomy, and more.
+- wolfram_alpha performs mathematical calculations, date and unit conversions, formula solving, etc.
 - Convert inputs to simplified keyword queries whenever possible (e.g. convert "how many people live in France" to "France population").
 - Send queries in English only; translate non-English queries before sending, then respond in the original language.
 - Display image URLs with Markdown syntax: ![URL]
@@ -12,7 +12,7 @@ wolfram_prompt="""- WolframAlpha understands natural language queries about enti
 - Include a space between compound units (e.g., "Ω m" for "ohm*meter").
 - To solve for a variable in an equation with units, consider solving a corresponding equation without units; exclude counting units (e.g., books), include genuine units (e.g., kg).
 - If data for multiple properties is needed, make separate calls for each property.
-- If a WolframAlpha result is not relevant to the query:
+- If a wolfram_alpha result is not relevant to the query:
  -- If Wolfram provides multiple 'Assumptions' for a query, choose the more relevant one(s) without explaining the initial result. If you are unsure, ask the user to choose.
  -- Re-send the exact same 'input' with NO modifications, and add the 'assumption' parameter, formatted as a list, with the relevant values.
  -- ONLY simplify or rephrase the initial query if a more relevant 'Assumption' or other input suggestions are not provided.

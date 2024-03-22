@@ -215,7 +215,7 @@ Widget getToolDetail(BuildContext context, ToolList data, Function() onComplete)
       ),
       const SizedBox(height: 5),
       Container(
-        //alignment: Alignment.centerLeft, // 将容器左对齐
+        alignment: Alignment.centerLeft, // 将容器左对齐
         child: Container(
           decoration: BoxDecoration(
             color: isDarkMode ? null : Colors.grey[200],
@@ -229,7 +229,7 @@ Widget getToolDetail(BuildContext context, ToolList data, Function() onComplete)
           child: Column(
               mainAxisSize: MainAxisSize.min,
               children: getmd(
-                  context, "问题: ${data.problem} \r\n 回答: ${data.tool_data}")),
+                  context, "问题: \n ${data.problem} \r\n 回答: \n ${data.tool_data}")),
         ),
       )
     ],
