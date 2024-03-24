@@ -30,6 +30,11 @@ class dalle_3:
         if response.status_code == 200:
 
             result = response.json()
+            images = result.data
+            img_list = []
+            for img in images:
+                img['url']
+
             print(result.data)
         else:
             print(f"Error: {response.status_code}, {response.text}")
