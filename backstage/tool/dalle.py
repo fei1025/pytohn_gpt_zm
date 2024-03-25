@@ -2,6 +2,55 @@
 import requests
 from tqdm import tqdm
 
+#  {
+#   function: {
+#   description: 'Create images from a text-only prompt.',
+#   name: 'lobe-image-designer____text2image____builtin',
+#   parameters: {
+#   properties: {
+#   prompts: {
+#   description: 'The user\'s original image description, potentially modified to abide by the lobe-image-designer policies. If the user does not suggest a number of captions to create, create four of them. If creating multiple ca
+# ptions, make them as diverse as possible. If the user requested modifications to previous images, the captions should not simply be longer, but rather it should be refactored to integrate the suggestions into each of the caption
+# s. Generate no more than 4 images, even if the user requests more.',
+#   items: { type: 'string' },
+#   maxItems: 4,
+#   minItems: 1,
+#   type: 'array'
+# },
+#   quality: {
+#   default: 'standard',
+#   description: 'The quality of the image that will be generated. hd creates images with finer details and greater consistency across the image.',
+#   enum: [ 'standard', 'hd' ],
+#   type: 'string'
+# },
+#   seeds: {
+#   description: 'A list of seeds to use for each prompt. If the user asks to modify a previous image, populate this field with the seed used to generate that image from the image lobe-image-designer metadata.',
+#   items: { type: 'integer' },
+#   type: 'array'
+# },
+#   size: {
+#   default: '1024x1024',
+#   description: 'The resolution of the requested image, which can be wide, square, or tall. Use 1024x1024 (square) as the default unless the prompt suggests a wide image, 1792x1024, or a full-body portrait, in which case 1024x179
+# 2 (tall) should be used instead. Always include this parameter in the request.',
+#   enum: [ '1792x1024', '1024x1024', '1024x1792' ],
+#   type: 'string'
+# },
+#   style: {
+#   default: 'vivid',
+#   description: 'The style of the generated images. Must be one of vivid or natural. Vivid causes the model to lean towards generating hyper-real and dramatic images. Natural causes the model to produce more natural, less hyper-r
+# eal looking images.',
+#   enum: [ 'vivid', 'natural' ],
+#   type: 'string'
+# }
+# },
+#   required: [ 'prompts' ],
+#   type: 'object'
+# }
+# },
+#   type: 'function'
+# }
+
+{'type': 'function', 'function': {'name': 'Python_REPL', 'description': 'A Python shell. Use this to execute python commands. Input should be a valid python command. If you want to see the output of a value, you should print it out with `print(...)`.', 'parameters': {'properties': {'__arg1': {'title': '__arg1', 'type': 'string'}}, 'required': ['__arg1'], 'type': 'object'}}}
 
 class dalle_3:
     def __init__(self):
@@ -28,7 +77,6 @@ class dalle_3:
         # {'created': 1711116467, 'data': [{'revised_prompt': 'Create a distinctive icon featuring elements related to mathematics such as equations, balance scales, compasses, and rulers. The overall image should convey a sense of logic, precision, and complexity. The background should be transparent, and the icon should be designed in a way that allows it to be easily recognizable even when scaled down. The primary colors should be those traditionally associated with mathematics and education: blue for logic, green for growth, and white for clarity.', 'url': 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-4ZEA4qzYvP9ibb11UrLszJyj/user-4uZfivMZBym9lXJZKyNMXAgO/img-nKAk71ZwWb7XhVF27HWSHs20.png?st=2024-03-22T13%3A07%3A47Z&se=2024-03-22T15%3A07%3A47Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-03-21T21%3A05%3A43Z&ske=2024-03-22T21%3A05%3A43Z&sks=b&skv=2021-08-06&sig=8EoHm6qnTqF8Ir5UcR8XFSeiQjC4EXKduBrfaDeklpY%3D'}]}
         # Check the response
         if response.status_code == 200:
-
             result = response.json()
             images = result.data
             img_list = []
@@ -47,7 +95,7 @@ class dalle_3:
             # 获取文件大小
             total_size = int(response.headers.get('content-length', 0))
             # 创建一个进度条，并设置文件大小
-            progress_bar = tqdm(total=total_size, unit='B', unit_scale=True)
+            #progress_bar = tqdm(total=total_size, unit='B', unit_scale=True)
 
             # 以二进制模式写入图像内容到文件
             with open(filename, 'wb') as f:
@@ -56,8 +104,9 @@ class dalle_3:
                         f.write(chunk)
                         #chunk 就是1024 设置的这个数据
                         print(f"总数据:{total_size},当前数据:{len(chunk)}")
-                        progress_bar.update(len(chunk))  # 更新进度条
-            progress_bar.close()
+                        #progress_bar.update(len(chunk))  # 更新进度条
+            #progress_bar.close()
+
             print("Image downloaded successfully")
         else:
             print("Failed to download image")

@@ -82,8 +82,8 @@ def send_open_ai(db: Session, res: reqChat):
     toolList = []
     for i in response:
         print(i)
-        if (i1 == 0 and len(i.choices) == 0 and i.choices[0].delta.content is None and i.choices[0].delta.tool_calls is None):
-            i1 = i1 + 1
+        if i1==0 and  (len(i.choices) == 0 or (i.choices[0].delta.content is None  or  i.choices[0].delta.tool_calls is None)):
+            i1=i1+1
             continue
         if i.choices[0].delta.tool_calls:
             tool_calls = i.choices[0].delta.tool_calls[0]
