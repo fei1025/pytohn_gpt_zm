@@ -5,11 +5,11 @@ from langchain_community.tools.arxiv.tool import ArxivQueryRun
 from langchain_community.tools.ddg_search import DuckDuckGoSearchRun
 from langchain_community.utilities.arxiv import ArxivAPIWrapper
 from langchain_community.utilities.duckduckgo_search import DuckDuckGoSearchAPIWrapper
-from langchain_core.utils.function_calling import convert_to_openai_function, convert_to_openai_tool
+from langchain_core.utils.function_calling import convert_to_openai_tool
 from langchain_experimental.tools import PythonREPLTool
-from openai import OpenAI, AzureOpenAI
-from openai.types.chat.chat_completion_chunk import ChoiceDeltaToolCall, ChoiceDeltaToolCallFunction
+from openai import OpenAI
 from tool import sys_role
+from tool import dalle as dalle_3
 
 from sqlalchemy.orm import Session
 
@@ -39,7 +39,7 @@ def send_open_ai(db: Session, res: reqChat):
                 message[0] = mess
             else:
                 message.insert(0, {"role": "system", "content": sys_role.wolfram_prompt})
-        elif "dall_e_3" in tools:
+        elif "lobe_image_designer" in tools:
             mess = message[0]
             if "system" == mess['role']:
                 mess['content'] = mess['content'] + " " + sys_role.dall_e_3
@@ -82,8 +82,8 @@ def send_open_ai(db: Session, res: reqChat):
     toolList = []
     for i in response:
         print(i)
-        if i1==0 and  (len(i.choices) == 0 or (i.choices[0].delta.content is None  or  i.choices[0].delta.tool_calls is None)):
-            i1=i1+1
+        if i1 == 0 and (len(i.choices) == 0 or (i.choices[0].delta.content is None and i.choices[0].delta.tool_calls is None)):
+            i1 = i1 + 1
             continue
         if i.choices[0].delta.tool_calls:
             tool_calls = i.choices[0].delta.tool_calls[0]
@@ -115,15 +115,20 @@ def send_open_ai(db: Session, res: reqChat):
         available_functions = getTools(setting)
         messageNum['messages'].append(assistant_message)
         saveTolls = []
-        print(f"1111111toolList:{toolList}")
         for tool_call in toolList:
             function_name = tool_call.function.name
             function_to_call = available_functions[function_name]
             function_args = json.loads(tool_call.function.arguments)
+            print(f"function_args:{function_args}")
             yield json.dumps({'type': "toolInput", "data": tool_call.function.arguments})
-            function_response = function_to_call(
-                function_args.get("__arg1")
-            )
+            toolsListName = ["wolfram_alpha", "Python_REPL", "arxiv", "duckduckgo_search"]
+            if function_name in toolsListName:
+                function_response = function_to_call(
+                    function_args.get("__arg1")
+                )
+            else:
+                function_response = function_to_call(**function_args)
+
             yield json.dumps({'type': "toolEnd", "data": function_response})
             modelTools = models.chat_hist_details_tools()
             modelTools.tools = function_name
@@ -190,6 +195,8 @@ def getSelectTools(db: Session, res: reqChat) -> []:
                 toolList.append(ArxivQueryRun(api_wrapper=ArxivAPIWrapper()))
             elif "ddg" == tool:
                 toolList.append(DuckDuckGoSearchRun(api_wrapper=DuckDuckGoSearchAPIWrapper()))
+            elif "lobe_image_designer" == tool:
+                toolList.append(dalle_3.dalle_3fu)
     if len(toolList) == 0:
         return None
     return [convert_to_openai_tool(t) for t in toolList]
@@ -202,6 +209,7 @@ def getTools(setting: models.User_settings) -> {}:
         "wolfram_alpha": query_run.run,
         "Python_REPL": PythonREPLTool().run,
         "arxiv": ArxivQueryRun(api_wrapper=ArxivAPIWrapper()).run,
-        "duckduckgo_search": DuckDuckGoSearchRun(api_wrapper=DuckDuckGoSearchAPIWrapper()).run
+        "duckduckgo_search": DuckDuckGoSearchRun(api_wrapper=DuckDuckGoSearchAPIWrapper()).run,
+        "lobe_image_designer": dalle_3.dalle_3().lobe_image_designer
     }
     return available_functions

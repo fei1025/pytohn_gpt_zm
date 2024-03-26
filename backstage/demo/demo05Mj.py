@@ -3,7 +3,7 @@ import json
 
 
 url="https://api.qaqgpt.com/v1/chat/completions"
-api_key = 'sk-Jc7qzfs6qLsDADYkAfC9Ac0cDe5c426e9c2134580aFd67E1'
+api_key = 'sk-E6Vzqjqqcpxhr2BlAfEeA70b70774623B412A4C542C69d65'
 
 headers = {
     "Authorization": f"Bearer {api_key}",

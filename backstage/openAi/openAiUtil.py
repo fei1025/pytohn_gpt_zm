@@ -63,6 +63,7 @@ def getAllTool() -> {}:
     # tools["llm-math"] = "llm"
     # 询问天气是很有帮助的
     tools["open-meteo-api"] = "open-meteo-api"
+    tools["dalle_3"] = "dalle_3"
     return tools
 
 def getAllToolNew()->[]:
@@ -72,8 +73,7 @@ def getAllToolNew()->[]:
     tools.append({"name":"arxiv","key":"arxiv","details":"当你需要回答有关物理、数学的问题时很有用,计算机科学、数量生物学、数量金融、统计学,电气工程与经济学,摘自arxiv.org上的科学文章"})
     tools.append({"name":"维基百科","key":"wikipedia","details":"维基百科上的数据"})
     tools.append({"name":"ddg搜索引擎","key":"ddg","details":"ddg搜索引擎,当你需要联网搜索的时候应该有用"})
-    # tools.append({"name":"llm数学工具","key":"llm-math","details":"基于大模型来尝试解决数学问题"})
-    # tools.append({"name":"天气","key":"open-meteo-api","details":"当你想知道天气问题应该可以"})
+    tools.append({"name":"dalle_3","key":"lobe_image_designer","details":"文字转画图"})
     return tools
 
 

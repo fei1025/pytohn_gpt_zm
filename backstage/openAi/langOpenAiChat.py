@@ -1,7 +1,6 @@
 import json
 import traceback
 from threading import Thread
-from typing import List
 
 from langchain import hub
 
@@ -98,6 +97,7 @@ def get_tools(db: Session, setting: models.User_settings, llm, res: reqChat, myH
                 query_run = MyWolframAlphaQueryRun(api_wrapper=wolfram, callbacks=[myHandler])
                 query_run.name="WolframAlpha"
                 toolList.append(query_run)
+
             else:
                 curtool = toolss[tool]
                 curtool.callbacks=[myHandler]
