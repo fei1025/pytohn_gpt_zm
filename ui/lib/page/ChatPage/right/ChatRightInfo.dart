@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,6 +8,7 @@ import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:markdown_widget/config/all.dart';
 import 'package:markdown_widget/config/configs.dart';
 import 'package:markdown_widget/widget/blocks/leaf/code_block.dart';
+import 'package:open_ui/page/api/api_service.dart';
 import 'package:open_ui/page/model/ChatDetails.dart';
 import 'package:provider/provider.dart';
 import '../../md/code_wrapper.dart';
@@ -88,7 +92,7 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                                               e.isExpanded = true;
                                             });
                                           },
-                                          child: iconMap[e.tools] ?? CircleAvatar( child: Text(e.tools))),
+                                          child: iconMap[e.tools] ?? CircleAvatar( child: Text(e.tools[0]))),
                             ],
                           ));
                     }).toList();
@@ -163,9 +167,7 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                                     ),
                             ),
                           ),
-                          chatDetails.role == "user"
-                              ? const Row()
-                              : Row(
+                          chatDetails.role == "user" ? const Row(): Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Padding(
@@ -182,6 +184,24 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                                         ),
                                       ),
                                     ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: InkWell(
+                                        onTap: () {
+                                          FilePicker.platform.getDirectoryPath().then((value){
+                                            print("value: $value");
+                                            ApiService().downloadFile("http://127.0.0.1:6688/images/e0e82b0e-549e-4c7b-9f4d-84d3ad1ad717.webp",value!);
+
+                                          });
+                                          _showToast("复制成功");
+                                        },
+                                        child: const Icon(
+                                          Icons.download,
+                                          size: 15,
+                                        ),
+                                      ),
+                                    ),
+
                                   ],
                                 )
                         ],

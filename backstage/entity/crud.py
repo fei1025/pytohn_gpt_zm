@@ -118,6 +118,9 @@ def get_chat_hist_details(db: Session, chatId: int) -> List[models.chat_hist_det
 
 
 def delete_chat(db: Session, chatId: str):
+    chatHistList = db.query(models.chat_hist_details).filter(models.chat_hist_details.chat_id == chatId).all()
+    for mo in chatHistList:
+        db.query(models.chat_hist_details_tools).filter(models.chat_hist_details_tools.chat_details_id==mo.id).delete()
     db.query(models.chat_hist_details).filter(models.chat_hist_details.chat_id == chatId).delete()
     db.query(models.chat_hist).filter(models.chat_hist.chat_id == chatId).delete()
     db.commit()
@@ -125,12 +128,19 @@ def delete_chat(db: Session, chatId: str):
 def get_chat_hist_details_tool(db: Session, chat_hist_details_id: int) -> List[models.chat_hist_details_tools]:
     return db.query(models.chat_hist_details_tools).filter(models.chat_hist_details_tools.chat_details_id == chat_hist_details_id).all()
 
+
+
+
+
 def save_chat_hist_details_tool(db: Session, chatHistDetailsTool: models.chat_hist_details_tools):
     db.add(chatHistDetailsTool)
     db.commit()
     db.refresh(chatHistDetailsTool)
 
 def delete_all_chat(db: Session):
+    chatHistList = db.query(models.chat_hist_details).all()
+    for mo in chatHistList:
+        db.query(models.chat_hist_details_tools).filter(models.chat_hist_details_tools.chat_details_id==mo.id).delete()
     db.query(models.chat_hist_details).delete()
     db.query(models.chat_hist).delete()
     db.commit()

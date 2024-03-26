@@ -45,8 +45,9 @@ dalle_3fu = {
 
 
 class dalle_3:
-    target_dir = 'img'
+    current_directory = os.getcwd()
     url = "https://api.qaqgpt.com/v1/images/generations"
+    target_dir=f"{current_directory}\img"
 
     def __init__(self):
         pass
@@ -70,20 +71,21 @@ class dalle_3:
         }
         response = requests.post(self.url, headers=headers, json=data)
         print(response.headers)
-        # {'created': 1711116467, 'data': [{'revised_prompt': 'Create a distinctive icon featuring elements related to mathematics such as equations, balance scales, compasses, and rulers. The overall image should convey a sense of logic, precision, and complexity. The background should be transparent, and the icon should be designed in a way that allows it to be easily recognizable even when scaled down. The primary colors should be those traditionally associated with mathematics and education: blue for logic, green for growth, and white for clarity.', 'url': 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-4ZEA4qzYvP9ibb11UrLszJyj/user-4uZfivMZBym9lXJZKyNMXAgO/img-nKAk71ZwWb7XhVF27HWSHs20.png?st=2024-03-22T13%3A07%3A47Z&se=2024-03-22T15%3A07%3A47Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-03-21T21%3A05%3A43Z&ske=2024-03-22T21%3A05%3A43Z&sks=b&skv=2021-08-06&sig=8EoHm6qnTqF8Ir5UcR8XFSeiQjC4EXKduBrfaDeklpY%3D'}]}
-        # Check the response
         if response.status_code == 200:
+
             result = response.json()
             images = result['data']
+            print(f"images:{images}")
             img_list = []
             for img in images:
                 if not os.path.exists(self.target_dir):
                     os.makedirs(self.target_dir)
                 file_uuid = uuid.uuid4()
-                target_image_path = os.path.join(self.target_dir, f'{file_uuid}.jpg')
+                target_image_path = os.path.join(self.target_dir, f'{file_uuid}.webp')
                 img_url = img['url']
                 self.download_image(img_url, target_image_path)
-                img_list.append(target_image_path)
+                imgPath =f"http://127.0.0.1:6688/images/{file_uuid}.webp"
+                img_list.append(imgPath)
             print(f"img_list{img_list}")
             return json.dumps(img_list)
         else:
@@ -106,7 +108,7 @@ class dalle_3:
                     if chunk:
                         f.write(chunk)
                         # chunk 就是1024 设置的这个数据
-                        print(f"总数据:{total_size},当前数据:{len(chunk)}")
+                        # print(f"总数据:{total_size},当前数据:{len(chunk)}")
                         # progress_bar.update(len(chunk))  # 更新进度条
             # progress_bar.close()
 

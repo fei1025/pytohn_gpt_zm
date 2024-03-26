@@ -18,6 +18,9 @@ from sse_starlette.sse import EventSourceResponse
 
 from entity.schemas import reqChat, userSetting
 
+from fastapi import Path
+from fastapi.responses import FileResponse
+
 router = APIRouter()
 
 
@@ -158,3 +161,14 @@ def send_open_ai(request: Request, res: reqChat, db: Session = Depends(get_db)):
                 yield json.dumps(data_point)
         g = event_generator()
         return EventSourceResponse(g)
+
+@router.get("/images/{image_path:path}")
+async def read_image(image_path: str = Path(..., description="The path to the image")):
+    try:
+        # 拼接完整的图片路径
+        current_directory = os.getcwd()
+        target_dir = f"{current_directory}\img"
+        image_full_path = f"{target_dir}/{image_path}"
+        return FileResponse(image_full_path)
+    except Exception as e:
+        return str(e)
