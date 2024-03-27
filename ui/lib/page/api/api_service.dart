@@ -274,15 +274,16 @@ class ApiService {
     return dataList;
   }
 
-  Future<void> downloadFile(String url, String savePath) async {
+  Future<void> downloadFile(String url, String savePath,Function(int totalBytes,int contentLength) downIng,Function(String save) success) async {
     var client = http.Client();
 
     final request = http.Request('GET', Uri.parse(url));
 
     var response = await client.send(request);
-
+     var imageNmaeList= url.split("/");
+     var name=imageNmaeList[imageNmaeList.length-1];
     // 创建文件用于保存下载内容
-    var file = File(savePath + "/dadad11.webp");
+    var file = File("$savePath/${name}");
     var fileStream = file.openWrite();
 
     // 记录下载字节的总数
@@ -297,7 +298,7 @@ class ApiService {
 
         // 更新进度
         print("${(totalBytes / contentLength * 100).toStringAsFixed(0)}%");
-
+        downIng(totalBytes,contentLength);
         // 将新的数据片段写入文件
         fileStream.add(newBytes);
       },
@@ -305,9 +306,8 @@ class ApiService {
         // 当所有片段都下载完毕时，关闭文件流
         file.exists();
         fileStream.close();
-         client.close();
-
-        print("文件下载完成，保存位置: $savePath");
+        client.close();
+        success("$savePath/${name}");
       },
       onError: (e) {
         print("文件下载发生错误：$e");

@@ -115,10 +115,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     icon: Icon(Icons.favorite),
                     label: Text('知识库'),
                   ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.home),
-                    label: Text('聊天(tool)'),
-                  ),
+                  // NavigationRailDestination(
+                  //   icon: Icon(Icons.home),
+                  //   label: Text('聊天(tool)'),
+                  // ),
 
                 ],
                 trailing: Expanded(

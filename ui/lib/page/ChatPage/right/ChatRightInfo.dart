@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -71,9 +72,11 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                 itemBuilder: (context, index) {
                   ChatDetails chatDetails = list[index];
                   List<Widget> listInfo = [];
+                  String tools="";
                   final toolList = chatDetails.toolList;
                   if (toolList != null) {
                     List<Widget> aa = toolList.map((e) {
+                      tools=tools+e.tools;
                       return Container(
                           alignment: Alignment.centerLeft, // 将容器左对齐
                           padding: const EdgeInsets.only(bottom: 1),
@@ -98,6 +101,7 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                     }).toList();
                     listInfo.addAll(aa);
                   }
+                  bool isDownload=tools.contains("lobe_image_designer");
 
                   return ListTile(
                       leading: chatDetails.role != "user"
@@ -184,24 +188,63 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                                         ),
                                       ),
                                     ),
-                                    Padding(
+                                    isDownload?Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: InkWell(
                                         onTap: () {
                                           FilePicker.platform.getDirectoryPath().then((value){
-                                            print("value: $value");
-                                            ApiService().downloadFile("http://127.0.0.1:6688/images/e0e82b0e-549e-4c7b-9f4d-84d3ad1ad717.webp",value!);
+                                            final toolList1 = chatDetails.toolList;
+                                            toolList1?.forEach((element) {
+                                              List<String> images = jsonDecode(element.tool_data).cast<String>();
+                                              images.forEach((element) {
+                                                double num=0;
+                                                var _dialogRoute;
+                                                ApiService().downloadFile(element,value!,(int totalBytes,int contentLength){
+                                                  // setState(() {
+                                                  //   num=totalBytes / contentLength;
+                                                  // });
+                                                  // _dialogRoute= showGeneralDialog(
+                                                  //   context: context,
+                                                  //   barrierColor: Colors.black.withOpacity(0.1),  // 设置透明度
+                                                  //   pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+                                                  //     return Center(
+                                                  //         child: Container(
+                                                  //             decoration: BoxDecoration(
+                                                  //               color: Colors.white,
+                                                  //               borderRadius: BorderRadius.circular(10),
+                                                  //             ),
+                                                  //             width: MediaQuery.of(context).size.width * 0.3,
+                                                  //             height: 13,
+                                                  //             child:Column(
+                                                  //               mainAxisAlignment: MainAxisAlignment.center,
+                                                  //               children: [
+                                                  //                 LinearProgressIndicator(value: num,),
+                                                  //               ],
+                                                  //             )));
+                                                  //   },
+                                                  // );
 
+                                                },(String path){
+                                                  // //Navigator.pop(context); // 关闭对话框
+                                                  // num=1;
+                                                  // //Future.delayed(Duration(milliseconds: 500));
+                                                  // if(_dialogRoute!=null){
+                                                  //   Navigator.of(context, rootNavigator: true).pop(_dialogRoute!);
+                                                  // }
+                                                  _showToast("下载成功,保存地址${path}");
+                                                  num=0;
+
+                                                });
+                                              });
+                                            });
                                           });
-                                          _showToast("复制成功");
                                         },
                                         child: const Icon(
                                           Icons.download,
                                           size: 15,
                                         ),
                                       ),
-                                    ),
-
+                                    ):const Row(),
                                   ],
                                 )
                         ],
