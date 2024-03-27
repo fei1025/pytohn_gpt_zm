@@ -55,7 +55,7 @@ class ToolList {
     // 回答数据
     this.tool_data='',
     bool isExpanded = false,
-    bool isLoad = false
+    required this.isLoad
   });
 
   factory ToolList.fromJson(Map<String, dynamic> json) {
@@ -66,6 +66,7 @@ class ToolList {
       tools: json['tools'] ?? '',
       problem: json['problem'] ?? '',
       tool_data: json['tool_data'] ?? '',
+      isLoad:false
     );
   }
 }

@@ -77,6 +77,7 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                   if (toolList != null) {
                     List<Widget> aa = toolList.map((e) {
                       tools=tools+e.tools;
+                      print("e.isLoad?:${e.isLoad}");
                       return Container(
                           alignment: Alignment.centerLeft, // 将容器左对齐
                           padding: const EdgeInsets.only(bottom: 1),
@@ -198,39 +199,11 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                                               List<String> images = jsonDecode(element.tool_data).cast<String>();
                                               images.forEach((element) {
                                                 double num=0;
-                                                var _dialogRoute;
                                                 ApiService().downloadFile(element,value!,(int totalBytes,int contentLength){
-                                                  // setState(() {
-                                                  //   num=totalBytes / contentLength;
-                                                  // });
-                                                  // _dialogRoute= showGeneralDialog(
-                                                  //   context: context,
-                                                  //   barrierColor: Colors.black.withOpacity(0.1),  // 设置透明度
-                                                  //   pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-                                                  //     return Center(
-                                                  //         child: Container(
-                                                  //             decoration: BoxDecoration(
-                                                  //               color: Colors.white,
-                                                  //               borderRadius: BorderRadius.circular(10),
-                                                  //             ),
-                                                  //             width: MediaQuery.of(context).size.width * 0.3,
-                                                  //             height: 13,
-                                                  //             child:Column(
-                                                  //               mainAxisAlignment: MainAxisAlignment.center,
-                                                  //               children: [
-                                                  //                 LinearProgressIndicator(value: num,),
-                                                  //               ],
-                                                  //             )));
-                                                  //   },
-                                                  // );
+
 
                                                 },(String path){
-                                                  // //Navigator.pop(context); // 关闭对话框
-                                                  // num=1;
-                                                  // //Future.delayed(Duration(milliseconds: 500));
-                                                  // if(_dialogRoute!=null){
-                                                  //   Navigator.of(context, rootNavigator: true).pop(_dialogRoute!);
-                                                  // }
+
                                                   _showToast("下载成功,保存地址${path}");
                                                   num=0;
 

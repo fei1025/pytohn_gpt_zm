@@ -123,8 +123,11 @@ def send_open_ai(db: Session, res: reqChat):
             yield json.dumps({'type': "toolInput", "data": tool_call.function.arguments})
             toolsListName = ["wolfram_alpha", "Python_REPL", "arxiv", "duckduckgo_search"]
             if function_name in toolsListName:
+                query = function_args.get("__arg1")
+                if query is None:
+                    query=function_args.get("query")
                 function_response = function_to_call(
-                    function_args.get("__arg1")
+                    query
                 )
             else:
                 function_response = function_to_call(**function_args)
@@ -134,7 +137,7 @@ def send_open_ai(db: Session, res: reqChat):
             modelTools.tools = function_name
             modelTools.type = "0"
             modelTools.tool_data = function_response
-            modelTools.problem = function_args.get("__arg1")
+            modelTools.problem = tool_call.function.arguments
             saveTolls.append(modelTools)
             messageNum['messages'].append(
                 {

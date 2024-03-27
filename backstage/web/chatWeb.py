@@ -94,6 +94,7 @@ async def save_chat_hist(res: reqChat, db: Session = Depends(get_db)):
     chatHist.title = res.content
     chatHist.type = res.type
     chatHist.knowledge_id = res.knowledge_id
+    chatHist.tools=res.tools
     crud.save_chat_hist(db, chatHist)
     return Result.success([chatHist])
 

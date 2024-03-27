@@ -63,6 +63,12 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  String curSelectTool="";
+  void setCurSelectTool(String s){
+    curSelectTool=s;
+    notifyListeners();
+}
+
 
   int titleIndex = -1;
 

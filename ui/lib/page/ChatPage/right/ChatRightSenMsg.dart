@@ -47,19 +47,23 @@ class _ChatRightSenMsg extends State<ChatRightSenMsg> {
                     onPressed: () {
                       ApiService.getAllToolList().then((value){
                         int? chatId = appState.cuChatId;
-                        if(chatId == null){
-                          showToastr("请选择一个对话",context);
-                          return;
+                        // if(chatId == null){
+                        //   showToastr("请选择一个对话",context);
+                        //   return;
+                        // }
+                        if(appState.cuChatHist!=null){
+                          String tools=appState.cuChatHist!.tools;
+                          _isCheckedList=value.map((e) =>  ToolsSelect(toolsName: e["name"],isSelect: tools.contains(e["key"]),key:e["key"],details: e["details"])).toList();
+                        }else{
+                          _isCheckedList=value.map((e) =>  ToolsSelect(toolsName: e["name"],isSelect: false,key:e["key"],details: e["details"])).toList();
                         }
-                        String tools=appState.cuChatHist!.tools;
-                        _isCheckedList=value.map((e) =>  ToolsSelect(toolsName: e["name"],isSelect: tools.contains(e["key"]),key:e["key"],details: e["details"])).toList();
                         showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return StatefulBuilder(
                                   builder: (context, setState) {
                                     return AlertDialog(
-                                      title: Text('Select Options'),
+                                      title: const Text('插件'),
                                       content: SingleChildScrollView(
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
@@ -92,11 +96,15 @@ class _ChatRightSenMsg extends State<ChatRightSenMsg> {
                                               s=s.substring(1);
                                             }
                                             print("选择的数据:${s}");
-                                            ApiService.update_chat(chatId, null,null,s)
-                                                .then((value) {
-                                              appState.setCuChatHistTools(s);
-                                              Navigator.of(context).pop(); // Close the dialog
-                                            });
+                                            if(chatId == null){
+                                              appState.setCurSelectTool(s);
+                                            }else{
+                                              ApiService.update_chat(chatId, null,null,s).then((value) {
+                                                appState.setCuChatHistTools(s);
+                                              });
+                                            }
+                                            Navigator.of(context).pop(); // Close the dialog
+
                                           },
                                           child: Text('确认'),
                                         ),

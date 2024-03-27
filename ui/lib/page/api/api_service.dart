@@ -56,7 +56,7 @@ class ApiService {
     final response = await httpUtils.post(
         '$_baseUrl/save_chat_hist',
         json.encode(
-            {'content': msg, 'type': type, 'knowledge_id': knowledgeId}),
+            {'content': msg, 'type': type, 'knowledge_id': knowledgeId,"tools":MyAppState().curSelectTool}),
         null);
     if (response.statusCode == 200) {
       String responseBody = utf8.decode(response.bodyBytes);
@@ -125,8 +125,7 @@ class ApiService {
               id: 0, chatId: 0, role: "assistant", content: jsonMap['data']);
         } else {
           List<ToolList> toolList = [];
-          chatDetails =
-              ChatDetails(id: 0, chatId: 0, role: "assistant", content: '');
+          chatDetails = ChatDetails(id: 0, chatId: 0, role: "assistant", content: '');
           ToolList tool = ToolList(
               id: 0,
               chat_details_id: 0,
@@ -144,13 +143,11 @@ class ApiService {
         if ("msg" == type) {
           chatDetails.content = chatDetails.content + jsonMap['data'];
         } else if ("toolInput" == type) {
-          ToolList toolList =
-              chatDetails.toolList![chatDetails.toolList!.length - 1];
+          ToolList toolList =chatDetails.toolList![chatDetails.toolList!.length - 1];
           toolList.problem = data;
           chatDetails.toolList![chatDetails.toolList!.length - 1] = toolList;
         } else if ("toolEnd" == type) {
-          ToolList toolList =
-              chatDetails.toolList![chatDetails.toolList!.length - 1];
+          ToolList toolList =chatDetails.toolList![chatDetails.toolList!.length - 1];
           toolList.isLoad = false;
           toolList.tool_data = data;
           chatDetails.toolList![chatDetails.toolList!.length - 1] = toolList;
