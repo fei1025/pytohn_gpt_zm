@@ -77,7 +77,6 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                   if (toolList != null) {
                     List<Widget> aa = toolList.map((e) {
                       tools=tools+e.tools;
-                      print("e.isLoad?:${e.isLoad}");
                       return Container(
                           alignment: Alignment.centerLeft, // 将容器左对齐
                           padding: const EdgeInsets.only(bottom: 1),
@@ -177,44 +176,50 @@ class _ChatRightInfo extends State<ChatRightInfo> {
                                   children: [
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: InkWell(
-                                        onTap: () {
-                                          Clipboard.setData(ClipboardData(
-                                              text: chatDetails.content));
-                                          _showToast("复制成功");
-                                        },
-                                        child: const Icon(
-                                          Icons.copy_all,
-                                          size: 15,
+                                      child: Tooltip(
+                                        message:"复制原文",
+                                        child: InkWell(
+                                          onTap: () {
+                                            Clipboard.setData(ClipboardData(
+                                                text: chatDetails.content));
+                                            _showToast("复制成功");
+                                          },
+                                          child: const Icon(
+                                            Icons.copy_all,
+                                            size: 20,
+                                          ),
                                         ),
                                       ),
                                     ),
                                     isDownload?Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: InkWell(
-                                        onTap: () {
-                                          FilePicker.platform.getDirectoryPath().then((value){
-                                            final toolList1 = chatDetails.toolList;
-                                            toolList1?.forEach((element) {
-                                              List<String> images = jsonDecode(element.tool_data).cast<String>();
-                                              images.forEach((element) {
-                                                double num=0;
-                                                ApiService().downloadFile(element,value!,(int totalBytes,int contentLength){
+                                      child: Tooltip(
+                                        message: "下载回复中的所有图片",
+                                        child: InkWell(
+                                          onTap: () {
+                                            FilePicker.platform.getDirectoryPath().then((value){
+                                              final toolList1 = chatDetails.toolList;
+                                              toolList1?.forEach((element) {
+                                                List<String> images = jsonDecode(element.tool_data).cast<String>();
+                                                images.forEach((element) {
+                                                  double num=0;
+                                                  ApiService().downloadFile(element,value!,(int totalBytes,int contentLength){
 
 
-                                                },(String path){
+                                                  },(String path){
 
-                                                  _showToast("下载成功,保存地址${path}");
-                                                  num=0;
+                                                    _showToast("下载成功,保存地址${path}");
+                                                    num=0;
 
+                                                  });
                                                 });
                                               });
                                             });
-                                          });
-                                        },
-                                        child: const Icon(
-                                          Icons.download,
-                                          size: 15,
+                                          },
+                                          child: const Icon(
+                                            Icons.download,
+                                            size: 20,
+                                          ),
                                         ),
                                       ),
                                     ):const Row(),

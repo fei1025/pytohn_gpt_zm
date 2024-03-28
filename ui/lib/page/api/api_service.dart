@@ -87,10 +87,12 @@ class ApiService {
       'role': 'user',
       'model': MyAppState().cuModel
     });
+    ChatDetails chatDetails = ChatDetails(id: 0, chatId: 0, role: "user", content: msg);
+    ChatDetails assistantChatDetails = ChatDetails(id: 0, chatId: 0, role: "assistant", content: '');
+    chatList.add(chatDetails);
     final response = await client.send(request);
     if (response.statusCode != 200) {
-      ChatDetails chatDetails = ChatDetails(
-          id: 0, chatId: 0, role: "error", content: "数据异常", other_data: []);
+      ChatDetails chatDetails = ChatDetails(id: 0, chatId: 0, role: "error", content: "数据异常", other_data: []);
       chatList.add(chatDetails);
       MyAppState().setChatDetails(chatList);
       MyAppState().isSend = false;
@@ -101,9 +103,7 @@ class ApiService {
     }
 
     bool isFirstEvent = true;
-    ChatDetails chatDetails =
-        ChatDetails(id: 0, chatId: 0, role: "user", content: msg);
-    chatList.add(chatDetails);
+    chatList.add(assistantChatDetails);
     MyAppState().setChatDetails(chatList);
     response.stream
         .transform(utf8.decoder)
@@ -119,13 +119,10 @@ class ApiService {
       if (isFirstEvent) {
         MyAppState().isSend = true;
         isFirstEvent = false;
-        ChatDetails chatDetails;
+        ChatDetails chatDetails=chatList[chatList.length - 1];
         if ("msg" == type) {
-          chatDetails = ChatDetails(
-              id: 0, chatId: 0, role: "assistant", content: jsonMap['data']);
         } else {
           List<ToolList> toolList = [];
-          chatDetails = ChatDetails(id: 0, chatId: 0, role: "assistant", content: '');
           ToolList tool = ToolList(
               id: 0,
               chat_details_id: 0,
@@ -135,7 +132,6 @@ class ApiService {
           toolList.add(tool);
           chatDetails.toolList = toolList;
         }
-        chatList.add(chatDetails);
         MyAppState().setChatDetails(chatList);
       }
       if (cuId == MyAppState().cuChatId) {

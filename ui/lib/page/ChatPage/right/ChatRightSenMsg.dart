@@ -71,7 +71,12 @@ class _ChatRightSenMsg extends State<ChatRightSenMsg> {
                                             _isCheckedList.length,
                                                 (index) {
                                               return CheckboxListTile(
-                                                title: Text(_isCheckedList[index].toolsName),
+                                                title: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [Text(_isCheckedList[index].toolsName),SizedBox(width:20),
+                                                  Tooltip(
+                                                      message:_isCheckedList[index].details ,
+                                                      child: Icon(Icons.question_mark,size: 15,semanticLabel:_isCheckedList[index].details,color:Colors.red))],),
                                                 value: _isCheckedList[index].isSelect,
                                                 onChanged: (bool? value) {
                                                   setState(() {
